@@ -15,4 +15,8 @@ app.get('/', (req, res) => {
 
 app.use('/tarefas', tarefasRoutes)
 
+const authRoutes = require('./src/routes/authRoutes')
+
+app.use('/auth', authRoutes)
+
 module.exports = app
