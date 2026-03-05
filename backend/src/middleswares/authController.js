@@ -28,6 +28,7 @@ exports.registrar = async (req, res) => {
     }
 }
 
+// Login
 exports.login = async (req, res) => {
     try{
         const { email, senha } = req.body
@@ -50,7 +51,7 @@ exports.login = async (req, res) => {
         }
 
         const token = jwt.sign(
-            { id: usuario},
+            { id: usuario.id},
             process.env.JWT_SECRET,
             { expiresIn: process.env.JWT_EXPIRES}
         )
