@@ -1,27 +1,21 @@
 import { useState } from 'react'
-import api from '../api/api'
-import { useNavigate } from 'react-router-dom'
+import { login } from '../api/api'
 
 export default function Login(){
     const [email, setEmail] = useState("")
     const [senha, setSenha] = useState("")
-    const navigate = useNavigate()
 
     const handleLogin = async(e) => {
         e.preventDefault()
-        try{
-            const response = await api.post("/auth/login",{
-                email, 
-                senha
-            })
 
-            localStorage.setItem("token", response.data.token)
+        const data = await login(email, senha)
 
-            navigate("/dashboard")
-
-        }catch(error){
-            alert("Erro ao fazer login")
-            console.log(error)
+        if (data.token){
+            localStorage.setItem("token", data.token)
+            window.location.href = "/dashboard"
+        }
+        else{
+            alert("Erro ao realizar login")
         }
     }
 

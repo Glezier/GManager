@@ -29,8 +29,12 @@ exports.criarTarefa = async (req, res) => {
 
         const statusValidos = ["pendente", "concluida"]
 
-        if(!titulo || !statusValidos.includes(status)){
+        if(!titulo){
             return res.status(400).json({error: "Informções pendentes ou incorretas"})
+        }
+
+        if (status && !statusValidos.includes(status)) {
+            return res.status(400).json({ error: "Status inválido" })
         }
 
         const result = await pool.query(
