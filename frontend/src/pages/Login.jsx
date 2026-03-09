@@ -15,29 +15,31 @@ export default function Login(){
             window.location.href = "/dashboard"
         }
         else{
-            alert("Erro ao realizar login")
+
+            alert(data.error || "Erro ao realizar login")
         }
     }
 
-    return(
-        <>
+    return(        
+        <form onSubmit={handleLogin}>
             <h1>Login</h1>
-            <form onSubmit={handleLogin}>
-                <input
-                    type='email'
-                    placeholder='Digite seu email'
-                    onChange={(e) => setEmail(e.target.value)}  
-                />
+            <input
+                type='email'
+                placeholder='Digite seu email'
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}  
+            />
 
-                <input 
-                    type="password"
-                    placeholder='Digite sua senha'
-                    onChange={(e) => setSenha(e.target.value)}
-                />
+            <input 
+                type="password"
+                placeholder='Digite sua senha'
+                value={senha}
+                onChange={(e) => setSenha(e.target.value)}
+            />
 
-                <button type='submit'>Entrar</button>
+            <button type='submit'>Entrar</button>
 
-            </form>
-        </>
+        </form>
+        
     )
 }
