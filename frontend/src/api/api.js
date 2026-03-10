@@ -44,3 +44,13 @@ export async function listarTarefas(token){
 
     return response.json()
 }
+
+export async function deletarTarefa(token, id){
+    const response = await fetch(`${API_URL}/tarefas/${id}`,{
+        method : 'DELETE',
+        headers :{
+            Authorization: `Bearer ${token}`
+        }
+    })
+    return response.json()
+}
