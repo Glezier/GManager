@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { listarTarefas, criarTarefa, deletarTarefa } from "../api/api"
+import { listarTarefas, criarTarefa, deletarTarefa, atualizarStatusTarefa } from "../api/api"
 
 export default function Dashboard(){
     const [tarefas, setTarefas] = useState([])
@@ -35,6 +35,14 @@ export default function Dashboard(){
         const token = localStorage.getItem("token")
 
         await deletarTarefa(token, id)
+
+        carregarTarefas(token)
+    }
+
+    async function concluirTarefa(id){
+        const token = localStorage.getItem("token")
+
+        await atualizarStatusTarefa(token, id, "concluida")
 
         carregarTarefas(token)
     }
@@ -100,6 +108,12 @@ export default function Dashboard(){
                     <h3>{tarefa.titulo}</h3>
                     <p>{tarefa.descricao}</p>
                     <span>{tarefa.status}</span> 
+
+                    {tarefa.status === "pendente" && (
+                        <button onClick={() => concluirTarefa(tarefa.id)}>
+                            Concluir
+                        </button>
+                    )}
 
                     <button onClick={()=>removerTarefa(tarefa.id)}>
                         Deletar tarefa

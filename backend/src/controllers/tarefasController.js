@@ -103,3 +103,32 @@ exports.deletarTarefa = async (req,res) => {
         res.status(500).json({error: "Erro ao deletar tarefa"})
     }
 }
+
+exports.atualizarStatusTarefa = async (req,res) => {
+    try{
+        const { id } = req.params
+        const { status } = req.body
+        const usuario_id = req.userId
+
+        const statusValidos = ["concluida", "pendente"]
+
+        if (!statusValidos.includes(status)){
+            return res.status(400).json({error: "Status não permitido"})
+        }
+
+        const result = await pool.query(
+            `UPDATE tarefas
+            SET status = $1
+            WHERE id = $2
+            AND usuario_id = $3
+            RETURNING *`,
+            [status, id, usuario_id]
+        )
+
+        res.json(result.rows[0])
+
+    }catch(error){
+        console.error(error)
+        res.status(500).json({error: "Erro ao atualizar o status da tarefa"})
+    }
+}

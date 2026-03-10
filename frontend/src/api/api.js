@@ -54,3 +54,16 @@ export async function deletarTarefa(token, id){
     })
     return response.json()
 }
+
+export async function atualizarStatusTarefa(token, id, status){
+    const response = await fetch(`${API_URL}/tarefas/${id}`,{
+        method: "PUT",
+        headers: {
+            "Content-Type" : "application/json",
+            Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({status})
+        
+    })
+    return response.json()
+}
