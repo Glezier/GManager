@@ -9,7 +9,7 @@ exports.listarTarefas = async (req,res) => {
             `SELECT * 
             FROM tarefas
             WHERE usuario_id = $1
-            ORDER BY id DESC`,
+            ORDER BY data, hora`,
             [usuario_id]
         )
 
@@ -24,24 +24,25 @@ exports.listarTarefas = async (req,res) => {
 // Criar tarefa
 exports.criarTarefa = async (req, res) => {
     try{
-        const {titulo, descricao, status} = req.body
+        const {titulo, descricao, data, hora } = req.body
         const usuario_id = req.userId
 
-        const statusValidos = ["pendente", "concluida"]
-
-        if(!titulo){
+        if(!titulo || !data){
             return res.status(400).json({error: "Informções pendentes ou incorretas"})
         }
 
-        if (status && !statusValidos.includes(status)) {
-            return res.status(400).json({ error: "Status inválido" })
-        }
-
         const result = await pool.query(
-            `INSERT INTO tarefas (titulo, descricao, status, usuario_id)
-            VALUES ($1, $2, $3, $4)
+            `INSERT INTO tarefas (titulo, descricao, status, usuario_id, data, hora)
+            VALUES ($1, $2, $3, $4, $5, $6)
             RETURNING *`,
-            [titulo, descricao || null, status || 'pendente', usuario_id]
+            [
+                titulo, 
+                descricao || null, 
+                'pendente', 
+                usuario_id, 
+                data, 
+                hora || null
+            ]
         )
         res.status(201).json(result.rows[0])
     } catch(error){
@@ -104,17 +105,10 @@ exports.deletarTarefa = async (req,res) => {
     }
 }
 
-exports.atualizarStatusTarefa = async (req,res) => {
+exports.concluirTarefa = async (req,res) => {
     try{
         const { id } = req.params
-        const { status } = req.body
         const usuario_id = req.userId
-
-        const statusValidos = ["concluida", "pendente"]
-
-        if (!statusValidos.includes(status)){
-            return res.status(400).json({error: "Status não permitido"})
-        }
 
         const result = await pool.query(
             `UPDATE tarefas
@@ -122,13 +116,13 @@ exports.atualizarStatusTarefa = async (req,res) => {
             WHERE id = $2
             AND usuario_id = $3
             RETURNING *`,
-            [status, id, usuario_id]
+            ["concluida", id, usuario_id]
         )
 
         res.json(result.rows[0])
 
     }catch(error){
         console.error(error)
-        res.status(500).json({error: "Erro ao atualizar o status da tarefa"})
+        res.status(500).json({error: "Erro ao concluir tarefa"})
     }
 }

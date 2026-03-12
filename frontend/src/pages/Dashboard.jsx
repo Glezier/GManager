@@ -1,68 +1,43 @@
-import { useEffect, useState } from "react"
-import { listarTarefas, criarTarefa, deletarTarefa, atualizarStatusTarefa } from "../api/api"
+import { useEffect, useState, useCallback  } from "react"
+import { listarTarefas, criarTarefa, deletarTarefa, concluirTarefa } from "../api/api"
+
+import TaskForm from "../components/TaskForm"
+import TaskCard from "../components/TaskCard"
 
 export default function Dashboard(){
     const [tarefas, setTarefas] = useState([])
-    const [titulo, setTitulo ] = useState("")
-    const [descricao, setDescricao ] = useState("") 
     const [addTarefa, setAddTarefa ] = useState(false)
 
-    async function carregarTarefas(token){
+    const token = localStorage.getItem("token")
+
+    const carregarTarefas = useCallback(async () => {
         const data = await listarTarefas(token)
         setTarefas(data)
-    }
+    }, [token])
 
-    async function adicionarTarefa(e){
-        e.preventDefault()
-
-        const token = localStorage.getItem("token")
-
-        const novaTarefa = {
-            titulo, 
-            descricao
-        }
-
-        await criarTarefa(token, novaTarefa)
-
-        setTitulo("")
-        setDescricao("")
+    async function novaTarefa(tarefa){
+        await criarTarefa(token, tarefa)
         setAddTarefa(false)
-
         carregarTarefas(token)
     }
 
     async function removerTarefa(id){
-        const token = localStorage.getItem("token")
-
         await deletarTarefa(token, id)
-
         carregarTarefas(token)
     }
 
-    async function concluirTarefa(id){
-        const token = localStorage.getItem("token")
-
-        await atualizarStatusTarefa(token, id, "concluida")
-
+    async function finalizarTarefa(id){
+        await concluirTarefa(token, id)
         carregarTarefas(token)
     }
 
     useEffect(()=>{
-        
-        const token = localStorage.getItem("token")
-
         if(!token){
             window.location.href = '/'
             return
         }
-
-        async function carregarTarefas(token){
-            const data = await listarTarefas(token)
-            setTarefas(data)
-        }
-        
-        carregarTarefas(token)
-    }, [])
+       
+    }, [token, carregarTarefas])
 
 
     return(
@@ -73,55 +48,21 @@ export default function Dashboard(){
                 Adicionar tarefa
             </button>
 
-            {(addTarefa &&
-            
-                <form onSubmit={adicionarTarefa}>
-
-                    <input 
-                        type="text"
-                        placeholder="Título da tarefa"
-                        value={titulo}
-                        onChange={(e)=>{setTitulo(e.target.value)}} 
-                    />
-
-                    <input 
-                        type="text"
-                        placeholder="Descrição da tarefa" 
-                        value={descricao}
-                        onChange={(e)=>{setDescricao(e.target.value)}}
-                    />
-
-                    <button type="submit">
-                        Salvar tarefa
-                    </button>
-
-                    <button
-                    type="button"
-                    onClick={() => setAddTarefa(false)}>
-                    Cancelar
-                    </button>
-                </form>
-            )}
-            
-            {tarefas.map(tarefa => (
-                <div key={tarefa.id}>
-                    <h3>{tarefa.titulo}</h3>
-                    <p>{tarefa.descricao}</p>
-                    <span>{tarefa.status}</span> 
-
-                    {tarefa.status === "pendente" && (
-                        <button onClick={() => concluirTarefa(tarefa.id)}>
-                            Concluir
-                        </button>
-                    )}
-
-                    <button onClick={()=>removerTarefa(tarefa.id)}>
-                        Deletar tarefa
-                    </button>
-                </div>
+            {(addTarefa && (
+                <TaskForm
+                    criar={novaTarefa}
+                    cancelar={()=>setAddTarefa(false)}
+                />
             ))}
-            
 
+            {tarefas.map(tarefa => (
+                <TaskCard
+                    key={tarefa.id}
+                    tarefa ={tarefa}
+                    concluir={finalizarTarefa}
+                    remover={removerTarefa}
+                />
+            ))}
         </>
     )
 }
