@@ -10,7 +10,7 @@ export default function Dashboard(){
 
     const token = localStorage.getItem("token")
 
-    const carregarTarefas = useCallback(async () => {
+    const carregarTarefas = useCallback(async () => {// Evitar re-renderização desnecessária
         const data = await listarTarefas(token)
         setTarefas(data)
     }, [token])
