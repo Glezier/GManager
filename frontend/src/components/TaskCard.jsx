@@ -1,13 +1,13 @@
 export default function TaskCard({tarefa, concluir, remover}){
+    const dataFormatada = new Date(tarefa.data).toLocaleDateString("pt-BR")
+
     return(
         <>
             <h3>{tarefa.titulo}</h3>
             <p>{tarefa.descricao}</p>
             <span>{tarefa.status}</span> 
-            <p>{tarefa.data_tarefa}</p>
-            {tarefa.hora_tarefa && (
-                <p>{tarefa.hora_tarefa.split("T")[0]}</p>
-            )}
+            <p>{dataFormatada}</p>
+            <p>{tarefa.hora}</p>
 
             {tarefa.status === "pendente" && (
                 <button onClick={() => concluir(tarefa.id)}>

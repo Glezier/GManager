@@ -9,7 +9,7 @@ exports.listarTarefas = async (req,res) => {
             `SELECT * 
             FROM tarefas
             WHERE usuario_id = $1
-            ORDER BY data, hora`,
+            ORDER BY data ASC, hora ASC NULLS LAST`,
             [usuario_id]
         )
 
@@ -28,7 +28,7 @@ exports.criarTarefa = async (req, res) => {
         const usuario_id = req.userId
 
         if(!titulo || !data){
-            return res.status(400).json({error: "Informções pendentes ou incorretas"})
+            return res.status(400).json({error: "Informações pendentes"})
         }
 
         const result = await pool.query(
@@ -118,6 +118,10 @@ exports.concluirTarefa = async (req,res) => {
             RETURNING *`,
             ["concluida", id, usuario_id]
         )
+
+        if (result.rows.length === 0){
+            return res.status(404).json({error: "Tarefa não encontrada"})
+        }
 
         res.json(result.rows[0])
 

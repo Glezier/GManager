@@ -1,9 +1,12 @@
 import { useState } from 'react'
+import { useNavigate, Link } from 'react-router-dom'
 import { login } from '../api/api'
 
 export default function Login(){
     const [email, setEmail] = useState("")
     const [senha, setSenha] = useState("")
+
+    const navigate = useNavigate()
 
     const handleLogin = async(e) => {
         e.preventDefault()
@@ -12,34 +15,37 @@ export default function Login(){
 
         if (data.token){
             localStorage.setItem("token", data.token)
-            window.location.href = "/dashboard"
+            navigate("/dashboard")
         }
         else{
-
             alert(data.error || "Erro ao realizar login")
         }
     }
 
-    return(        
-        <form onSubmit={handleLogin}>
-            <h1>Login</h1>
-            <input
-                type='email'
-                placeholder='Digite seu email'
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}  
-            />
+    return(   
+        <>
+            <form onSubmit={handleLogin}>
+                <h1>Login</h1>
+                <input
+                    type='email'
+                    placeholder='Digite seu email'
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}  
+                />
 
-            <input 
-                type="password"
-                placeholder='Digite sua senha'
-                value={senha}
-                onChange={(e) => setSenha(e.target.value)}
-            />
+                <input 
+                    type="password"
+                    placeholder='Digite sua senha'
+                    value={senha}
+                    onChange={(e) => setSenha(e.target.value)}
+                />
 
-            <button type='submit'>Entrar</button>
+                <button type='submit'>Entrar</button>
 
-        </form>
+            </form>
+
+            <p>Não tem conta? <Link to='/register'>Clique aqui</Link></p>
+        </>     
         
     )
 }

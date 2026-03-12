@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback  } from "react"
+import { useNavigate } from 'react-router-dom'
 import { listarTarefas, criarTarefa, deletarTarefa, concluirTarefa } from "../api/api"
 
 import TaskForm from "../components/TaskForm"
@@ -8,7 +9,9 @@ export default function Dashboard(){
     const [tarefas, setTarefas] = useState([])
     const [addTarefa, setAddTarefa ] = useState(false)
 
-    const token = localStorage.getItem("token")
+    const navigate = useNavigate()
+
+    const token = localStorage.getItem("token") || ""
 
     const carregarTarefas = useCallback(async () => {// Evitar re-renderização desnecessária
         const data = await listarTarefas(token)
@@ -33,7 +36,7 @@ export default function Dashboard(){
 
     useEffect(()=>{
         if(!token){
-            window.location.href = '/'
+            navigate('/')
             return
         }
 

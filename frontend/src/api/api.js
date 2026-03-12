@@ -8,6 +8,10 @@ export async function login(email,senha){
         },
         body: JSON.stringify({ email,senha })
     })
+    if(!response.ok){
+        throw new Error("Erro na requisição")
+    }
+
     return response.json()
 }
 
@@ -19,6 +23,11 @@ export async function registrar(nome, email, senha){
         },
         body: JSON.stringify({ nome, email, senha })
     })
+
+    if(!response.ok){
+        throw new Error("Erro na requisição")
+    }
+    
     return response.json()
 }
 
@@ -32,6 +41,10 @@ export async function criarTarefa(token, tarefa){
         body: JSON.stringify(tarefa)
     })
 
+    if(!response.ok){
+        throw new Error("Erro na requisição")
+    }
+
     return response.json()
 }
 
@@ -41,6 +54,10 @@ export async function listarTarefas(token){
             Authorization: `Bearer ${token}`
         }
     })
+
+    if(!response.ok){
+        throw new Error("Erro na requisição")
+    }
 
     return response.json()
 }
@@ -52,14 +69,18 @@ export async function deletarTarefa(token, id){
             Authorization: `Bearer ${token}`
         }
     })
+
+    if(!response.ok){
+        throw new Error("Erro na requisição")
+    }
+
     return response.json()
 }
 
 export async function concluirTarefa(token, id){
-    const response = await fetch(`${API_URL}/tarefas/${id}`,{
-        method: "PUT",
+    const response = await fetch(`${API_URL}/tarefas/${id}/concluir`,{
+        method: "PATCH",
         headers: {
-            "Content-Type" : "application/json",
             Authorization: `Bearer ${token}`
         },
         body: JSON.stringify({
@@ -67,5 +88,10 @@ export async function concluirTarefa(token, id){
         })
         
     })
+
+    if(!response.ok){
+        throw new Error("Erro na requisição")
+    }
+    
     return response.json()
 }

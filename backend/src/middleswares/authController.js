@@ -5,10 +5,19 @@ const jwt = require('jsonwebtoken')
 // Registro
 exports.registrar = async (req, res) => {
     try{
-        const { nome, senha, email } = req.body
+        const { nome, email, senha } = req.body
 
-        if (!nome || !senha || !email){
+        if (!nome || !email || !senha){
             return res.status(400).json({error: "Todos os campos são obrigatórios"})
+        }
+
+        const emailExist = await pool.query(
+            `SELECT id from usuarios WHERE email = $1`,
+            [email]
+        )
+
+        if (emailExist.rows.length > 0){
+            return res.status(400).json({ error: "Email já cadastrado"})
         }
 
         const senhaHash = await bcrypt.hash(senha, 10)
@@ -20,7 +29,7 @@ exports.registrar = async (req, res) => {
             [nome, email, senhaHash]
         )
 
-        res.status(200).json(result.rows[0])
+        res.status(201).json(result.rows[0])
 
     }catch(error){
         console.error(error)
