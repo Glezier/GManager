@@ -18,17 +18,17 @@ export default function Dashboard(){
     async function novaTarefa(tarefa){
         await criarTarefa(token, tarefa)
         setAddTarefa(false)
-        carregarTarefas(token)
+        carregarTarefas()
     }
 
     async function removerTarefa(id){
         await deletarTarefa(token, id)
-        carregarTarefas(token)
+        carregarTarefas()
     }
 
     async function finalizarTarefa(id){
         await concluirTarefa(token, id)
-        carregarTarefas(token)
+        carregarTarefas()
     }
 
     useEffect(()=>{
@@ -36,6 +36,8 @@ export default function Dashboard(){
             window.location.href = '/'
             return
         }
+
+        carregarTarefas()
        
     }, [token, carregarTarefas])
 
