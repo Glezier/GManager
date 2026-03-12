@@ -34,6 +34,24 @@ export default function Dashboard(){
         carregarTarefas()
     }
 
+    function agruparTarefas(tarefas){
+        const grupos = {} // cria um grupo
+
+        tarefas.forEach((tarefa) => { // percorre todas as tarefas
+            const data = tarefa.data // pega a data da tarefa
+
+            if (!grupos[data]){ // se não existe um grupo para essa data
+                grupos[data] = [] // cria o grupo com a data
+            }
+
+            grupos[data].push(tarefa) // adiciona a tarefa na data dela
+        })
+
+        return grupos
+    }
+
+    const tarefasAgrupadas = agruparTarefas(tarefas)
+
     useEffect(()=>{
         if(!token){
             navigate('/')
@@ -43,7 +61,7 @@ export default function Dashboard(){
         // eslint-disable-next-line react-hooks/set-state-in-effect
         carregarTarefas()
        
-    }, [token, carregarTarefas])
+    }, [token, carregarTarefas, navigate])
 
 
     return(
@@ -61,13 +79,21 @@ export default function Dashboard(){
                 />
             ))}
 
-            {tarefas.map(tarefa => (
-                <TaskCard
-                    key={tarefa.id}
-                    tarefa ={tarefa}
-                    concluir={finalizarTarefa}
-                    remover={removerTarefa}
-                />
+            {Object.entries(tarefasAgrupadas).map(([data, tarefasDoDia]) => (
+                <div key={data}>
+                    <h2>
+                        {new Date(data).toLocaleDateString("pt-BR")}
+                    </h2>
+
+                    {tarefasDoDia.map((tarefa) => (
+                        <TaskCard
+                            key={tarefa.id}
+                            tarefa={tarefa}
+                            concluir={finalizarTarefa}
+                            remover={removerTarefa}
+                        />
+                    ))}
+                </div>
             ))}
         </>
     )
