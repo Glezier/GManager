@@ -1,10 +1,10 @@
 import { useState } from 'react'
 
-export default function TaskForm ({ criar, cancelar }){
+export default function TaskForm ({ criar, cancelar, hoje }){
 
     const [titulo, setTitulo ] = useState("")
     const [descricao, setDescricao ] = useState("") 
-    const [data, setData] = useState("")
+    const [data, setData] = useState(hoje)
     const [hora, setHora] = useState("")
 
     function handleSubmit(e){

@@ -41,8 +41,6 @@ export async function criarTarefa(token, tarefa){
         body: JSON.stringify(tarefa)
     })
 
-    console.log(tarefa)
-
     if(!response.ok){
         throw new Error("Erro na requisição")
     }

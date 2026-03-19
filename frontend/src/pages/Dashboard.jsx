@@ -5,13 +5,15 @@ import { listarTarefas, criarTarefa, deletarTarefa, concluirTarefa } from "../ap
 import TaskForm from "../components/TaskForm"
 import TaskCard from "../components/TaskCard"
 
+import "./Dashboard.css"
+
 export default function Dashboard(){
     const [tarefas, setTarefas] = useState([])
     const [addTarefa, setAddTarefa ] = useState(false)
 
     const navigate = useNavigate()
-
     const token = localStorage.getItem("token") || ""
+    const hoje = new Date().toLocaleDateString("en-CA")
 
     const carregarTarefas = useCallback(async () => {
         try {
@@ -22,11 +24,6 @@ export default function Dashboard(){
             navigate("/");
         }
     }, [token, navigate]);
-
-    // const carregarTarefas = useCallback(async () => {// Evitar re-renderização desnecessária
-    //     const data = await listarTarefas(token)
-    //     setTarefas(data)
-    // }, [token])
 
     async function novaTarefa(tarefa){
         await criarTarefa(token, tarefa)
@@ -44,27 +41,39 @@ export default function Dashboard(){
         carregarTarefas()
     }
 
-    const hoje = new Date().toLocaleDateString("en-CA")
-
     const tarefasDeHoje = useMemo(() => {
-        return tarefas.filter((tarefas) => tarefas.data.toString().split("T")[0] === hoje)
+        return tarefas.filter((tarefa) => tarefa.data.toString().split("T")[0] === hoje)
     }, [tarefas, hoje])
 
-    const tarefasAgrupadas = useMemo(()=>{ // não recaulcular sempre os grupos
-        const grupos = {} // cria um grupo
+    const tarefasConcluidasHoje = useMemo(() => {
+        return tarefasDeHoje.filter((tarefa) => tarefa.status === "concluida")
+    }, [tarefasDeHoje])
 
-        tarefas.forEach((tarefa) => { // percorre todas as tarefas
-            const data = tarefa.data // pega a data da tarefa
-            if (!grupos[data]){ // se não existe um grupo para essa data
-                grupos[data] = [] // cria o grupo com a data
-            }
+    const progressoHoje = tarefasConcluidasHoje.length / tarefasDeHoje.length * 100 || 0 
 
-            grupos[data].push(tarefa) // adiciona a tarefa na data dela
-        })
+    const semana = useMemo(() => {
+        const base = new Date(`${hoje}T00:00:00`)
+        const dias = []
 
-        
-        return grupos
-    }, [tarefas])
+        for (let i = 0; i < 5; i++) {
+            const data = new Date(base)
+            data.setDate(base.getDate() + i)
+
+            const dataFormatada = data.toLocaleDateString("en-CA")
+            const tarefasDoDia = tarefas.filter(
+                (tarefa) => tarefa.data.toString().split("T")[0] === dataFormatada
+            )
+
+            dias.push({
+                id: dataFormatada,
+                label: data.toLocaleDateString("pt-BR", { weekday: "short" }),
+                numero: data.getDate(),
+                tarefas: tarefasDoDia.slice(0, 3),
+            })
+        }
+
+        return dias
+    }, [tarefas, hoje])
 
     useEffect(()=>{
         if(!token){
@@ -79,62 +88,151 @@ export default function Dashboard(){
 
 
     return(
-        <>
-            <section>
-                <h2>
-                    Tarefas de hoje
-                </h2>
+        <main className="dashboard">
+            <header className="dashboard-topbar">
+                <div className="dashboard-brand">
+                    Gerenciador
+                </div>
 
-                {tarefasDeHoje.length > 0 ? (
-                    tarefasDeHoje.map((tarefa) => (
-                        <TaskCard 
-                            key={tarefa.id}
-                            tarefa={tarefa}
-                            concluir={finalizarTarefa}
-                            remover={removerTarefa}
-                        />
-                    ))
-                ) : (
-                    <p>
-                        Nenhuma tarefa para hoje
-                    </p>
-                )}
-            </section>
+                <nav className="dashboard-nav">
+                    <button type="button">Calendário</button>
+                    <button type="button">Notas</button>
+                </nav>
 
-            <button onClick={()=>setAddTarefa(true)}>
-                Adicionar tarefa
-            </button>
+                <button
+                    type="button"
+                    className="dashboard-logout"
+                    onClick={() =>{
+                        localStorage.removeItem("token")
+                        navigate("/")
+                    }}
+                >
+                    Sair
+                </button>
+            </header>
 
-            {(addTarefa && (
-                <TaskForm
-                    criar={novaTarefa}
-                    cancelar={()=>setAddTarefa(false)}
-                />
-            ))}
-            
-
-            <section>
-                <h2>
-                    Todas as tarefas
-                </h2>
-
-                {Object.entries(tarefasAgrupadas).map(([data, tarefasDoDia]) => (
-                    <div key={data}>
-                        <h2>
-                            {new Date(data).toLocaleDateString("pt-BR")}
-                        </h2>
-
-                        {tarefasDoDia.map((tarefa) => (
-                            <TaskCard
-                                key={tarefa.id}
-                                tarefa={tarefa}
-                                concluir={finalizarTarefa}
-                                remover={removerTarefa}
-                            />
-                        ))}
+            <section className="dashboard-top">
+                <div className="dashboard-panel dashboard-panel-today">
+                    <div className="dashboard-head">
+                        <p>Hoje</p>
+                        <h1>Tarefas do dia</h1>
                     </div>
-                ))}
+
+                    <div className="dashboard-progress">
+                        <button
+                            type="button"
+                            className="dashboard-add-task"
+                            onClick={() => setAddTarefa(true)}
+                        >
+                            Nova tarefa
+                        </button>
+
+                        <div className="dashboard-progress-info">
+                            <div className="dashboard-progress-text">
+                                <span>
+                                    {tarefasConcluidasHoje.length} de {tarefasDeHoje.length} concluí­das
+                                </span>
+                                <span>{Math.round(progressoHoje)}%</span>
+                            </div>
+
+                            <div className="dashboard-progress-bar">
+                                <div
+                                    className="dashboard-progress-fill"
+                                    style={{ width: `${progressoHoje}%` }}
+                                />
+                            </div>
+                        </div>
+                    </div>
+
+                    {addTarefa && (
+                        <div className="dashboard-form">
+                            <TaskForm
+                                criar={novaTarefa}
+                                cancelar={()=>setAddTarefa(false)}
+                                hoje={hoje}
+                            />
+                        </div>
+                    )}
+
+                    <div className="dashboard-task-list">
+                        {tarefasDeHoje.length > 0 ? (
+                            tarefasDeHoje.map((tarefa) => (
+                                <TaskCard 
+                                    key={tarefa.id}
+                                    tarefa={tarefa}
+                                    concluir={finalizarTarefa}
+                                    remover={removerTarefa}
+                                />
+                            ))
+                        ) : (
+                            <p>
+                                Nenhuma tarefa para hoje
+                            </p>
+                        )}
+                    </div>
+                </div>
+
+                <div className="dashboard-panel dashboard-panel-calendar">
+                    <div className="dashboard-head">
+                        <p>Calendário</p>
+                        <h2>Visão mensal</h2>
+                    </div>
+
+                    <div className="dashboard-calendar-box">
+                        Calendário mensal
+                    </div>
+                </div>
             </section>
-        </>
+
+            <section className="dashboard-panel">
+                <div className="dashboard-head">
+                    <p>Semana</p>
+                    <h2>Próximos dias</h2>
+                </div>
+
+                <div className="dashboard-week">
+                    {semana.map((dia) => (
+                        <div key={dia.id} className="dashboard-day">
+                            <div className="dashboard-day-head">
+                                <span>{dia.label}</span>
+                                <strong>{dia.numero}</strong>
+                            </div>
+
+                            {dia.tarefas.length > 0 ? (
+                                dia.tarefas.map((tarefa) => (
+                                    <p key={tarefa.id} className="dashboard-mini-task">
+                                        {tarefa.titulo}
+                                    </p>
+                                ))
+                            ) : (
+                                <p className="dashboard-mini-task dashboard-mini-empty">
+                                    Sem tarefas
+                                </p>
+                            )}
+                        </div>
+                    ))}
+                </div>
+            </section>
+
+            <section className="dashboard-bottom">
+                <div className="dashboard-panel">
+                    <div className="dashboard-head">
+                        <p>Notas rápidas</p>
+                        <h2>Anotações gerais</h2>
+                    </div>
+
+                    <div className="dashboard-notes-box">
+                        Área reservada para notas gerais.
+                    </div>
+                </div>
+
+                
+            </section>
+
+            <footer className="dashboard-footer">
+                Gerenciador de tarefas
+            </footer>
+        </main>
+        
     )
 }
