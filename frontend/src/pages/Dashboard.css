@@ -232,3 +232,14 @@ body {
     width: 100%;
   }
 }
+
+
+.calendario{
+  border: none;
+  font-size: 30px;
+  font-weight: bold;
+  background: none;
+  margin: 0;
+  padding: 0;
+  cursor: pointer;
+}

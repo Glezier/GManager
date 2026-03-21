@@ -55,20 +55,20 @@ export default function Dashboard(){
         const base = new Date(`${hoje}T00:00:00`)
         const dias = []
 
-        for (let i = 0; i < 5; i++) {
+        for (let i = 1; i < 6; i++) {
             const data = new Date(base)
             data.setDate(base.getDate() + i)
 
             const dataFormatada = data.toLocaleDateString("en-CA")
             const tarefasDoDia = tarefas.filter(
                 (tarefa) => tarefa.data.toString().split("T")[0] === dataFormatada
-            )
+            ) // retorna todas as tarefas do dia
 
             dias.push({
                 id: dataFormatada,
-                label: data.toLocaleDateString("pt-BR", { weekday: "short" }),
+                label: data.toLocaleDateString("pt-BR", { weekday: "short" }), // dia da semana abreviado
                 numero: data.getDate(),
-                tarefas: tarefasDoDia.slice(0, 3),
+                tarefas: tarefasDoDia.slice(0, 3), // retorna no máximo 3 tarefas do dia
             })
         }
 
@@ -173,14 +173,10 @@ export default function Dashboard(){
                 </div>
 
                 <div className="dashboard-panel dashboard-panel-calendar">
-                    <div className="dashboard-head">
-                        <p>Calendário</p>
-                        <h2>Visão mensal</h2>
-                    </div>
-
-                    <div className="dashboard-calendar-box">
-                        Calendário mensal
-                    </div>
+                    <button type="button" className="calendario" onClick={() => navigate("/calendario")}k>
+                        Calendário
+                    </button>
+                    <h2>Visão mensal</h2>
                 </div>
             </section>
 
@@ -202,7 +198,7 @@ export default function Dashboard(){
                                 dia.tarefas.map((tarefa) => (
                                     <p key={tarefa.id} className="dashboard-mini-task">
                                         {tarefa.titulo}
-                                    </p>
+                                    </p>        
                                 ))
                             ) : (
                                 <p className="dashboard-mini-task dashboard-mini-empty">
