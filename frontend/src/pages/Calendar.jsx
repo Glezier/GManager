@@ -4,6 +4,7 @@ import interactionPlugin from '@fullcalendar/interaction'
 import { useState, useEffect, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { listarTarefas } from '../api/api'
+import "./Calendar.css"
 
 function formatarDataLocal(data){
     const ano = data.getFullYear()
@@ -38,7 +39,7 @@ export default function Calendar(){
             return
         }
 
-        if(!periodo.inicio || periodo.fim){
+        if(!periodo.inicio || !periodo.fim){
             return
         }
 
@@ -46,10 +47,11 @@ export default function Calendar(){
     },[token, navigate, periodo])
 
     const eventos = useMemo( ()=> {
-        return tarefas.map((tarefas) => ({
-            id: tarefas.id,
-            tittle: tarefas.titulo,
-            date: tarefas.data.toString().split("T")[0],
+        return tarefas.map((tarefa) => ({
+            id: tarefa.id,
+            title: tarefa.titulo,
+            date: tarefa.data.toString().split("T")[0],
+            classNames: [`evento-${tarefa.status}`],
         }))
     }, [tarefas])
 
@@ -69,7 +71,7 @@ export default function Calendar(){
                 locale='pt-br'
                 events={eventos}
                 dateClick={handleDate}
-                dayMaxEvent={true}
+                dayMaxEvents={3}
                 height="auto"
                 datesSet={(info) => {
                     const inicio = formatarDataLocal(info.start)
