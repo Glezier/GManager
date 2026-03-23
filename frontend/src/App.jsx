@@ -4,6 +4,7 @@ import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'
 import Calendar from './pages/Calendar'
 import PrivateRoute from './routes/PrivateRoute'
+import DayPage from './pages/DayPage'
 
 export default function App(){
   return(
@@ -20,6 +21,13 @@ export default function App(){
         <Route path="/calendario" element={
           <PrivateRoute>
             <Calendar/>
+          </PrivateRoute>
+        }
+        />
+        <Route path='/dia/:data'
+        element={
+          <PrivateRoute>
+            <DayPage />
           </PrivateRoute>
         }
         />
