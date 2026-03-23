@@ -48,8 +48,8 @@ export async function criarTarefa(token, tarefa){
     return response.json()
 }
 
-export async function listarTarefas(token){
-    const response = await fetch(`${API_URL}/tarefas`,{
+export async function listarTarefas(token, inicio, fim){
+    const response = await fetch(`${API_URL}/tarefas?inicio=${inicio}&fim=${fim}`,{
         headers : {
             Authorization: `Bearer ${token}`
         }

@@ -4,13 +4,19 @@ const pool = require('../database/db');
 exports.listarTarefas = async (req,res) => {
     try{
         const usuario_id = req.userId
+        const {inicio, fim} = req.query
+
+        if (!inicio || !fim){
+            return res.status(400).json({error: "É necessário início e fim para busca"})
+        }
 
         const result = await pool.query(
             `SELECT * 
             FROM tarefas
             WHERE usuario_id = $1
+            AND data BETWEEN $2 AND $3
             ORDER BY data ASC, hora ASC NULLS LAST`,
-            [usuario_id]
+            [usuario_id, inicio, fim]
         )
 
         return res.json(result.rows)

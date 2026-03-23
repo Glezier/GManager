@@ -7,6 +7,14 @@ import TaskCard from "../components/TaskCard"
 
 import "./Dashboard.css"
 
+function formatarDataLocal(data){
+    const ano = data.getFullYear()
+    const mes = String(data.getMonth() + 1).padStart(2, "0")
+    const dia = String(data.getDate()).padStart(2, "0")
+
+    return `${ano}-${mes}-${dia}`
+}
+
 export default function Dashboard(){
     const [tarefas, setTarefas] = useState([])
     const [addTarefa, setAddTarefa ] = useState(false)
@@ -15,15 +23,21 @@ export default function Dashboard(){
     const token = localStorage.getItem("token") || ""
     const hoje = new Date().toLocaleDateString("en-CA")
 
+    const dataFim = (() => {
+        const data = new Date(`${hoje}T00:00:00`)
+        data.setDate(data.getDate() + 5)
+        return formatarDataLocal(data)
+    })()
+
     const carregarTarefas = useCallback(async () => {
         try {
-            const data = await listarTarefas(token);
+            const data = await listarTarefas(token, hoje, dataFim);
             setTarefas(data);
         } catch (error) {
             console.error("Erro ao carregar tarefas:", error);
             navigate("/");
         }
-    }, [token, navigate]);
+    }, [token, navigate, hoje, dataFim]);
 
     async function novaTarefa(tarefa){
         await criarTarefa(token, tarefa)
@@ -173,7 +187,7 @@ export default function Dashboard(){
                 </div>
 
                 <div className="dashboard-panel dashboard-panel-calendar">
-                    <button type="button" className="calendario" onClick={() => navigate("/calendario")}k>
+                    <button type="button" className="calendario" onClick={() => navigate("/calendario")}>
                         Calendário
                     </button>
                     <h2>Visão mensal</h2>
