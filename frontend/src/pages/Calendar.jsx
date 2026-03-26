@@ -1,18 +1,24 @@
 import FullCalendar from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import interactionPlugin from '@fullcalendar/interaction'
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { listarTarefas } from '../api/api'
 import "./Calendar.css"
 
 function formatarDataLocal(data){
     const ano = data.getFullYear()
-    const mes = String(data.getMonth() + 1).padStart(2, "0")
-    const dia = String(data.getDate()).padStart(2, "0")
+    const mes = String(data.getMonth() + 1)
+    const dia = String(data.getDate())
 
     return `${ano}-${mes}-${dia}`
 }
+
+const meses = [
+    "Janeiro", "Fevereiro", "Março", "Abril",
+    "Maio", "Junho", "Julho", "Agosto",
+    "Setembro", "Outubro", "Novembro", "Dezembro"
+]
 
 export default function Calendar(){
     const [tarefas, setTarefas] = useState([])
@@ -22,6 +28,18 @@ export default function Calendar(){
         inicio: "",
         fim:""
     })
+
+    const calendarRef = useRef(null)
+
+    const hoje = new Date()
+    const [mesSelecionado, setMesSelecionado] = useState(hoje.getMonth())
+    const [anoSelecionado, setAnoSelecionado] = useState(hoje.getFullYear())
+
+    const anos = []
+    
+    for (let ano = hoje.getFullYear() - 5; ano <= hoje.getFullYear() + 5; ano++) {
+        anos.push(ano)
+    }
 
     useEffect(() => {
         async function carregar() {
@@ -46,6 +64,13 @@ export default function Calendar(){
         carregar()
     },[token, navigate, periodo])
 
+     // Navega o calendário quando mês ou ano mudam
+    useEffect(() => {
+        const api = calendarRef.current?.getApi()
+        if (!api) return
+        api.gotoDate(new Date(anoSelecionado, mesSelecionado, 1))
+    }, [mesSelecionado, anoSelecionado])
+
     const eventos = useMemo( ()=> {
         return tarefas.map((tarefa) => ({
             id: tarefa.id,
@@ -59,13 +84,53 @@ export default function Calendar(){
         navigate(`/dia/${info.dateStr}`)
     }
 
+    // Sincroniza os selects quando o usuário navega pelas setas do FullCalendar
+    function handleDatesSet(info) {
+        const inicio = formatarDataLocal(info.start)
+        const fimReal = new Date(info.end)
+        fimReal.setDate(fimReal.getDate() - 1)
+        const fim = formatarDataLocal(fimReal)
+        setPeriodo({ inicio, fim })
+
+        // Atualiza os selects para refletir o mês visível
+        const dataCentral = new Date(info.start)
+        dataCentral.setDate(dataCentral.getDate() + 7) // garante que está no mês correto
+        setMesSelecionado(dataCentral.getMonth())
+        setAnoSelecionado(dataCentral.getFullYear())
+    }
+
     return(
         <main style={{ margin: "35px"}}>
             <h1>
                 Calendário
             </h1>
 
+            <div style={{ display: "flex", gap: "18px", margin: "16px 0", alignItems: "center", justifyContent: "flex-end"}}>
+                <label htmlFor="select-mes">Mês:</label>
+                <select
+                    id="select-mes"
+                    value={mesSelecionado}
+                    onChange={(e) => setMesSelecionado(Number(e.target.value))}
+                >
+                    {meses.map((nome, index) => (
+                        <option key={index} value={index}>{nome}</option>
+                    ))}
+                </select>
+
+                <label htmlFor="select-ano">Ano:</label>
+                <select
+                    id="select-ano"
+                    value={anoSelecionado}
+                    onChange={(e) => setAnoSelecionado(Number(e.target.value))}
+                >
+                    {anos.map((ano) => (
+                        <option key={ano} value={ano}>{ano}</option>
+                    ))}
+                </select>
+            </div>
+
             <FullCalendar
+                ref={calendarRef}
                 plugins={[dayGridPlugin, interactionPlugin]}
                 initialView='dayGridMonth'
                 locale='pt-br'
@@ -73,16 +138,7 @@ export default function Calendar(){
                 dateClick={handleDate}
                 dayMaxEvents={3}
                 height="auto"
-                datesSet={(info) => {
-                    const inicio = formatarDataLocal(info.start)
-
-                    const fimReal = new Date(info.end)
-                    fimReal.setDate(fimReal.getDate() - 1)
-
-                    const fim = formatarDataLocal(fimReal)
-
-                    setPeriodo({ inicio, fim })
-                }}
+                datesSet={handleDatesSet}
             />
         </main>
     )
