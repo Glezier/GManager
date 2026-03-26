@@ -1,0 +1,93 @@
+commits realizados apenas no diretorio plataforma..
+
+Criar pasta do projeto
+Inicializar repositório Git
+Criar .gitignore
+Primeiro commit (estrutura inicial)
+Inicializar projeto Node (npm init)
+Instalar dependências (express, pg, dotenv, cors, nodemon)
+Criar estrutura de pastas (src, routes, controllers, database)
+Criar servidor Express básico
+Testar servidor funcionando
+Instalar PostgreSQL
+Criar banco de dados
+Criar tabela tarefas
+Criar arquivo de conexão com banco (db.js)
+Configurar variáveis de ambiente (.env)
+Testar conexão com PostgreSQL pelo servidor
+Criar rota GET consultando o banco
+
+Inicializar repositório git
+Criar repositório no github mesmo
+
+ter arquivos
+git init no terminal
+git add .
+git commit -m
+ir no coisinha de git e dar pusblish branch
+
+
+
+dir para listar diretorios
+mkdir pra criar um diretorio (pasta)
+ni nome pra criar um arquivo no powershell
+type nul > nome pra criar no cmd
+del nome pra deletar um arquivo
+
+git init pra inicializar o repositorio
+git add pra adicionar os aquivos
+git commit -m pra commit
+git push pra mandar pro github  (git push origin main)
+git status
+git commit --allow-empty -m pra dar um commit sem mexer no anterior, apenas mexe no remoto
+
+npm install -y
+npm install express pg dotenv cors
+npm install -D nodemon
+
+adicionar isso no package.json pra rodar com npm run dev
+"scripts":{
+    "dev": "nodemon src/server.js"
+  }
+
+senha do banco mysql GlezierTestes123
+mysql -u root -p
+
+senha do banco postgres GlezierTestes123
+psql -U postgres -p 5433 
+pg_dump dados de acesso -d database > nomedoarquivo para copiar e exportar database
+
+CREATE DATABASE plataforma_estudos;
+
+\l pra listar
+\c pra conectar a um database
+\dt pra listar tables
+\d pra descrever uma tabela
+
+CREATE TABLE tarefas (
+    id SERIAL PRIMARY KEY,
+    titulo VARCHAR(255) NOT NULL,
+    descricao TEXT,
+    status VARCHAR(20) DEFAULT 'pendente',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE usuarios (
+    id SERIAL PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    email VARCHAR(150) UNIQUE NOT NULL,
+    senha VARCHAR(255) NOT NULL,
+    criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+ALTER TABLE tarefas
+ADD CONSTRAINT status_valido
+CHECK (status IN ('pendente', 'concluida'));
+
+criação das rotas e separacao de app e server
+
+ALTER TABLE tarefas
+ADD COLUMN data_tarefa DATE NOT NULL DEFAULT CURRENT_DATE;
+
+ALTER TABLE tarefas
+ADD COLUMN hora_tarefa TIME;

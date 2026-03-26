@@ -94,3 +94,13 @@ Implementar a Fase 1 começando por:
 1. reforço da documentação
 2. proteção de rotas
 3. evolução do dashboard para visão do dia
+
+Passos agora:
+Estilizar o task form
+botar ícones na barra de cima, botoes de acoes e logout
+estilizar o login
+estilizar o criar conta
+arrumar calendario pra escolher mes e usar setas
+add mini calendario no dashboard 
+criar hooks 
+adicionar funcao de notas

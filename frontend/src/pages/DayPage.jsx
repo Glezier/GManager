@@ -59,41 +59,41 @@ export default function DayPage(){
     }, [data])
 
     return(
-        <main>
-            <button type="button" onClick={() => navigate("/calendario")}>
-        Voltar para calendário
-      </button>
+      <main>
+        <button type="button" onClick={() => navigate("/calendario")}>
+          Voltar para calendário
+        </button>
 
-      <h1>{dataFormatada}</h1>
+        <h1>{dataFormatada}</h1>
 
-      <button type="button" onClick={() => setAddTarefa(true)}>
-        Nova tarefa
-      </button>
+        <button type="button" onClick={() => setAddTarefa(true)}>
+          Nova tarefa
+        </button>
 
-      {addTarefa && (
-        <div style={{ margin: "20px 0" }}>
-          <TaskForm
-            criar={novaTarefa}
-            cancelar={() => setAddTarefa(false)}
-            hoje={data}
-          />
-        </div>
-      )}
-
-      <section style={{ display: "grid", gap: "12px", marginTop: "20px" }}>
-        {tarefas.length > 0 ? (
-          tarefas.map((tarefa) => (
-            <TaskCard
-              key={tarefa.id}
-              tarefa={tarefa}
-              concluir={finalizarTarefa}
-              remover={removerTarefa}
+        {addTarefa && (
+          <div style={{ margin: "20px 0" }}>
+            <TaskForm
+              criar={novaTarefa}
+              cancelar={() => setAddTarefa(false)}
+              hoje={data}
             />
-          ))
-        ) : (
-          <p>Nenhuma tarefa para este dia.</p>
+          </div>
         )}
-      </section>
-        </main>
+
+        <section style={{ display: "grid", gap: "12px", marginTop: "20px" }}>
+          {tarefas.length > 0 ? (
+            tarefas.map((tarefa) => (
+              <TaskCard
+                key={tarefa.id}
+                tarefa={tarefa}
+                concluir={finalizarTarefa}
+                remover={removerTarefa}
+              />
+            ))
+          ) : (
+            <p>Nenhuma tarefa para este dia.</p>
+          )}
+        </section>
+      </main>
     )
 }

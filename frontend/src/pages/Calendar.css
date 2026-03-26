@@ -5,3 +5,7 @@
 .evento-pendente {
     background-color: rgb(165, 33, 33);
 }
+
+.fc-daygrid-day {
+    cursor: pointer;
+}
