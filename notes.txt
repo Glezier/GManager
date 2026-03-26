@@ -40,6 +40,7 @@ git commit -m pra commit
 git push pra mandar pro github  (git push origin main)
 git status
 git commit --allow-empty -m pra dar um commit sem mexer no anterior, apenas mexe no remoto
+git pull origin main pra pegar os commits feitos
 
 npm install -y
 npm install express pg dotenv cors

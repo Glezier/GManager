@@ -1,4 +1,7 @@
 import "./TaskCard.css"
+import CheckIcon from '../assets/icons/check.png'
+import DeleteIcon from '../assets/icons/delete.png'
+
 export default function TaskCard({tarefa, concluir, remover}){
 
 
@@ -29,7 +32,7 @@ export default function TaskCard({tarefa, concluir, remover}){
           onClick={() => concluir(tarefa.id)}
           title="Concluir tarefa"
         >
-          ✓
+          <img src={CheckIcon} alt="" className="task-card-icon-image"/>
         </button>
       )}
 
@@ -39,7 +42,7 @@ export default function TaskCard({tarefa, concluir, remover}){
         onClick={() => remover(tarefa.id)}
         title="Excluir tarefa"
       >
-        🗑
+        <img src={DeleteIcon} className="task-card-icon-image" alt=""  />
       </button>
     </div>
   </article>

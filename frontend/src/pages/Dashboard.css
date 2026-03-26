@@ -8,6 +8,16 @@ body {
   box-sizing: border-box;
 }
 
+.bar-icons{
+  width: 36px;
+  padding: 0;
+  margin: 0;
+}
+
+.day-icons{
+  width: 26px;
+}
+
 .dashboard {
   max-width: 1280px;
   margin: 0 auto;
@@ -19,7 +29,7 @@ body {
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  padding: 18px 20px;
+  padding: 10px 24px;
   margin-bottom: 20px;
   background: #d9d9d9;
   border-radius: 12px;
@@ -31,7 +41,7 @@ body {
 
 .dashboard-nav {
   display: flex;
-  gap: 14px;
+  gap: 30px;
 }
 
 .dashboard-topbar button,
@@ -133,7 +143,7 @@ body {
   border: 1px solid #999;
   border-radius: 12px;
   background: #e9e9e9;
-  font-size: 16px;
+  font-size: 18px;
   cursor: pointer;
 }
 

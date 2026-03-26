@@ -6,6 +6,11 @@ import TaskForm from "../components/TaskForm"
 import TaskCard from "../components/TaskCard"
 
 import "./Dashboard.css"
+import CalendarIcon from '../assets/icons/calendar.png'
+import NotesIcon from '../assets/icons/notes.png'
+import LogoutIcon from '../assets/icons/logout.png'
+import AddIcon from '../assets/icons/add.png'
+
 
 function formatarDataLocal(data){
     const ano = data.getFullYear()
@@ -109,8 +114,12 @@ export default function Dashboard(){
                 </div>
 
                 <nav className="dashboard-nav">
-                    <button type="button">Calendário</button>
-                    <button type="button">Notas</button>
+                    <button type="button" onClick={() => navigate("/calendario")}>
+                        <img src={CalendarIcon} alt="Calendário" className="bar-icons" title="Calendário"/>
+                    </button>
+                    <button type="button">
+                        <img src={NotesIcon} alt="Notas" className="bar-icons" title="Notas"/>
+                    </button>
                 </nav>
 
                 <button
@@ -121,7 +130,7 @@ export default function Dashboard(){
                         navigate("/")
                     }}
                 >
-                    Sair
+                    <img src={LogoutIcon} className="bar-icons" alt="Sair" title="Sair" />
                 </button>
             </header>
 
@@ -138,6 +147,7 @@ export default function Dashboard(){
                             className="dashboard-add-task"
                             onClick={() => setAddTarefa(true)}
                         >
+                            <img src={AddIcon} alt="Adicionar tarefas" className="day-icons"/>
                             Nova tarefa
                         </button>
 
