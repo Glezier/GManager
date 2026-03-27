@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import './TaskForm.css'
 
 export default function TaskForm ({ criar, cancelar, hoje }){
 
@@ -19,13 +20,20 @@ export default function TaskForm ({ criar, cancelar, hoje }){
 
         setTitulo("")
         setDescricao("")
-        setData("")
+        setData(hoje)
         setHora("")
     }
 
     return(
-        <form onSubmit={handleSubmit}>
+    <form className="task-form" onSubmit={handleSubmit}>
+        <div className="task-form-head">
+            <h3>Nova tarefa</h3>
+            <p>Preencha os dados para adicionar uma nova atividade.</p>
+        </div>
+
+        <div className="task-form-fields">
             <input 
+                className="task-form-input"
                 type="text"
                 placeholder="Título da tarefa"
                 value={titulo}
@@ -33,36 +41,44 @@ export default function TaskForm ({ criar, cancelar, hoje }){
             />
 
             <input 
+                className="task-form-input"
                 type="text"
                 placeholder="Descrição da tarefa" 
                 value={descricao}
                 onChange={(e)=>{setDescricao(e.target.value)}}
             />
 
-            <input 
-                type="date"
-                placeholder="Data da tarefa" 
-                value={data}
-                onChange={(e)=>{setData(e.target.value)}}
-                required
-            />
+            <div className="task-form-row">
+                <input 
+                    className="task-form-input"
+                    type="date"
+                    value={data}
+                    onChange={(e)=>{setData(e.target.value)}}
+                    required
+                />
 
-            <input 
-                type="time" 
-                placeholder="Hora da tarefa"
-                value={hora}
-                onChange={(e)=>{setHora(e.target.value)}}
-            />
+                <input 
+                    className="task-form-input"
+                    type="time" 
+                    value={hora}
+                    onChange={(e)=>{setHora(e.target.value)}}
+                />
+            </div>
+        </div>
 
-            <button type="submit">
+        <div className="task-form-actions">
+            <button className="task-form-save" type="submit">
                 Salvar tarefa
             </button>
 
             <button
+                className="task-form-cancel"
                 type="button"
-                onClick={cancelar}>
-                    Cancelar
+                onClick={cancelar}
+            >
+                Cancelar
             </button>
-        </form>
-    )
+        </div>
+    </form>
+)
 }

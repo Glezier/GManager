@@ -243,6 +243,20 @@ body {
   }
 }
 
+.task-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 1000;
+}
+
+.task-modal {
+  width: min(100%, 560px);
+}
 
 .calendario{
   border: none;

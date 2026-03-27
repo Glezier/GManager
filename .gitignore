@@ -1,6 +1,6 @@
 node_modules/
 .env
-#notes.txt
+notes.txt
 dist/
 coverage/
 README.md

@@ -106,6 +106,18 @@ export default function Dashboard(){
     }, [token, navigate, carregarTarefas])
 
 
+    useEffect(() => {
+    if (addTarefa) {
+        document.body.style.overflow = "hidden"
+    } else {
+        document.body.style.overflow = "auto"
+    }
+
+    return () => {
+        document.body.style.overflow = "auto"
+    }
+}, [addTarefa])
+
     return(
         <main className="dashboard">
             <header className="dashboard-topbar">
@@ -169,12 +181,14 @@ export default function Dashboard(){
                     </div>
 
                     {addTarefa && (
-                        <div className="dashboard-form">
-                            <TaskForm
-                                criar={novaTarefa}
-                                cancelar={()=>setAddTarefa(false)}
-                                hoje={hoje}
-                            />
+                        <div className="task-modal-overlay" onClick={() => setAddTarefa(false)}>
+                            <div className="task-modal" onClick={(e) => e.stopPropagation()}>
+                                <TaskForm
+                                    criar={novaTarefa}
+                                    cancelar={() => setAddTarefa(false)}
+                                    hoje={hoje}
+                                />
+                            </div>
                         </div>
                     )}
 
