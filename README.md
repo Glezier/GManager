@@ -1,3 +1,12 @@
+configurar .enc seguindo o .env-example
+cd backend
+npm install nodemon
+npm run dev
+
+cd frontend
+npm install
+npm run dev
+
 npm install @fullcalendar/react @fullcalendar/core @fullcalendar/daygrid @fullcalendar/interaction
 
 # Gerenciador de Tarefas
