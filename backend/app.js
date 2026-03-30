@@ -1,4 +1,15 @@
 require('dotenv').config()
+
+//Validação de variáves de ambiente
+const requiredEnv = ['DB_URL', 'JWT_SECRET']
+const errEnv = requiredEnv.filter((envVar) => !process.env[envVar])
+if (errEnv.length > 0) {
+  throw new Error(
+    `Variáveis de ambiente obrigatórias ausentes: ${errEnv.join(', ')}`
+  )
+}
+
+
 const express = require('express')
 const cors = require('cors')
 

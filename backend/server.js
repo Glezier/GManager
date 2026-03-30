@@ -1,7 +1,7 @@
 const app = require('./app')
 const pool = require('./src/database/db')
 
-const PORT = process.env.PORT || 3000
+const PORT = process.env.PORT || 3000 //fallback de porta
 
 // Testa conexão com o banco antes de iniciar servidor
 pool.query('SELECT NOW()')

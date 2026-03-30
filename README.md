@@ -1,6 +1,9 @@
 configurar .enc seguindo o .env-example
+b fallback de porta para 3000 e expires para 1d
+f fallback para http://localhost:3000
+
 cd backend
-npm install nodemon
+npm install nodemon validator
 npm run dev
 
 cd frontend
