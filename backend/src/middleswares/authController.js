@@ -45,7 +45,7 @@ exports.registrar = async (req, res) => {
             return res.status(400).json({
                 error:{
                     code: "VALIDATION_ERROR",
-                    message: "A senha deve possuir pelo menor 8 caracteres",
+                    message: "A senha deve possuir pelo menos 8 caracteres",
                 },
             })
         }

@@ -23,6 +23,8 @@ function formatarDataLocal(data){
 export default function Dashboard(){
     const [tarefas, setTarefas] = useState([])
     const [addTarefa, setAddTarefa ] = useState(false)
+    const [erro, setErro] = useState("")
+    const [loading, setLoading] = useState(true)
 
     const navigate = useNavigate()
     const token = localStorage.getItem("token") || ""
@@ -36,28 +38,54 @@ export default function Dashboard(){
 
     const carregarTarefas = useCallback(async () => {
         try {
+            setErro("")
+            setLoading(true)
+
             const data = await listarTarefas(token, hoje, dataFim);
             setTarefas(data);
         } catch (error) {
-            console.error("Erro ao carregar tarefas:", error);
-            navigate("/");
+            setErro(error.message)
+            if(
+                error.message === "Token inválido" ||
+                error.message === "Token não fornecido"
+            ){
+                localStorage.removeItem("token")
+                navigate("/")
+            }            
+        } finally{
+            setLoading(false)
         }
     }, [token, navigate, hoje, dataFim]);
 
     async function novaTarefa(tarefa){
-        await criarTarefa(token, tarefa)
-        setAddTarefa(false)
-        carregarTarefas()
+        try{
+            setErro('')
+            await criarTarefa(token, tarefa)
+            setAddTarefa(false)
+            await carregarTarefas()
+        }catch(error){
+            setErro(error.message)
+        }
     }
 
     async function removerTarefa(id){
-        await deletarTarefa(token, id)
-        carregarTarefas()
+        try{
+            setErro('')
+            await deletarTarefa(token, id)
+            await carregarTarefas()
+        }catch(error){
+            setErro(error.message)
+        }
     }
 
     async function finalizarTarefa(id){
-        await concluirTarefa(token, id)
-        carregarTarefas()
+        try{
+            setErro('')
+            await concluirTarefa(token, id)
+            await carregarTarefas()
+        } catch(error){
+            setErro(error.message)
+        }
     }
 
     const tarefasDeHoje = useMemo(() => {
@@ -107,16 +135,16 @@ export default function Dashboard(){
 
 
     useEffect(() => {
-    if (addTarefa) {
-        document.body.style.overflow = "hidden"
-    } else {
-        document.body.style.overflow = "auto"
-    }
+        if (addTarefa) {
+            document.body.style.overflow = "hidden"
+        } else {
+            document.body.style.overflow = "auto"
+        }
 
-    return () => {
-        document.body.style.overflow = "auto"
-    }
-}, [addTarefa])
+        return () => {
+            document.body.style.overflow = "auto"
+        }
+    }, [addTarefa])
 
     return(
         <main className="dashboard">
@@ -152,6 +180,8 @@ export default function Dashboard(){
                         <p>Hoje</p>
                         <h1>Tarefas do dia</h1>
                     </div>
+
+                    {erro && <p>{erro}</p>}
 
                     <div className="dashboard-progress">
                         <button
@@ -193,7 +223,9 @@ export default function Dashboard(){
                     )}
 
                     <div className="dashboard-task-list">
-                        {tarefasDeHoje.length > 0 ? (
+                        {loading ? (
+                            <p>Carregando tarefas...</p>
+                        ) : tarefasDeHoje.length > 0 ? (
                             tarefasDeHoje.map((tarefa) => (
                                 <TaskCard 
                                     key={tarefa.id}

@@ -10,6 +10,8 @@ import TaskForm from '../components/TaskForm'
 export default function DayPage(){
     const [tarefas, setTarefas] = useState([])
     const [addTarefa, setAddTarefa] = useState(false)
+    const [erro, setErro] = useState('')
+    const [loading, setLoading] = useState(true)
 
     const { data } = useParams() // pega parâmetros da requisição
     const navigate = useNavigate()
@@ -17,28 +19,55 @@ export default function DayPage(){
 
     const carregarTarefas =  useCallback(async() => {
         try{
+            setErro('')
+            setLoading(true)
+
             const result = await listarTarefas(token, data, data)
             setTarefas(result)
         }catch(error){
-            console.error("Erro ao carregar tarefas" + error)
-            navigate("/")
+            setErro(error.message)
+
+            if(
+              error.message === "Token inválido" ||
+              error.message === "Token não fornecido"
+            ) {
+              localStorage.removeItem("token")
+              navigate("/")
+            }
+        } finally{
+          setLoading(false)
         }
     }, [token, navigate, data])
 
     async function novaTarefa(tarefa){
+      try{
+        setErro("")
         await criarTarefa(token, tarefa)
         setAddTarefa(false)
-        carregarTarefas()
+        await carregarTarefas()
+      } catch(error){
+        setErro(error.message)
+      }
     }
 
     async function removerTarefa(id) {
+      try{
+        setErro('')
         await deletarTarefa(token, id);
-        carregarTarefas();
+        await carregarTarefas();
+      } catch(error){
+        setErro(error.message)
+      }
     }
 
     async function finalizarTarefa(id) {
+      try{
+        setErro('')
         await concluirTarefa(token, id);
-        carregarTarefas();
+        await carregarTarefas();
+      } catch(error){
+        setErro(error.message)
+      }
     }
 
     useEffect(() => {
@@ -66,6 +95,8 @@ export default function DayPage(){
 
         <h1>{dataFormatada}</h1>
 
+        {erro && <p>{erro}</p>}
+
         <button type="button" onClick={() => setAddTarefa(true)}>
           Nova tarefa
         </button>
@@ -81,7 +112,9 @@ export default function DayPage(){
         )}
 
         <section style={{ display: "grid", gap: "12px", marginTop: "20px" }}>
-          {tarefas.length > 0 ? (
+          {loading ? (
+            <p>Carregando tarefas...</p>
+          ) : tarefas.length > 0 ? (
             tarefas.map((tarefa) => (
               <TaskCard
                 key={tarefa.id}

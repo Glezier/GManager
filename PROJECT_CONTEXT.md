@@ -73,12 +73,7 @@ O sistema deve evoluir para um organizador pessoal com:
 ### Fase 1: Base técnica e confiabilidade
 Objetivo: estabilizar o projeto e remover fragilidades que hoje atrapalham evolução, debug e deploy.
 
-- melhorar tratamento de erros no login, cadastro e operações de tarefa
-- exibir mensagens reais de erro no frontend em vez de erros genéricos
-- padronizar respostas da API
 - criar middleware global de erro no backend
-- validar entradas de autenticação e tarefas
-- restringir valores válidos de status
 - revisar formatação e consistência de datas
 - corrigir inconsistências de nomenclatura e estrutura
 - revisar encoding e padronização textual dos arquivos
@@ -216,7 +211,7 @@ Para seguir o roadmap com clareza:
 - manter sempre visível qual é o próximo item da fila
 
 ### Item atual
-- Fase 1: melhorar tratamento de erros no login, cadastro e operações de tarefa
+- Fase 1: criar middleware global de erro no backend
 
 ## Critério de prioridade
 Sempre priorizar nesta ordem:

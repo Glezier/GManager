@@ -6,31 +6,28 @@ export default function Register(){
     const [nome, setNome ] = useState("")
     const [email, setEmail ] = useState("")
     const [senha, setSenha] = useState("")
+    const [erro, setErro] = useState("")
 
     const navigate = useNavigate()
 
     async function handleSubmit(e){
         e.preventDefault()
+        setErro("")
 
         try{
-            const data = await registrar(nome, email, senha)
-            if (data.error){
-                alert(data.error)
-                return
-            }
-            alert("Usuário criado com sucesso")
+            await registrar(nome, email, senha)
             navigate("/")
-
         }catch(error){
-            alert("Erro ao registrar usuário")
+            setErro(error.message)
             console.error(error)
         }
-
     }
 
     return (
         <>
             <h2>Criar conta</h2>
+
+            {erro && <p>{erro}</p>}
 
             <form onSubmit={handleSubmit}>
                 <input 
@@ -55,6 +52,7 @@ export default function Register(){
                     value={senha}
                     onChange={(e) => setSenha(e.target.value)}
                     required
+                    minLength={8}
                 />
 
                 <button type="submit">

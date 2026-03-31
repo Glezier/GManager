@@ -5,20 +5,27 @@ import { login } from '../api/api'
 export default function Login(){
     const [email, setEmail] = useState("")
     const [senha, setSenha] = useState("")
+    const [erro, setErro] = useState("")
 
     const navigate = useNavigate()
 
     const handleLogin = async(e) => {
         e.preventDefault()
+        setErro("")
 
-        const data = await login(email, senha)
+        try{
+            const data = await login(email, senha)
+            
+            if (data.token){
+                localStorage.setItem("token", data.token)
+                navigate("/dashboard")
+                return
+            }
 
-        if (data.token){
-            localStorage.setItem("token", data.token)
-            navigate("/dashboard")
-        }
-        else{
-            alert(data.error || "Erro ao realizar login")
+            setErro("Erro ao realizar login")
+        } catch(error){
+            setErro(error.message)
+            console.error(error)
         }
     }
 
@@ -26,11 +33,15 @@ export default function Login(){
         <>
             <form onSubmit={handleLogin}>
                 <h1>Login</h1>
+
+                {erro && <p>{erro}</p>}
+
                 <input
-                    type='email'
+                    type="email"
                     placeholder='Digite seu email'
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}  
+                    required
                 />
 
                 <input 
@@ -38,6 +49,7 @@ export default function Login(){
                     placeholder='Digite sua senha'
                     value={senha}
                     onChange={(e) => setSenha(e.target.value)}
+                    required
                 />
 
                 <button type='submit'>Entrar</button>
