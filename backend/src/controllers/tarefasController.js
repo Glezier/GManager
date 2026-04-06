@@ -1,8 +1,14 @@
 const pool = require('../database/db');
+const AppError = require('../utils/AppError')
+const validator = require('validator')
 
 // Funções de validação dos campos
 function isValidDate(date) {
-    return /^\d{4}-\d{2}-\d{2}$/.test(date)
+    return validator.isDate(date, {
+        format: 'YYYY-MM-DD',
+        strictMode: true,
+        delimiters: ['-'],
+    })
 }
 
 function isValidTime(time) {
@@ -10,11 +16,11 @@ function isValidTime(time) {
 }
 
 function isValidStatus(status) {
-    return ['pendente', 'concluida'].includes(status)
+    return validator.isIn(status, ['pendente', 'concluida'])
 }
 
 // Criar tarefa
-exports.criarTarefa = async (req, res) => {
+exports.criarTarefa = async (req, res, next) => {
     try{
         // Recebe todos os dados da requisição
         const {titulo, descricao, data, hora } = req.body
@@ -22,39 +28,35 @@ exports.criarTarefa = async (req, res) => {
 
         // Validação de título e data ausentes
         if(!titulo || !data){
-            return res.status(400).json({
-                error: {
-                    code: "VALIDATION_ERROR",
-                    message: "Título e data obrigatórios",
-                },
-            })
+            return next(new AppError(
+                'Título e data obrigatórios',
+                400,
+                'VALIDATION_ERROR'
+            ))
         }
         // Validação de título vazio
         if (!titulo.trim()) {
-            return res.status(400).json({
-                error: {
-                    code: 'VALIDATION_ERROR',
-                    message: 'O título não pode estar vazio',
-                },
-            })
+            return next(new AppError(
+                'O título não pode estar vazio',
+                400,
+                'VALIDATION_ERROR'
+            ))
         }
         // Validação da data informada
         if (!isValidDate(data)) {
-            return res.status(400).json({
-                error: {
-                    code: 'VALIDATION_ERROR',
-                    message: 'A data deve estar no formato YYYY-MM-DD',
-                },
-            })
+            return next(new AppError(
+                'A data deve estar no formato YYYY-MM-DD',
+                400,
+                'VALIDATION_ERROR'
+            ))
         }
         // Validação da hora informada
         if (hora && !isValidTime(hora)) {
-            return res.status(400).json({
-                error: {
-                    code: 'VALIDATION_ERROR',
-                    message: 'A hora deve estar no formato HH:MM',
-                },
-            })
+            return next(new AppError(
+                'A hora deve estar no formato HH:MM',
+                400,
+                'VALIDATION_ERROR'
+            ))
         }
 
         // Inserção no banco de dados
@@ -74,18 +76,12 @@ exports.criarTarefa = async (req, res) => {
 
         res.status(201).json(result.rows[0])
     } catch(error){
-        console.error(error)
-        res.status(500).json({
-            error: {
-                code: "INTERNAL_ERROR",
-                message: "Erro ao criar tarefa",
-            },
-        })
+        next(error)
     }
 }
 
 //Listar tarefas
-exports.listarTarefas = async (req,res) => {
+exports.listarTarefas = async (req,res, next) => {
     try{
         // Recebe usuario, inicio e fim da requisição
         const usuario_id = req.userId
@@ -93,22 +89,20 @@ exports.listarTarefas = async (req,res) => {
 
         // Verificação de inicio e fim informados
         if (!inicio || !fim){
-            return res.status(400).json({
-                error: {
-                    code: "VALIDATION_ERROR",
-                    message: "É necessário informar início e fim para busca",
-                },
-            })
+            return next(new AppError(
+                'É necessário informar início e fim para busca',
+                400,
+                'VALIDATION_ERROR'
+            ))
         }
 
         // Verificação da validade do início e fim informados
         if (!isValidDate(inicio) || !isValidDate(fim)){
-            return res.status(400).json({
-                error:{
-                    code: "VALIDATION_ERROR",
-                    message: "As datas devem estar no formato YYYY-MM-DD",
-                },
-            })
+            return next(new AppError(
+                'As datas devem estar no formato YYYY-MM-DD',
+                400,
+                'VALIDATION_ERROR'
+            ))
         }
 
         // Busca no bando de dados pelas tarefas no tempo informado
@@ -124,18 +118,12 @@ exports.listarTarefas = async (req,res) => {
         return res.json(result.rows)
 
     } catch(error){
-        console.error(error)
-        res.status(500).json({
-            error: {
-                code: "INTERNAL_ERROR",
-                message: "Erro ao buscar tarefas",
-            },
-        })
+        next(error)
     }
 }
 
 // Atualizar tarefa
-exports.atualizarTarefa = async (req, res) => {
+exports.atualizarTarefa = async (req, res, next) => {
     try {
         // Recebendo dados da requisição
         const { id } = req.params
@@ -144,42 +132,38 @@ exports.atualizarTarefa = async (req, res) => {
         
         // Verificação do título
         if (titulo !== undefined && !titulo.trim()) {
-            return res.status(400).json({
-                error: {
-                    code: 'VALIDATION_ERROR',
-                    message: 'O título não pode estar vazio',
-                },
-            })
+            return next(new AppError(
+                'O título não pode estar vazio',
+                400,
+                'VALIDATION_ERROR'
+            ))
         }
 
         // Verificação do status informado
         if (status !== undefined && !isValidStatus(status)) {
-            return res.status(400).json({
-                error: {
-                    code: 'VALIDATION_ERROR',
-                    message: 'Status inválido',
-                },
-            })
+            return next(new AppError(
+                'Status inválido',
+                400,
+                'VALIDATION_ERROR'
+            ))
         }
         
         // Verificação da data informada
         if (data !== undefined && !isValidDate(data)) {
-            return res.status(400).json({
-                error: {
-                    code: 'VALIDATION_ERROR',
-                    message: 'A data deve estar no formato YYYY-MM-DD',
-                },
-            })
+            return next(new AppError(
+                'A data deve estar no formato YYYY-MM-DD',
+                400,
+                'VALIDATION_ERROR'
+            ))
         }
 
         // Verificação da hora informada
         if (hora !== undefined && hora !== null && hora !== '' && !isValidTime(hora)) {
-            return res.status(400).json({
-                error: {
-                    code: 'VALIDATION_ERROR',
-                    message: 'A hora deve estar no formato HH:MM',
-                },
-            })
+            return next(new AppError(
+                'A hora deve estar no formato HH:MM',
+                400,
+                'VALIDATION_ERROR'
+            ))
         }
 
         // Update no banco de dados
@@ -205,28 +189,21 @@ exports.atualizarTarefa = async (req, res) => {
 
         // Tarefa não cadastrada
         if (result.rows.length === 0) {
-            return res.status(404).json({
-                error: {
-                    code: "TASK_NOT_FOUND",
-                    message: "Tarefa não encontrada",
-                },
-            })
+            return next(new AppError(
+                'Tarefa não encontrada',
+                404,
+                'TASK_NOT_FOUND'
+            ))
         }
 
         res.json(result.rows[0])
     }catch (error){
-        console.error(error)
-        res.status(500).json({
-            error: {
-                code: "INTERNAL_ERROR",
-                message: "Erro ao atualizar tarefa",
-            },
-        })
+        next(error)
     }
 }
 
 // Concluir tarefa
-exports.concluirTarefa = async (req,res) => {
+exports.concluirTarefa = async (req,res, next) => {
     try{
         // Reeceb dados da requisição
         const { id } = req.params
@@ -244,29 +221,22 @@ exports.concluirTarefa = async (req,res) => {
 
         // Tarefa não encontrada
         if (result.rows.length === 0){
-            return res.status(404).json({
-                error: {
-                    code: "TASK_NOT_FOUND",
-                    message: "Tarefa não encontrada",
-                },
-            })
+            return next(new AppError(
+                'Tarefa não encontrada',
+                404,
+                'TASK_NOT_FOUND'
+            ))
         }
 
         res.json(result.rows[0])
 
     }catch(error){
-        console.error(error)
-        res.status(500).json({
-            error: {
-                code: "INTERNAL_ERROR",
-                message: "Erro ao concluir tarefa",
-            },
-        })
+        next(error)
     }
 }
 
 // Deletar tarefa
-exports.deletarTarefa = async (req,res) => {
+exports.deletarTarefa = async (req,res, next) => {
     try{
         // Recebe dados da requisição
         const { id } = req.params
@@ -282,23 +252,16 @@ exports.deletarTarefa = async (req,res) => {
         
         // Tarefa não cadastrada
         if (result.rows.length === 0){
-            return res.status(404).json({
-                error: {
-                    code: "TASK_NOT_FOUND",
-                    message: "Tarefa não encontrada",
-                },
-            })
+            return next(new AppError(
+                'Tarefa não encontrada',
+                404,
+                'TASK_NOT_FOUND'
+            ))
         }
 
         res.json({message: "Tarefa deletada com sucesso"})
 
     }catch(error){
-        console.error(error)
-        res.status(500).json({
-            error: {
-                code: "INTERNAL_ERROR",
-                message: "Erro ao deletar tarefa",
-            },
-        })
+        next(error)
     }
 }

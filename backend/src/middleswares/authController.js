@@ -2,6 +2,7 @@ const pool = require('../database/db')
 const validator = require('validator')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
+const AppError = require('../utils/AppError')
 
 // Função para validação do email
 function isValidEmail(email){
@@ -9,46 +10,30 @@ function isValidEmail(email){
 }
 
 // Registro
-exports.registrar = async (req, res) => {
+exports.registrar = async (req, res, next) => {
     try{
         const { nome, email, senha } = req.body // Recebe nome, email e senha da requisição
         
         // Retorna erro se algum dado estiver faltando
         if (!nome || !email || !senha){
-            return res.status(400).json({
-                error: {
-                    code: "VALIDATION_ERROR",
-                    message: "Todos os campos são obrigatórios",
-                },
-            })
+            return next(new AppError("Todos os campos são obrigatórios", 400, 'VALIDATION_ERROR'))
         }
+
         // Verificação do tamanho do nome informado
         if (nome.trim().length < 2){
-            return res.status(400).json({
-                error:{
-                    code: "VALIDATION_ERROR",
-                    message: "O nome deve possuir pelo menos 2 caracteres",
-                },
-            })
+            return next(new AppError('O nome deve possuir pelo menos 2 caracteres', 400, 'VALIDATION_ERROR'))
         }
+
         // Verificação se o email informado é válido
         if (!isValidEmail(email)){
-            return res.status(400).json({
-                error:{
-                    code: "VALIDATION_ERROR",
-                    message: "Email inválido",
-                },
-            })
+            return next(new AppError('Email inválido', 400, 'VALIDATION_ERROR'))
         }
+
         // Verificação do tamanho da senha
         if (senha.length < 8){
-            return res.status(400).json({
-                error:{
-                    code: "VALIDATION_ERROR",
-                    message: "A senha deve possuir pelo menos 8 caracteres",
-                },
-            })
+            return next(new AppError('A senha deve possuir pelo menos 8 caracteres', 400, 'VALIDATION_ERROR'))
         }
+        
         // Eliminação de espaços e transformação para caracteres minúsculos
         const emailCorrigido = email.trim().toLowerCase()
 
@@ -60,12 +45,7 @@ exports.registrar = async (req, res) => {
 
         // Verificaçãp do email já cadastrado
         if (emailExist.rows.length > 0){
-            return res.status(400).json({
-                error:{
-                    code: "EMAIL_ALREADY_EXISTS",
-                    message: "Email já cadastrado",
-                },
-            })
+            return next(new AppError('Email já cadastrado', 400, 'EMAIL_ALREADY_EXISTS'))
         }
         // Senha criptografada
         const senhaHash = await bcrypt.hash(senha, 10)
@@ -81,39 +61,23 @@ exports.registrar = async (req, res) => {
         res.status(201).json(result.rows[0])
 
     }catch(error){
-        console.error(error)
-        res.status(500).json({
-            error: {
-                code: "INTERNAL_ERROR",
-                message: "Erro ao registrar usuário",
-            },
-        })
+        next(error)
     }
 }
 
 // Login
-exports.login = async (req, res) => {
+exports.login = async (req, res, next) => {
     try{
         const { email, senha } = req.body // Recebe email e senha da requisição
 
         // Retorna erro se algum dado estiver faltando
         if (!email || !senha){
-            return res.status(400).json({
-                error:{
-                    code: "VALIDATION_ERROR",
-                    message: "Email e senha são obrigatórios",
-                },
-            })
+            return next(new AppError('Email e senha são obrigatórios', 400, 'VALIDATION_ERROR'))
         }
 
         // Verificação de validade do email
         if (!isValidEmail(email)){
-            return res.status(400).json({
-                error:{
-                    code: "VALIDATION_ERROR",
-                    message: "Email inválido",
-                },
-            })
+            return next(new AppError('Email inválido', 400, 'VALIDATION_ERROR'))
         }
 
         // Eliminação de espaços e transformação para caracteres minúsculos
@@ -127,12 +91,7 @@ exports.login = async (req, res) => {
 
         // Erro por invalidade de algum elemento
         if (result.rows.length === 0){
-            return res.status(400).json({
-                error: {
-                    code: "INVALID_CREDENTIALS",
-                    message: "Email ou senha inválidos",
-                },
-            })
+            return next(new AppError('Email ou senha inválidos', 400, 'INVALID_CREDENTIALS'))
         }
 
         // Retorno do usuário
@@ -142,12 +101,7 @@ exports.login = async (req, res) => {
         const senhaValida = await bcrypt.compare(senha, usuario.senha)
 
         if (!senhaValida){
-            return res.status(400).json({
-                error: {
-                    code: "INVALID_CREDENTIALS",
-                    message: "Email ou senha inválidos",
-                },
-            })
+            return next(new AppError('Email ou senha inválidos', 400, 'INVALID_CREDENTIALS'))
         }
 
         // Emissão do token para o usuário com sucesso no login
@@ -160,12 +114,6 @@ exports.login = async (req, res) => {
         res.json({token})
 
     }catch(error){
-        console.error(error)
-        res.status(500).json({
-            error: {
-                code: "INTERNAL_ERROR",
-                message: "Erro ao realizar login",
-            },
-        })
+        next(error)
     }
 }

@@ -1,13 +1,14 @@
 const jwt = require('jsonwebtoken')
+const AppError = require('../utils/AppError')
 
 module.exports = (req, res, next) =>{
     const authHeader = req.headers.authorization
 
     if(!authHeader){
-        return res.status(401).json({error: "Token não fornecido"})
+        return next(new AppError("Token não fornecido", 401, "TOKEN_MISSING"))
     }
 
-    const token = authHeader.split(' ')[1]
+    const token = authHeader.split(' ')[1] // Recebe no formato 'Bearer token'
 
     try{
         const decoded = jwt.verify(token, process.env.JWT_SECRET)
@@ -17,6 +18,6 @@ module.exports = (req, res, next) =>{
         next()
 
     }catch(error){
-        return res.status(401).json({error: "Token inválido"})
+        return next(new AppError("Token inválido", 401, "TOKEN_INVALID"))
     }
 }

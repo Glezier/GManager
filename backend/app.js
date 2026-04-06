@@ -9,11 +9,12 @@ if (errEnv.length > 0) {
   )
 }
 
-
 const express = require('express')
 const cors = require('cors')
 
 const tarefasRoutes = require('./src/routes/tarefasRoutes')
+const authRoutes = require('./src/routes/authRoutes')
+const errorMiddleware = require('./src/middleswares/errorMiddleware')
 
 const app = express()
 
@@ -25,9 +26,8 @@ app.get('/', (req, res) => {
 })
 
 app.use('/tarefas', tarefasRoutes)
-
-const authRoutes = require('./src/routes/authRoutes')
-
 app.use('/auth', authRoutes)
+
+app.use(errorMiddleware)
 
 module.exports = app

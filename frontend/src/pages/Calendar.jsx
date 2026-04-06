@@ -6,10 +6,10 @@ import { useNavigate } from 'react-router-dom'
 import { listarTarefas } from '../api/api'
 import "./Calendar.css"
 
-function formatarDataLocal(data){
+function formatarDataLocal(data) {
     const ano = data.getFullYear()
-    const mes = String(data.getMonth() + 1)
-    const dia = String(data.getDate())
+    const mes = String(data.getMonth() + 1).padStart(2, '0')
+    const dia = String(data.getDate()).padStart(2, '0')
 
     return `${ano}-${mes}-${dia}`
 }

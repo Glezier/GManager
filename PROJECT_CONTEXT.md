@@ -73,7 +73,7 @@ O sistema deve evoluir para um organizador pessoal com:
 ### Fase 1: Base técnica e confiabilidade
 Objetivo: estabilizar o projeto e remover fragilidades que hoje atrapalham evolução, debug e deploy.
 
-- criar middleware global de erro no backend
+- definir um padrão único de formatação e manipulação de datas para todo o projeto
 - revisar formatação e consistência de datas
 - corrigir inconsistências de nomenclatura e estrutura
 - revisar encoding e padronização textual dos arquivos
@@ -148,6 +148,15 @@ Objetivo: preparar o projeto para crescer sem depender de ajustes manuais.
 ### Fase 8: Recursos avançados
 Objetivo: expandir o produto depois que a base estiver confiável.
 
+- criar uma aba de gestão de gastos
+- registrar data da compra
+- registrar forma de pagamento
+- registrar valor da compra
+- visualizar gastos por forma de pagamento
+- visualizar gastos semanais
+- visualizar gastos mensais
+- avaliar filtros por período
+- avaliar resumo financeiro simples no dashboard
 - filtros por status
 - filtros por data
 - busca de tarefas
@@ -211,7 +220,7 @@ Para seguir o roadmap com clareza:
 - manter sempre visível qual é o próximo item da fila
 
 ### Item atual
-- Fase 1: criar middleware global de erro no backend
+- Fase 1: definir um padrão único de formatação e manipulação de datas para todo o projeto
 
 ## Critério de prioridade
 Sempre priorizar nesta ordem:
