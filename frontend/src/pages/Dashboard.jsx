@@ -16,8 +16,10 @@ import AddIcon from '../assets/icons/add.png'
 export default function Dashboard(){
     const [tarefas, setTarefas] = useState([])
     const [addTarefa, setAddTarefa ] = useState(false)
-    const [erro, setErro] = useState("")
+    const [erroPagina, setErroPagina] = useState("")
+    const [erroForm, setErroForm] = useState('')
     const [loading, setLoading] = useState(true)
+    const [sucesso, setSucesso] = useState("")
 
     const navigate = useNavigate()
     const token = localStorage.getItem("token") || ""
@@ -31,13 +33,13 @@ export default function Dashboard(){
 
     const carregarTarefas = useCallback(async () => {
         try {
-            setErro("")
+            setErroPagina("")
             setLoading(true)
 
             const data = await listarTarefas(token, hoje, dataFim);
             setTarefas(data);
         } catch (error) {
-            setErro(error.message)
+            setErroPagina(error.message)
             if(
                 error.message === "Token inválido" ||
                 error.message === "Token não fornecido"
@@ -52,32 +54,38 @@ export default function Dashboard(){
 
     async function novaTarefa(tarefa){
         try{
-            setErro('')
+            setErroForm('')
+            setSucesso('')
             await criarTarefa(token, tarefa)
             setAddTarefa(false)
             await carregarTarefas()
+            setSucesso("Tarefa cadastrada com sucesso")
         }catch(error){
-            setErro(error.message)
+            setErroForm(error.message)
         }
     }
 
     async function removerTarefa(id){
         try{
-            setErro('')
+            setErroPagina('')
+            setSucesso('')
             await deletarTarefa(token, id)
             await carregarTarefas()
+            setSucesso("Tarefa excluída com sucesso")
         }catch(error){
-            setErro(error.message)
+            setErroPagina(error.message)
         }
     }
 
     async function finalizarTarefa(id){
         try{
-            setErro('')
+            setErroPagina('')
+            setSucesso('')
             await concluirTarefa(token, id)
             await carregarTarefas()
+            setSucesso("Tarefa concluída com sucesso")
         } catch(error){
-            setErro(error.message)
+            setErroPagina(error.message)
         }
     }
 
@@ -138,6 +146,18 @@ export default function Dashboard(){
         }
     }, [addTarefa])
 
+    // Controle do tempo de exibição das mensagens de sucesso de ações do usuário
+    useEffect(()=>{
+        if (sucesso){
+            const timer = setTimeout(() => {
+                setSucesso('')
+            }, 2500)
+
+            return () => clearTimeout(timer)
+        }
+        return
+    }, [sucesso])
+
     return(
         <main className="dashboard">
             <header className="dashboard-topbar">
@@ -173,13 +193,17 @@ export default function Dashboard(){
                         <h1>Tarefas do dia</h1>
                     </div>
 
-                    {erro && <p>{erro}</p>}
+                    {erroPagina && <p className="dashboard-feedback dashboard-feedback-error">{erroPagina}</p>}
+                    {sucesso && <p className="dashboard-feedback dashboard-feedback-success">{sucesso}</p>}
 
                     <div className="dashboard-progress">
                         <button
                             type="button"
                             className="dashboard-add-task"
-                            onClick={() => setAddTarefa(true)}
+                            onClick={() => {
+                                setAddTarefa(true)
+                                setErroForm('')
+                            }}
                         >
                             <img src={AddIcon} alt="Adicionar tarefas" className="day-icons"/>
                             Nova tarefa
@@ -207,8 +231,12 @@ export default function Dashboard(){
                             <div className="task-modal" onClick={(e) => e.stopPropagation()}>
                                 <TaskForm
                                     criar={novaTarefa}
-                                    cancelar={() => setAddTarefa(false)}
+                                    cancelar={() => {
+                                        setAddTarefa(false)
+                                        setErroForm('')
+                                    }}
                                     hoje={hoje}
+                                    erro={erroForm}
                                 />
                             </div>
                         </div>

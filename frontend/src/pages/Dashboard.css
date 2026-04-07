@@ -267,3 +267,22 @@ body {
   padding: 0;
   cursor: pointer;
 }
+
+.dashboard-feedback {
+  margin: 0 0 16px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  font-size: 14px;
+}
+
+.dashboard-feedback-error {
+  background: #fde8e8;
+  color: #b42318;
+  border: 1px solid #f5c2c7;
+}
+
+.dashboard-feedback-success {
+  background: #e7f6ec;
+  color: #1f7a35;
+  border: 1px solid #b7dfc2;
+}

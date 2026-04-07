@@ -1,0 +1,30 @@
+.day-page {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.day-list {
+  display: grid;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.day-feedback {
+  margin: 16px 0;
+  padding: 12px 14px;
+  border-radius: 12px;
+  font-size: 14px;
+}
+
+.day-feedback-error {
+  background: #fde8e8;
+  color: #b42318;
+  border: 1px solid #f5c2c7;
+}
+
+.day-feedback-success {
+  background: #e7f6ec;
+  color: #1f7a35;
+  border: 1px solid #b7dfc2;
+}

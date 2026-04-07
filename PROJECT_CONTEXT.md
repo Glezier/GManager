@@ -1,23 +1,28 @@
-# Projeto: Plataforma de Organização
+# Projeto: Gerenciador de Tarefas
 
 ## Visão do produto
-Aplicação web de organização pessoal com foco em agenda, calendário e acompanhamento das tarefas do dia.
+Aplicação web de organização pessoal com foco em tarefas por dia, calendário mensal e acompanhamento rápido da rotina.
 
-A proposta principal é simples e forte: ao entrar no app, o usuário deve enxergar rapidamente o que precisa fazer hoje, navegar pelo calendário com facilidade e gerenciar tarefas de qualquer data sem esforço.
+A proposta principal é:
+- abrir o app e ver rapidamente o que precisa ser feito hoje
+- navegar por datas com facilidade
+- gerenciar tarefas de qualquer dia sem atrito
+- evoluir depois para notas e outras áreas de organização pessoal
 
 Este projeto tem dois objetivos:
-1. servir como produto real de uso pessoal
-2. servir como projeto de aprendizado prático em desenvolvimento full-stack
+1. ser uma ferramenta real de uso pessoal
+2. servir como prática consistente de desenvolvimento full-stack
 
 ## Stack atual
 - Frontend: React + Vite
 - Backend: Node.js + Express
 - Banco de dados: PostgreSQL
 - Autenticação: JWT
+- Calendário: FullCalendar
 
 ## Estado atual do projeto
 
-### O que já existe
+### Funcionalidades já existentes
 - cadastro de usuário
 - login com JWT
 - proteção básica de rotas privadas no frontend
@@ -26,208 +31,137 @@ Este projeto tem dois objetivos:
 - conclusão de tarefas
 - exclusão de tarefas
 - dashboard com tarefas do dia
-- visão dos próximos dias
+- resumo dos próximos dias
 - calendário mensal
 - página dedicada para um dia específico
 - criação de tarefa a partir do dia selecionado
+- modal para criação de tarefa no dashboard
+- tratamento inicial de erro e loading no frontend
+- feedback visual de sucesso nas ações principais de tarefa
+- validação inicial de entrada no backend
+- middleware global de erro no backend
 
-### O que já saiu do roadmap inicial
-Estes pontos já deixaram de ser prioridade porque já existem em algum nível funcional:
-- dashboard inicial mostrando tarefas do dia
-- calendário mensal interativo
-- criação de tarefas a partir do dia selecionado
-- tarefas com data e hora
-- mostrar tarefas do dia ao entrar no dashboard
-- proteger rotas privadas no frontend
-- construir componente de calendário
-- navegar entre meses
-- selecionar um dia
-- exibir tarefas do dia selecionado
-- destacar dias com tarefas
-- visão semanal inicial
+### Estado técnico atual
+- frontend e backend já conversam com tratamento básico de erro
+- o backend já possui `AppError` e `errorMiddleware`
+- o frontend já usa `.env` para a URL da API
+- há uma base inicial de padronização de datas no frontend
+- ainda há espaço para reduzir repetição entre Dashboard, Calendar e DayPage
 
-## Diagnóstico atual
-O projeto já tem uma boa base funcional e um recorte de produto claro. O próximo passo mais importante não é adicionar várias features novas de uma vez, e sim consolidar a fundação da aplicação para que a evolução fique mais rápida, segura e organizada.
+## Problemas atuais mais relevantes
+- ainda falta feedback visual de sucesso nas ações
+- ainda há duplicação de lógica de tarefas no frontend
+- a visão semanal ainda não é clicável
+- a página do dia ainda pode evoluir bastante em UX
+- login e cadastro ainda precisam amadurecer visualmente
+- o calendário ainda pode ganhar mais contexto visual
+- ainda faltam edição de tarefas, testes e migrations
+- o projeto ainda tem alguns sinais de encoding inconsistente em textos
 
-Hoje as maiores oportunidades estão em:
-- tratamento de erros no frontend e backend
-- padronização da comunicação com a API
-- validação de entrada no backend
-- remoção de duplicação de lógica no frontend
-- organização melhor da arquitetura
-- preparação do ambiente para deploy e manutenção
-- evolução da UX das tarefas
+## Roadmap oficial
+Este é o roadmap principal a seguir daqui para frente.
 
-## Direção do produto
-O sistema deve evoluir para um organizador pessoal com:
-- dashboard realmente útil no uso diário
-- calendário agradável e fácil de navegar
-- tarefas com edição, ordenação e filtros
-- notas rápidas utilizáveis de verdade
-- listas com checks para organização rápida
-- experiência visual consistente
-- base técnica confiável para crescer sem retrabalho
+### Fase 1: Consolidar o fluxo principal de tarefas
+Objetivo: fechar o ciclo essencial do produto com feedback claro e navegação melhor.
 
-## Roadmap atualizado
-
-### Fase 1: Base técnica e confiabilidade
-Objetivo: estabilizar o projeto e remover fragilidades que hoje atrapalham evolução, debug e deploy.
-
-- definir um padrão único de formatação e manipulação de datas para todo o projeto
-- revisar formatação e consistência de datas
-- corrigir inconsistências de nomenclatura e estrutura
-- revisar encoding e padronização textual dos arquivos
-
-### Fase 2: Organização do frontend
-Objetivo: reduzir repetição e deixar a interface mais fácil de manter.
-
-- criar hooks para autenticação e tarefas
-- centralizar leitura e escrita de token
-- melhorar o comportamento das rotas privadas para token inválido ou expirado
-- extrair lógica repetida de carregamento, criação, exclusão e conclusão de tarefas
-- padronizar estados de loading, erro e vazio
-- organizar melhor navegação entre login, dashboard, calendário e página do dia
-
-### Fase 3: Fluxo principal de tarefas
-Objetivo: fechar o ciclo principal do produto com uma experiência mais completa.
-
-- permitir edição de tarefa no frontend
+- exibir confirmações visuais de sucesso para criar, concluir e excluir tarefas
+- tornar a visão semanal clicável para abrir o dia correspondente
+- melhorar a página do dia
+- adicionar edição de tarefa no frontend
 - melhorar ordenação por horário
-- permitir atualizar título, descrição, data, hora e status
-- criar confirmação visual antes de excluir
-- melhorar feedback após criar, concluir, editar ou remover tarefa
-- exibir confirmações visuais de sucesso para ações como criar, concluir, editar e excluir tarefas
-- preparar navegação entre dias de forma mais natural
-- tornar a página do dia mais completa e agradável de usar
+- adicionar confirmação visual antes de excluir
 
-### Fase 4: UX e identidade visual
-Objetivo: sair de uma interface funcional para uma interface agradável e consistente.
+### Fase 2: Organizar melhor o frontend
+Objetivo: reduzir repetição e deixar a base mais fácil de manter.
+
+- extrair lógica repetida de tarefas
+- centralizar tratamento de token
+- padronizar melhor estados de erro, loading, vazio e sucesso
+- avaliar criação de hooks para autenticação e tarefas
+- padronizar navegação entre dashboard, calendário e página do dia
+
+### Fase 3: Melhorar UX e identidade visual
+Objetivo: transformar a aplicação em uma experiência mais consistente e agradável.
 
 - estilizar login
 - estilizar criar conta
-- revisar todo o CSS com consistência visual
-- aplicar identidade visual unificada
-- melhorar layout geral do dashboard
-- melhorar layout da página de dia
-- tornar o calendário mais bonito e intuitivo
-- adicionar estados vazios com mais contexto
+- revisar layout do dashboard
+- revisar layout da página do dia
+- melhorar visual do calendário
 - melhorar feedback visual para ações do usuário
-- garantir boa experiência em mobile e desktop
+- revisar responsividade em mobile e desktop
+- revisar consistência geral do CSS
 
-### Fase 5: Evolução do calendário e do dashboard
-Objetivo: transformar calendário e dashboard em ferramentas realmente centrais do produto.
+### Fase 4: Evoluir calendário e dashboard
+Objetivo: tornar essas telas realmente centrais no uso diário.
 
-- melhorar navegação de mês com setas e seleção mais refinada
 - destacar hoje com mais clareza
-- adicionar mini calendário no dashboard
-- permitir navegação rápida entre datas
 - melhorar resumo semanal
-- tornar os itens da visão semanal clicáveis para abrir o dia correspondente
-- exibir tarefas com mais contexto dentro da visão mensal
+- exibir mais contexto das tarefas no calendário
+- permitir navegação mais fluida entre datas
+- adicionar mini calendário no dashboard, se ainda fizer sentido após a evolução da interface
 
-### Fase 6: Notas e organização pessoal
-Objetivo: ampliar o projeto além de tarefas simples e aproximar do uso real diário.
+### Fase 5: Notas e organização pessoal
+Objetivo: ampliar o projeto além das tarefas.
 
-- adicionar função de notas
-- definir se notas serão gerais, por dia ou ambas
+- adicionar funcionalidade de notas
+- decidir se notas serão gerais, por dia ou ambas
 - integrar notas ao dashboard
-- criar funcionalidade de lista com checks
-- definir se a lista com checks será geral, por dia ou vinculada a notas
-- permitir marcar e desmarcar itens com rapidez
-- pensar em observações associadas às tarefas
-- avaliar categorias e prioridade
+- avaliar listas com checks
+- avaliar observações vinculadas a tarefas
 
-### Fase 7: Backend maduro e persistência sustentável
-Objetivo: preparar o projeto para crescer sem depender de ajustes manuais.
+### Fase 6: Base técnica madura
+Objetivo: preparar o projeto para crescer com menos retrabalho.
 
-- separar responsabilidades em rotas, controllers, services e camada de acesso a dados
-- reduzir SQL espalhado diretamente nos controllers
+- separar melhor responsabilidades no backend
+- reduzir SQL espalhado diretamente em controllers
 - criar migrations ou scripts versionados do banco
-- documentar estrutura mínima do banco de forma reproduzível
-- preparar base inicial de testes no backend
-- preparar base inicial de testes no frontend
+- preparar testes iniciais no backend
+- preparar testes iniciais no frontend
+- revisar padronização textual e encoding dos arquivos
 
-### Fase 8: Recursos avançados
-Objetivo: expandir o produto depois que a base estiver confiável.
+### Fase 7: Recursos avançados
+Objetivo: expandir o produto quando a base estiver confiável.
 
-- criar uma aba de gestão de gastos
-- registrar data da compra
-- registrar forma de pagamento
-- registrar valor da compra
-- visualizar gastos por forma de pagamento
-- visualizar gastos semanais
-- visualizar gastos mensais
-- avaliar filtros por período
-- avaliar resumo financeiro simples no dashboard
 - filtros por status
 - filtros por data
 - busca de tarefas
 - categorias
 - prioridade
-- preparação para recorrência
+- recorrência
 - exportação em PDF
 - exportação em imagem
 - métricas simples de produtividade
 - deploy da aplicação
+- área de gestão de gastos
 
 ## Ordem prática recomendada
-Se a execução for seguir uma fila única, esta é a ordem mais saudável agora:
+Se estivermos seguindo uma fila única de trabalho, a ordem ideal agora é:
 
-1. tratamento de erros e respostas da API
-2. variáveis de ambiente e preparação de ambiente
-3. validação de entrada no backend
-4. hooks e organização do frontend
-5. edição de tarefas
-6. revisão visual de login, cadastro, dashboard e calendário
-7. notas e listas com checks
-8. migrations e testes
+1. feedback visual de sucesso nas tarefas
+2. visão semanal clicável
+3. melhorias da página do dia
+4. edição de tarefa
+5. organização do frontend
+6. revisão visual de login, cadastro, dashboard, calendário e day page
+7. notas
+8. base técnica madura
 9. filtros, busca, categorias e prioridade
 10. recursos avançados e deploy
 
-## Próximos passos imediatos
-O melhor foco agora é atacar primeiro o que melhora qualidade de base e destrava o restante.
+## Próximo passo atual
+- tornar a visão semanal clicável para abrir o dia correspondente
 
-### Sprint sugerida 1
-- melhorar tratamento de erro no frontend
-- padronizar respostas da API
-- validar entrada no backend
-- mover configurações para `.env`
-
-### Sprint sugerida 2
-- criar hooks
-- reorganizar autenticação no frontend
-- extrair fluxo de tarefas para camada reutilizável
-- implementar edição de tarefa
-
-### Sprint sugerida 3
-- estilizar login
-- estilizar criar conta
-- revisar dashboard
-- revisar calendário
-- rever todo o CSS
-
-### Sprint sugerida 4
-- adicionar função de notas
-- adicionar função de lista com checks
-- adicionar mini calendário no dashboard
-- melhorar navegação entre dias
-- iniciar migrations e testes
-
-## Forma de execução
-Para seguir o roadmap com clareza:
-
-- avançar item por item
-- conversar antes de mudanças relevantes
-- remover do roadmap os itens concluídos
-- manter sempre visível qual é o próximo item da fila
-
-### Item atual
-- Fase 1: definir um padrão único de formatação e manipulação de datas para todo o projeto
+## Forma de trabalho
+- seguir este arquivo como referência principal de evolução
+- atualizar este contexto sempre que uma etapa relevante for concluída
+- remover do roadmap o que já foi entregue
+- evitar abrir frentes muito fora da ordem definida aqui, salvo necessidade técnica real
 
 ## Critério de prioridade
-Sempre priorizar nesta ordem:
-1. corrigir fragilidade técnica
-2. melhorar fluxo principal do usuário
+Priorizar sempre nesta ordem:
+1. corrigir fragilidade técnica real
+2. melhorar o fluxo principal do usuário
 3. reduzir repetição e dívida estrutural
 4. melhorar UX e visual
 5. adicionar novas funcionalidades

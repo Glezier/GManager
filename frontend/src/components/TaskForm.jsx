@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import './TaskForm.css'
 
-export default function TaskForm ({ criar, cancelar, hoje }){
+export default function TaskForm ({ criar, cancelar, hoje, erro='' }){
 
     const [titulo, setTitulo ] = useState("")
     const [descricao, setDescricao ] = useState("") 
@@ -30,6 +30,8 @@ export default function TaskForm ({ criar, cancelar, hoje }){
             <h3>Nova tarefa</h3>
             <p>Preencha os dados para adicionar uma nova atividade.</p>
         </div>
+
+        {erro && <p className='error'>{erro}</p>}
 
         <div className="task-form-fields">
             <input 

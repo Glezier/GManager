@@ -4,13 +4,16 @@ import { listarTarefas, criarTarefa, deletarTarefa, concluirTarefa } from '../ap
 import { formatarDataBR } from '../utils/date'
 import TaskCard from '../components/TaskCard'
 import TaskForm from '../components/TaskForm'
+import './DayPage.css'
 
 
 export default function DayPage(){
     const [tarefas, setTarefas] = useState([])
     const [addTarefa, setAddTarefa] = useState(false)
-    const [erro, setErro] = useState('')
+    const [erroPagina, setErroPagina] = useState('')
+    const [erroForm, setErroForm] = useState('')
     const [loading, setLoading] = useState(true)
+    const [sucesso, setSucesso] = useState('')
 
     const { data } = useParams() // pega parâmetros da requisição
     const navigate = useNavigate()
@@ -18,13 +21,13 @@ export default function DayPage(){
 
     const carregarTarefas =  useCallback(async() => {
         try{
-            setErro('')
+            setErroPagina('')
             setLoading(true)
 
             const result = await listarTarefas(token, data, data)
             setTarefas(result)
         }catch(error){
-            setErro(error.message)
+            setErroPagina(error.message)
 
             if(
               error.message === "Token inválido" ||
@@ -40,32 +43,38 @@ export default function DayPage(){
 
     async function novaTarefa(tarefa){
       try{
-        setErro("")
+        setErroForm("")
+        setSucesso('')
         await criarTarefa(token, tarefa)
         setAddTarefa(false)
         await carregarTarefas()
+        setSucesso("Tarefa criada com sucesso")
       } catch(error){
-        setErro(error.message)
+        setErroForm(error.message)
       }
     }
 
     async function removerTarefa(id) {
       try{
-        setErro('')
+        setErroPagina('')
+        setSucesso('')
         await deletarTarefa(token, id);
         await carregarTarefas();
+        setSucesso('Tarefa removida com sucesso')
       } catch(error){
-        setErro(error.message)
+        setErroPagina(error.message)
       }
     }
 
     async function finalizarTarefa(id) {
       try{
-        setErro('')
+        setErroPagina('')
+        setSucesso('')
         await concluirTarefa(token, id);
         await carregarTarefas();
+        setSucesso('Tarefa concluída com sucesso')
       } catch(error){
-        setErro(error.message)
+        setErroPagina(error.message)
       }
     }
 
@@ -75,25 +84,40 @@ export default function DayPage(){
             return
         }
 
-        // eslint-disable-next-line react-hooks/set-state-in-effect
         carregarTarefas()
     }, [token, navigate, carregarTarefas])
+
+    // Controle do tempo de exibição das mensagens de sucesso de ações do usuário
+    useEffect(()=>{
+        if (sucesso){
+            const timer = setTimeout(() => {
+                setSucesso('')
+            }, 2500)
+
+            return () => clearTimeout(timer)
+        }
+        return
+    }, [sucesso])
 
     const dataFormatada = useMemo(() => {
         return formatarDataBR(data)
     }, [data])
 
     return(
-      <main>
+      <main className='day-page'>
         <button type="button" onClick={() => navigate("/calendario")}>
           Voltar para calendário
         </button>
 
         <h1>{dataFormatada}</h1>
 
-        {erro && <p>{erro}</p>}
+        {erroPagina && <p className="day-feedback day-feedback-error">{erroPagina}</p>}
+        {sucesso && <p className="day-feedback day-feedback-success">{sucesso}</p>}
 
-        <button type="button" onClick={() => setAddTarefa(true)}>
+        <button type="button" onClick={() => {
+            setAddTarefa(true)
+            setErroForm('')
+          }}>
           Nova tarefa
         </button>
 
@@ -103,11 +127,12 @@ export default function DayPage(){
               criar={novaTarefa}
               cancelar={() => setAddTarefa(false)}
               hoje={data}
+              erro={erroForm}
             />
           </div>
         )}
 
-        <section style={{ display: "grid", gap: "12px", marginTop: "20px" }}>
+        <section className='day-list'>
           {loading ? (
             <p>Carregando tarefas...</p>
           ) : tarefas.length > 0 ? (
