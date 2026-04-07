@@ -21,6 +21,8 @@ export default function Calendar(){
         inicio: "",
         fim:""
     })
+    const [erro, setErro] = useState("")
+    const [loading, setLoading] = useState(false)
 
     const calendarRef = useRef(null)
 
@@ -37,11 +39,22 @@ export default function Calendar(){
     useEffect(() => {
         async function carregar() {
             try{
+                setErro("")
+                setLoading(true)
+
                 const data = await listarTarefas(token, periodo.inicio, periodo.fim)
                 setTarefas(data)
             } catch (error){
-                console.error(error)
-                navigate("/")
+                setErro(error.message)
+                if (
+                    error.message === "Token inválido" ||
+                    error.message === "Token não fornecido"
+                ) {
+                    localStorage.removeItem("token")
+                    navigate("/")
+                }
+            } finally {
+                setLoading(false)
             }
         }
 
@@ -121,6 +134,9 @@ export default function Calendar(){
                     ))}
                 </select>
             </div>
+
+            {erro && <p>{erro}</p>}
+            {loading && <p>Carregando calendário...</p>}
 
             <FullCalendar
                 ref={calendarRef}

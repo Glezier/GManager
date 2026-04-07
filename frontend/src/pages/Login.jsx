@@ -6,12 +6,14 @@ export default function Login(){
     const [email, setEmail] = useState("")
     const [senha, setSenha] = useState("")
     const [erro, setErro] = useState("")
+    const [loading, setLoading] = useState(false)
 
     const navigate = useNavigate()
 
     const handleLogin = async(e) => {
         e.preventDefault()
         setErro("")
+        setLoading(true)
 
         try{
             const data = await login(email, senha)
@@ -21,11 +23,10 @@ export default function Login(){
                 navigate("/dashboard")
                 return
             }
-
-            setErro("Erro ao realizar login")
         } catch(error){
             setErro(error.message)
-            console.error(error)
+        } finally{
+            setLoading(false)
         }
     }
 
@@ -52,7 +53,9 @@ export default function Login(){
                     required
                 />
 
-                <button type='submit'>Entrar</button>
+                <button type='submit' disabled={loading}>
+                    {loading ? "Entrando": "Entrar"}
+                </button>
 
             </form>
 

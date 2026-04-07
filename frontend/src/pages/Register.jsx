@@ -7,19 +7,22 @@ export default function Register(){
     const [email, setEmail ] = useState("")
     const [senha, setSenha] = useState("")
     const [erro, setErro] = useState("")
+    const [loading, setLoading] = useState(false)
 
     const navigate = useNavigate()
 
     async function handleSubmit(e){
         e.preventDefault()
         setErro("")
+        setLoading(true)
 
         try{
             await registrar(nome, email, senha)
             navigate("/")
         }catch(error){
             setErro(error.message)
-            console.error(error)
+        } finally{
+            setLoading(false)
         }
     }
 
@@ -55,8 +58,8 @@ export default function Register(){
                     minLength={8}
                 />
 
-                <button type="submit">
-                    Registrar usuário
+                <button type="submit" disabled={loading}>
+                    {loading ? "Criando conta..." : "Registrar usuário"}
                 </button>
 
             </form>
