@@ -4,15 +4,8 @@ import interactionPlugin from '@fullcalendar/interaction'
 import { useState, useEffect, useMemo, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { listarTarefas } from '../api/api'
+import { getData, formatarData } from '../utils/date'
 import "./Calendar.css"
-
-function formatarDataLocal(data) {
-    const ano = data.getFullYear()
-    const mes = String(data.getMonth() + 1).padStart(2, '0')
-    const dia = String(data.getDate()).padStart(2, '0')
-
-    return `${ano}-${mes}-${dia}`
-}
 
 const meses = [
     "Janeiro", "Fevereiro", "Março", "Abril",
@@ -75,7 +68,7 @@ export default function Calendar(){
         return tarefas.map((tarefa) => ({
             id: tarefa.id,
             title: tarefa.titulo,
-            date: tarefa.data.toString().split("T")[0],
+            date: formatarData(tarefa.data),
             classNames: [`evento-${tarefa.status}`],
         }))
     }, [tarefas])
@@ -86,10 +79,10 @@ export default function Calendar(){
 
     // Sincroniza os selects quando o usuário navega pelas setas do FullCalendar
     function handleDatesSet(info) {
-        const inicio = formatarDataLocal(info.start)
+        const inicio = getData(info.start)
         const fimReal = new Date(info.end)
         fimReal.setDate(fimReal.getDate() - 1)
-        const fim = formatarDataLocal(fimReal)
+        const fim = getData(fimReal)
         setPeriodo({ inicio, fim })
 
         // Atualiza os selects para refletir o mês visível

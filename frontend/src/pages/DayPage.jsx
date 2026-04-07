@@ -1,8 +1,7 @@
 import { useState, useCallback, useEffect, useMemo } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-
 import { listarTarefas, criarTarefa, deletarTarefa, concluirTarefa } from '../api/api'
-
+import { formatarDataBR } from '../utils/date'
 import TaskCard from '../components/TaskCard'
 import TaskForm from '../components/TaskForm'
 
@@ -81,10 +80,7 @@ export default function DayPage(){
     }, [token, navigate, carregarTarefas])
 
     const dataFormatada = useMemo(() => {
-        return new Date(`${data}T00:00:00`).toLocaleDateString("pt-BR",{
-            weekday: "long",
-            day: "2-digit",
-        });
+        return formatarDataBR(data)
     }, [data])
 
     return(

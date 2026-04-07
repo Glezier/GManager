@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback, useMemo  } from "react"
 import { useNavigate } from 'react-router-dom'
 import { listarTarefas, criarTarefa, deletarTarefa, concluirTarefa } from "../api/api"
+import { getData, formatarData } from "../utils/date"
 
 import TaskForm from "../components/TaskForm"
 import TaskCard from "../components/TaskCard"
@@ -12,14 +13,6 @@ import LogoutIcon from '../assets/icons/logout.png'
 import AddIcon from '../assets/icons/add.png'
 
 
-function formatarDataLocal(data){
-    const ano = data.getFullYear()
-    const mes = String(data.getMonth() + 1).padStart(2, "0")
-    const dia = String(data.getDate()).padStart(2, "0")
-
-    return `${ano}-${mes}-${dia}`
-}
-
 export default function Dashboard(){
     const [tarefas, setTarefas] = useState([])
     const [addTarefa, setAddTarefa ] = useState(false)
@@ -28,12 +21,12 @@ export default function Dashboard(){
 
     const navigate = useNavigate()
     const token = localStorage.getItem("token") || ""
-    const hoje = new Date().toLocaleDateString("en-CA")
+    const hoje = getData()
 
     const dataFim = (() => {
         const data = new Date(`${hoje}T00:00:00`)
         data.setDate(data.getDate() + 5)
-        return formatarDataLocal(data)
+        return getData(data)
     })()
 
     const carregarTarefas = useCallback(async () => {
@@ -89,7 +82,7 @@ export default function Dashboard(){
     }
 
     const tarefasDeHoje = useMemo(() => {
-        return tarefas.filter((tarefa) => tarefa.data.toString().split("T")[0] === hoje)
+        return tarefas.filter((tarefa) => formatarData(tarefa.data) === hoje)
     }, [tarefas, hoje])
 
     const tarefasConcluidasHoje = useMemo(() => {
@@ -106,9 +99,9 @@ export default function Dashboard(){
             const data = new Date(base)
             data.setDate(base.getDate() + i)
 
-            const dataFormatada = data.toLocaleDateString("en-CA")
+            const dataFormatada = getData(data)
             const tarefasDoDia = tarefas.filter(
-                (tarefa) => tarefa.data.toString().split("T")[0] === dataFormatada
+                (tarefa) => formatarData(tarefa.data) === dataFormatada
             ) // retorna todas as tarefas do dia
 
             dias.push({

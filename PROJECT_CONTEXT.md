@@ -96,6 +96,7 @@ Objetivo: fechar o ciclo principal do produto com uma experiência mais completa
 - permitir atualizar título, descrição, data, hora e status
 - criar confirmação visual antes de excluir
 - melhorar feedback após criar, concluir, editar ou remover tarefa
+- exibir confirmações visuais de sucesso para ações como criar, concluir, editar e excluir tarefas
 - preparar navegação entre dias de forma mais natural
 - tornar a página do dia mais completa e agradável de usar
 
@@ -121,6 +122,7 @@ Objetivo: transformar calendário e dashboard em ferramentas realmente centrais 
 - adicionar mini calendário no dashboard
 - permitir navegação rápida entre datas
 - melhorar resumo semanal
+- tornar os itens da visão semanal clicáveis para abrir o dia correspondente
 - exibir tarefas com mais contexto dentro da visão mensal
 
 ### Fase 6: Notas e organização pessoal
