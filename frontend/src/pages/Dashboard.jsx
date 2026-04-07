@@ -278,7 +278,13 @@ export default function Dashboard(){
 
                 <div className="dashboard-week">
                     {semana.map((dia) => (
-                        <div key={dia.id} className="dashboard-day">
+                        <button 
+                            key={dia.id} 
+                            type="button"
+                            className="dashboard-day"
+                            onClick={() => navigate(`/dia/${dia.id}`)} 
+                            title={`Tarefas de ${dia.label}`} 
+                        >
                             <div className="dashboard-day-head">
                                 <span>{dia.label}</span>
                                 <strong>{dia.numero}</strong>
@@ -295,7 +301,7 @@ export default function Dashboard(){
                                     Sem tarefas
                                 </p>
                             )}
-                        </div>
+                        </button>
                     ))}
                 </div>
             </section>

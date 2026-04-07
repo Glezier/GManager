@@ -32,6 +32,7 @@ Este projeto tem dois objetivos:
 - exclusão de tarefas
 - dashboard com tarefas do dia
 - resumo dos próximos dias
+- visão semanal clicável para abrir o dia correspondente
 - calendário mensal
 - página dedicada para um dia específico
 - criação de tarefa a partir do dia selecionado
@@ -65,7 +66,6 @@ Este é o roadmap principal a seguir daqui para frente.
 Objetivo: fechar o ciclo essencial do produto com feedback claro e navegação melhor.
 
 - exibir confirmações visuais de sucesso para criar, concluir e excluir tarefas
-- tornar a visão semanal clicável para abrir o dia correspondente
 - melhorar a página do dia
 - adicionar edição de tarefa no frontend
 - melhorar ordenação por horário
@@ -150,7 +150,7 @@ Se estivermos seguindo uma fila única de trabalho, a ordem ideal agora é:
 10. recursos avançados e deploy
 
 ## Próximo passo atual
-- tornar a visão semanal clicável para abrir o dia correspondente
+- melhorar a página do dia
 
 ## Forma de trabalho
 - seguir este arquivo como referência principal de evolução
