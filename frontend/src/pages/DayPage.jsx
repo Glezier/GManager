@@ -109,6 +109,35 @@ export default function DayPage(){
       navigate(`/dia/${getData(novaData)}`)
     }
 
+    // Bloqueio do scroll ao adicionar tarefa
+    useEffect(() => {
+        if (addTarefa) {
+          document.body.style.overflow = 'hidden'
+        } else {
+          document.body.style.overflow = ''
+        }
+
+        return () => {
+          document.body.style.overflow = ''
+        }
+    }, [addTarefa])
+
+    // Botão voltar do navegador para calendario
+    useEffect(() => {
+      window.history.pushState(null, '', window.location.pathname)
+
+      function handlePopState() {
+        navigate('/calendario', { replace: true })
+      }
+
+      window.addEventListener('popstate', handlePopState)
+
+      return () => {
+        window.removeEventListener('popstate', handlePopState)
+      }
+    }, [navigate, data])
+
+
     return(
       <main className='day-page'>
         <button type="button" onClick={() => navigate("/calendario")}>
@@ -116,10 +145,10 @@ export default function DayPage(){
         </button>
 
         <div className='day-nav'>
-          <button type='button' onClick={navegarDia(-1)}>
+          <button type='button' onClick={() => navegarDia(-1)}>
             Dia anterior
           </button>
-          <button type='button' onClick={navegarDia(1)}>
+          <button type='button' onClick={() => navegarDia(1)}>
             Próximo dia
           </button>
         </div>
@@ -140,8 +169,8 @@ export default function DayPage(){
           <div className='task-modal-overlay' onClick={()=>{
             setErroForm('')
             setAddTarefa(false)
-          }}> // Impedir que o clique suba para o elemento pai
-            <div className='task-modal' onClick={(e) => e.stopPropagation()}> 
+          }}> 
+            <div className='task-modal' onClick={(e) => e.stopPropagation()}> {/* Impedir que o clique suba para o elemento pai */}
               <TaskForm
                 criar={novaTarefa}
                 cancelar={() => {

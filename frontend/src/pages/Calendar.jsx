@@ -105,6 +105,18 @@ export default function Calendar(){
         setAnoSelecionado(dataCentral.getFullYear())
     }
 
+    // Botão voltar do navegador apontar para Dashboard
+    useEffect(()=>{
+        function handlePopState(){
+            navigate('/dashboard', {replace: true})
+        }
+        window.addEventListener('popstate', handlePopState)
+
+        return () => {
+            window.removeEventListener('popstate', handlePopState)
+        }
+    }, [navigate])
+
     return(
         <main style={{ margin: "35px"}}>
             <h1>
