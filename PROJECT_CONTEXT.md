@@ -152,6 +152,25 @@ Se estivermos seguindo uma fila única de trabalho, a ordem ideal agora é:
 ## Próximo passo atual
 - melhorar a página do dia
 
+### Detalhamento do próximo passo
+Este é o foco imediato da próxima sessão de desenvolvimento.
+
+- adicionar navegação entre dia anterior e próximo na `DayPage`
+- melhorar a hierarquia visual do topo da `DayPage`
+- usar modal na criação de tarefa também na `DayPage`
+- bloquear o scroll da página enquanto o modal da `DayPage` estiver aberto
+- manter o comportamento de clicar fora do modal para fechar
+- garantir que erros de formulário apareçam no `TaskForm`, e não soltos na página
+- manter mensagens de sucesso da ação no contexto da página
+
+### O que ainda não entra nesta etapa
+Para evitar abrir escopo demais, estes pontos ficam para depois:
+
+- edição de tarefa
+- confirmação antes de excluir
+- refatoração para hook compartilhado de tarefas
+- revisão visual completa da `DayPage`
+
 ## Forma de trabalho
 - seguir este arquivo como referência principal de evolução
 - atualizar este contexto sempre que uma etapa relevante for concluída

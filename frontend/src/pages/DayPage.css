@@ -28,3 +28,45 @@
   color: #1f7a35;
   border: 1px solid #b7dfc2;
 }
+
+.day-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.day-nav {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.day-back,
+.day-nav button {
+  border: 1px solid #cfcfcf;
+  border-radius: 12px;
+  background: #f3f3f3;
+  padding: 10px 14px;
+  cursor: pointer;
+}
+
+.day-title {
+  margin: 0 0 20px;
+}
+
+.task-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 1000;
+}
+
+.task-modal {
+  width: min(100%, 560px);
+}

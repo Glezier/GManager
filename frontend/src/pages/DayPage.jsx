@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect, useMemo } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { listarTarefas, criarTarefa, deletarTarefa, concluirTarefa } from '../api/api'
-import { formatarDataBR } from '../utils/date'
+import { formatarDataBR, getData } from '../utils/date'
 import TaskCard from '../components/TaskCard'
 import TaskForm from '../components/TaskForm'
 import './DayPage.css'
@@ -103,11 +103,26 @@ export default function DayPage(){
         return formatarDataBR(data)
     }, [data])
 
+    function navegarDia(indice){
+      const novaData = new Date(`${data}T00:00:00`)
+      novaData.setDate(novaData.getDate() + indice)
+      navigate(`/dia/${getData(novaData)}`)
+    }
+
     return(
       <main className='day-page'>
         <button type="button" onClick={() => navigate("/calendario")}>
           Voltar para calendário
         </button>
+
+        <div className='day-nav'>
+          <button type='button' onClick={navegarDia(-1)}>
+            Dia anterior
+          </button>
+          <button type='button' onClick={navegarDia(1)}>
+            Próximo dia
+          </button>
+        </div>
 
         <h1>{dataFormatada}</h1>
 
@@ -122,13 +137,21 @@ export default function DayPage(){
         </button>
 
         {addTarefa && (
-          <div style={{ margin: "20px 0" }}>
-            <TaskForm
-              criar={novaTarefa}
-              cancelar={() => setAddTarefa(false)}
-              hoje={data}
-              erro={erroForm}
-            />
+          <div className='task-modal-overlay' onClick={()=>{
+            setErroForm('')
+            setAddTarefa(false)
+          }}> // Impedir que o clique suba para o elemento pai
+            <div className='task-modal' onClick={(e) => e.stopPropagation()}> 
+              <TaskForm
+                criar={novaTarefa}
+                cancelar={() => {
+                  setAddTarefa(false)
+                  setErroForm('')
+                }}
+                hoje={data}
+                erro={erroForm}
+              />
+            </div>
           </div>
         )}
 
