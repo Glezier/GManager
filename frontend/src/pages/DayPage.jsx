@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect, useMemo } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { listarTarefas, criarTarefa, deletarTarefa, concluirTarefa } from '../api/api'
+import { listarTarefas, criarTarefa, deletarTarefa, concluirTarefa, atualizarTarefa } from '../api/api'
 import { formatarDataBR, getData } from '../utils/date'
 import TaskForm from '../components/TaskForm'
 import DayTasksPanel from '../components/DayTasksPanel'
@@ -17,6 +17,7 @@ export default function DayPage(){
     const [erroForm, setErroForm] = useState('')
     const [loading, setLoading] = useState(true)
     const [sucesso, setSucesso] = useState('')
+    const [editando, setEditando] = useState(null)
 
     const { data } = useParams() // pega parâmetros da requisição
     const navigate = useNavigate()
@@ -48,10 +49,18 @@ export default function DayPage(){
       try{
         setErroForm("")
         setSucesso('')
-        await criarTarefa(token, tarefa)
+
+        if(editando){
+          await atualizarTarefa(token, editando.id, tarefa)
+          setSucesso("Tarefa atualizada com sucesso")
+        } else{
+          await criarTarefa(token, tarefa)
+          setSucesso("Tarefa criada com sucesso")
+        }
+        
         setAddTarefa(false)
+        setEditando(null)
         await carregarTarefas()
-        setSucesso("Tarefa criada com sucesso")
       } catch(error){
         setErroForm(error.message)
       }
@@ -155,6 +164,7 @@ export default function DayPage(){
         {addTarefa && (
           <div className='task-modal-overlay' onClick={()=>{
             setErroForm('')
+            setEditando(null)
             setAddTarefa(false)
           }}> 
             <div className='task-modal' onClick={(e) => e.stopPropagation()}> {/* Impedir que o clique suba para o elemento pai */}
@@ -166,6 +176,7 @@ export default function DayPage(){
                 }}
                 hoje={data}
                 erro={erroForm}
+                tarefaInicial={editando}
               />
             </div>
           </div>
@@ -181,12 +192,18 @@ export default function DayPage(){
           progresso={progressoDia}
           onConcluir={finalizarTarefa}
           onRemover={removerTarefa}
+          onEditar={(tarefa)=>{
+            setErroForm('')
+            setEditando(tarefa)
+            setAddTarefa(true)
+          }}
           botaoAcao={
             <button
               type="button"
               className="dashboard-add-task"
               onClick={() => {
                   setErroForm("")
+                  setEditando(null)
                   setAddTarefa(true)
               }}
           >

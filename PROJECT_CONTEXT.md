@@ -42,6 +42,7 @@ Este projeto tem dois objetivos:
 - feedback visual de sucesso nas ações principais de tarefa
 - validação inicial de entrada no backend
 - middleware global de erro no backend
+- edição de tarefa no frontend
 
 ### Estado técnico atual
 - frontend e backend já conversam com tratamento básico de erro
@@ -65,7 +66,6 @@ Este é o roadmap principal a seguir daqui para frente.
 Objetivo: fechar o ciclo essencial do produto com feedback claro e navegação melhor.
 
 - exibir confirmações visuais de sucesso para criar, concluir e excluir tarefas
-- adicionar edição de tarefa no frontend
 - melhorar ordenação por horário
 - adicionar confirmação visual antes de excluir
 
@@ -146,18 +146,16 @@ Se estivermos seguindo uma fila única de trabalho, a ordem ideal agora é:
 7. recursos avançados e deploy
 
 ## Próximo passo atual
-- adicionar edição de tarefa no frontend
+- organizar melhor o frontend, começando pela redução de repetição no fluxo de tarefas entre Dashboard e DayPage
 
 ### Detalhamento do próximo passo
-Este é o foco imediato da próxima sessão de desenvolvimento.
+- criar um hook para centralizar o fluxo de tarefas
+- mover para esse hook a lógica de carregar tarefas por intervalo
+- mover para esse hook a lógica de criar, editar, concluir e excluir tarefas
+- mover para esse hook os estados de `loading`, `erroPagina`, `erroForm`, `sucesso`, `addTarefa` e `tarefaEditando`
+- adaptar primeiro o `Dashboard` para usar o hook
+- depois adaptar a `DayPage` para usar o mesmo hook
 
-- adicionar navegação entre dia anterior e próximo na `DayPage`
-- melhorar a hierarquia visual do topo da `DayPage`
-- usar modal na criação de tarefa também na `DayPage`
-- bloquear o scroll da página enquanto o modal da `DayPage` estiver aberto
-- manter o comportamento de clicar fora do modal para fechar
-- garantir que erros de formulário apareçam no `TaskForm`, e não soltos na página
-- manter mensagens de sucesso da ação no contexto da página
 
 ### O que ainda não entra nesta etapa
 Para evitar abrir escopo demais, estes pontos ficam para depois:

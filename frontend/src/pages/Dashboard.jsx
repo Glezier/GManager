@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback, useMemo  } from "react"
 import { useNavigate } from 'react-router-dom'
-import { listarTarefas, criarTarefa, deletarTarefa, concluirTarefa } from "../api/api"
+import { listarTarefas, criarTarefa, deletarTarefa, concluirTarefa, atualizarTarefa } from "../api/api"
 import { getData, formatarData } from "../utils/date"
 
 import TaskForm from "../components/TaskForm"
@@ -20,6 +20,7 @@ export default function Dashboard(){
     const [erroForm, setErroForm] = useState('')
     const [loading, setLoading] = useState(true)
     const [sucesso, setSucesso] = useState("")
+    const [editando, setEditando] = useState(null)
 
     const navigate = useNavigate()
     const token = localStorage.getItem("token") || ""
@@ -56,10 +57,18 @@ export default function Dashboard(){
         try{
             setErroForm('')
             setSucesso('')
-            await criarTarefa(token, tarefa)
+            if (editando){
+                await atualizarTarefa(token, editando.id, tarefa)
+                setSucesso("Tarefa atualizada com sucesso")
+            } else{
+                await criarTarefa(token, tarefa)
+                setSucesso("Tarefa cadastrada com sucesso")
+            }
+
             setAddTarefa(false)
+            setEditando(null)
             await carregarTarefas()
-            setSucesso("Tarefa cadastrada com sucesso")
+            
         }catch(error){
             setErroForm(error.message)
         }
@@ -198,6 +207,11 @@ export default function Dashboard(){
                     progresso={progressoHoje}
                     onConcluir={finalizarTarefa}
                     onRemover={removerTarefa}
+                    onEditar={(tarefa)=>{
+                        setErroForm('')
+                        setEditando(tarefa)
+                        setAddTarefa(true)
+                    }}
                     botaoAcao={
                         <button
                             type="button"
@@ -205,6 +219,7 @@ export default function Dashboard(){
                             onClick={() => {
                                 setErroForm("")
                                 setAddTarefa(true)
+                                setEditando(null)
                             }}
                         >
                             <img src={AddIcon} alt="Adicionar tarefas" className="day-icons"/>
@@ -227,6 +242,7 @@ export default function Dashboard(){
                                 }}
                                 hoje={hoje}
                                 erro={erroForm}
+                                tarefaInicial={editando}
                             />
                         </div>
                     </div>

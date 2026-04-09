@@ -1,12 +1,15 @@
-import { useState } from 'react'
-import './TaskForm.css'
+import { useState, useRef, useEffect } from 'react'
+import './TaskForm.css'  
+import { formatarData, formatarHora } from '../utils/date'
 
-export default function TaskForm ({ criar, cancelar, hoje, erro='' }){
+export default function TaskForm ({ criar, cancelar, hoje, erro='', tarefaInicial = null }){
 
-    const [titulo, setTitulo ] = useState("")
-    const [descricao, setDescricao ] = useState("") 
-    const [data, setData] = useState(hoje)
-    const [hora, setHora] = useState("")
+    const [titulo, setTitulo ] = useState(tarefaInicial?.titulo || "")
+    const [descricao, setDescricao ] = useState(tarefaInicial?.descricao || "") 
+    const [data, setData] = useState(formatarData(tarefaInicial?.data) || hoje)
+    const [hora, setHora] = useState(formatarHora(tarefaInicial?.hora) || "")
+    const [status, setStatus] = useState(tarefaInicial?.status || 'pendente')
+    const tituloRef = useRef(null)
 
     function handleSubmit(e){
         e.preventDefault() // React controlar a execução do formulário
@@ -15,72 +18,96 @@ export default function TaskForm ({ criar, cancelar, hoje, erro='' }){
             titulo,
             descricao, 
             data,
-            hora
+            hora,
+            status
         })
 
-        setTitulo("")
-        setDescricao("")
-        setData(hoje)
-        setHora("")
+        if(!tarefaInicial){
+            setTitulo("")
+            setDescricao("")
+            setData(hoje)
+            setHora("")
+        }
     }
 
+    useEffect(()=>{
+        if (tituloRef.current){
+            tituloRef.current.focus()
+        }
+    }, [tarefaInicial])
+
     return(
-    <form className="task-form" onSubmit={handleSubmit}>
-        <div className="task-form-head">
-            <h3>Nova tarefa</h3>
-            <p>Preencha os dados para adicionar uma nova atividade.</p>
-        </div>
-
-        {erro && <p className='error'>{erro}</p>}
-
-        <div className="task-form-fields">
-            <input 
-                className="task-form-input"
-                type="text"
-                placeholder="Título da tarefa"
-                value={titulo}
-                onChange={(e)=>{setTitulo(e.target.value)}} 
-            />
-
-            <input 
-                className="task-form-input"
-                type="text"
-                placeholder="Descrição da tarefa" 
-                value={descricao}
-                onChange={(e)=>{setDescricao(e.target.value)}}
-            />
-
-            <div className="task-form-row">
-                <input 
-                    className="task-form-input"
-                    type="date"
-                    value={data}
-                    onChange={(e)=>{setData(e.target.value)}}
-                    required
-                />
-
-                <input 
-                    className="task-form-input"
-                    type="time" 
-                    value={hora}
-                    onChange={(e)=>{setHora(e.target.value)}}
-                />
+        <form className="task-form" onSubmit={handleSubmit}>
+            <div className="task-form-head">
+                <h3>{tarefaInicial ? "Editar tarefa": "Nova tarefa"}</h3>
+                <p>{tarefaInicial 
+                    ? "Atualize as informações da tarefa"
+                    : "Preencha os dados para adicionar uma nova atividade."}
+                </p>
             </div>
-        </div>
 
-        <div className="task-form-actions">
-            <button className="task-form-save" type="submit">
-                Salvar tarefa
-            </button>
+            {erro && <p className='error'>{erro}</p>}
 
-            <button
-                className="task-form-cancel"
-                type="button"
-                onClick={cancelar}
-            >
-                Cancelar
-            </button>
-        </div>
-    </form>
-)
+            <div className="task-form-fields">
+                <input 
+                    className="task-form-input"
+                    type="text"
+                    placeholder="Título da tarefa"
+                    value={titulo}
+                    onChange={(e)=>{setTitulo(e.target.value)}} 
+                    ref={tituloRef}
+                />
+
+                <input 
+                    className="task-form-input"
+                    type="text"
+                    placeholder="Descrição da tarefa" 
+                    value={descricao}
+                    onChange={(e)=>{setDescricao(e.target.value)}}
+                />
+
+                <div className="task-form-row">
+                    <input 
+                        className="task-form-input"
+                        type="date"
+                        value={data}
+                        onChange={(e)=>{setData(e.target.value)}}
+                        required
+                    />
+
+                    <input 
+                        className="task-form-input"
+                        type="time" 
+                        value={hora}
+                        onChange={(e)=>{setHora(e.target.value)}}
+                    />
+
+                    {tarefaInicial && (
+                        <select
+                            className='task-form-input'
+                            value={status}
+                            onChange={(e) => setStatus(e.target.value)}
+                        >
+                            <option value="pendente">Pendente</option>
+                            <option value="concluida">Concluida</option>
+                        </select>
+                    )}
+                </div>
+            </div>
+
+            <div className="task-form-actions">
+                <button className="task-form-save" type="submit">
+                    Salvar tarefa
+                </button>
+
+                <button
+                    className="task-form-cancel"
+                    type="button"
+                    onClick={cancelar}
+                >
+                    Cancelar
+                </button>
+            </div>
+        </form>
+    )
 }

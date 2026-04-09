@@ -1,9 +1,10 @@
 import "./TaskCard.css"
 import CheckIcon from '../assets/icons/check.png'
 import DeleteIcon from '../assets/icons/delete.png'
+import EditIcon from '../assets/icons/edit.png'
 import { formatarHora } from "../utils/date"
 
-export default function TaskCard({tarefa, concluir, remover}){
+export default function TaskCard({tarefa, concluir, remover, editar}){
   return (
     <article className="task-card">
       <div className="task-card-info">
@@ -34,7 +35,12 @@ export default function TaskCard({tarefa, concluir, remover}){
             <img src={CheckIcon} alt="" className="task-card-icon-image"/>
           </button>
         ) : (
-          <div className="task-card-icon-placeholder"/>        )}
+          <div className="task-card-icon-placeholder"/>
+        )}
+
+        <button type="button" className="task-card-icon" onClick={()=> editar(tarefa)}>
+          <img src={EditIcon} alt="" className="task-card-icon-image"/>
+        </button>
 
         <button
           type="button"

@@ -12,6 +12,7 @@ export default function DayTasksPanel({
     botaoAcao = null,
     onConcluir,
     onRemover,
+    onEditar,
     emptyMessage = 'Nenhuma tarefa para este dia'
 }){
     return(
@@ -58,6 +59,7 @@ export default function DayTasksPanel({
                             tarefa={tarefa}
                             concluir={onConcluir}
                             remover={onRemover}
+                            editar={onEditar}
                         />
                     ))
                 ) : (
