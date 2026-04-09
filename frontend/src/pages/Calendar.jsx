@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom'
 import { listarTarefas } from '../api/api'
 import { getData, formatarData } from '../utils/date'
 import "./Calendar.css"
+import './DayPage.css'
 
 const meses = [
     "Janeiro", "Fevereiro", "Março", "Abril",
@@ -123,7 +124,7 @@ export default function Calendar(){
                 Calendário
             </h1>
 
-            <div style={{ display: "flex", gap: "18px", margin: "16px 0", alignItems: "center", justifyContent: "flex-end"}}>
+            <div style={{ display: "flex", gap: "18px", alignItems: "center", justifyContent: "flex-end"}}>
                 <label htmlFor="select-mes">Mês:</label>
                 <select
                     id="select-mes"
@@ -149,6 +150,10 @@ export default function Calendar(){
 
             {erro && <p>{erro}</p>}
             {loading && <p>Carregando calendário...</p>}
+
+            <button type='button' className='day-back' onClick={()=> navigate('/dashboard')}>
+                Voltar para Dashboard
+            </button>
 
             <FullCalendar
                 ref={calendarRef}

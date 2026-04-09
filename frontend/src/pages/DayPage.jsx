@@ -2,9 +2,12 @@ import { useState, useCallback, useEffect, useMemo } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { listarTarefas, criarTarefa, deletarTarefa, concluirTarefa } from '../api/api'
 import { formatarDataBR, getData } from '../utils/date'
-import TaskCard from '../components/TaskCard'
 import TaskForm from '../components/TaskForm'
+import DayTasksPanel from '../components/DayTasksPanel'
 import './DayPage.css'
+import AddIcon from '../assets/icons/add.png'
+import Next from '../assets/icons/next.png'
+import Preview from '../assets/icons/preview.png'
 
 
 export default function DayPage(){
@@ -103,10 +106,16 @@ export default function DayPage(){
         return formatarDataBR(data)
     }, [data])
 
+    const tarefasConcluidasDia = useMemo(() => {
+        return tarefas.filter((tarefa) => tarefa.status === "concluida")
+    }, [tarefas])
+
+    const progressoDia = tarefasConcluidasDia.length / tarefas.length * 100 || 0 
+
     function navegarDia(indice){
       const novaData = new Date(`${data}T00:00:00`)
       novaData.setDate(novaData.getDate() + indice)
-      navigate(`/dia/${getData(novaData)}`)
+      navigate(`/dia/${getData(novaData)}`, {replace: true}) // Voltar do navegador não empilha coisas, troca a rota atual
     }
 
     // Bloqueio do scroll ao adicionar tarefa
@@ -122,48 +131,26 @@ export default function DayPage(){
         }
     }, [addTarefa])
 
-    // Botão voltar do navegador para calendario
-    useEffect(() => {
-      window.history.pushState(null, '', window.location.pathname)
-
-      function handlePopState() {
-        navigate('/calendario', { replace: true })
-      }
-
-      window.addEventListener('popstate', handlePopState)
-
-      return () => {
-        window.removeEventListener('popstate', handlePopState)
-      }
-    }, [navigate, data])
-
-
     return(
       <main className='day-page'>
-        <button type="button" onClick={() => navigate("/calendario")}>
-          Voltar para calendário
-        </button>
 
-        <div className='day-nav'>
-          <button type='button' onClick={() => navegarDia(-1)}>
-            Dia anterior
+        <div className='day-topbar'>
+          <button type="button" className='day-back' onClick={() => navigate("/calendario")}>
+            Voltar para Calendário
           </button>
-          <button type='button' onClick={() => navegarDia(1)}>
-            Próximo dia
-          </button>
+
+          <div className='day-nav'>
+            <button type='button' onClick={() => navegarDia(-1)}>
+              <img src={Preview} alt="Retroceder um dia" className='icons' />
+              Dia anterior
+            </button>
+            <button type='button' onClick={() => navegarDia(1)}>
+              Próximo dia
+              <img src={Next} alt="Avançar um dia" className='icons' />
+            </button>
+          </div>
+
         </div>
-
-        <h1>{dataFormatada}</h1>
-
-        {erroPagina && <p className="day-feedback day-feedback-error">{erroPagina}</p>}
-        {sucesso && <p className="day-feedback day-feedback-success">{sucesso}</p>}
-
-        <button type="button" onClick={() => {
-            setAddTarefa(true)
-            setErroForm('')
-          }}>
-          Nova tarefa
-        </button>
 
         {addTarefa && (
           <div className='task-modal-overlay' onClick={()=>{
@@ -184,22 +171,31 @@ export default function DayPage(){
           </div>
         )}
 
-        <section className='day-list'>
-          {loading ? (
-            <p>Carregando tarefas...</p>
-          ) : tarefas.length > 0 ? (
-            tarefas.map((tarefa) => (
-              <TaskCard
-                key={tarefa.id}
-                tarefa={tarefa}
-                concluir={finalizarTarefa}
-                remover={removerTarefa}
-              />
-            ))
-          ) : (
-            <p>Nenhuma tarefa para este dia.</p>
-          )}
-        </section>
+        <DayTasksPanel
+          titulo={dataFormatada}
+          erro={erroPagina}
+          sucesso={sucesso}
+          loading={loading}
+          tarefas={tarefas}
+          tarefasConcluidas={tarefasConcluidasDia.length}
+          progresso={progressoDia}
+          onConcluir={finalizarTarefa}
+          onRemover={removerTarefa}
+          botaoAcao={
+            <button
+              type="button"
+              className="dashboard-add-task"
+              onClick={() => {
+                  setErroForm("")
+                  setAddTarefa(true)
+              }}
+          >
+              <img src={AddIcon} alt="Adicionar tarefas" className="day-icons"/>
+              Nova tarefa
+          </button>
+          }
+          emptyMessage="Nenhuma tarefa para este dia."
+        />
       </main>
     )
 }

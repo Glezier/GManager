@@ -4,7 +4,7 @@ import { listarTarefas, criarTarefa, deletarTarefa, concluirTarefa } from "../ap
 import { getData, formatarData } from "../utils/date"
 
 import TaskForm from "../components/TaskForm"
-import TaskCard from "../components/TaskCard"
+import DayTasksPanel from "../components/DayTasksPanel"
 
 import "./Dashboard.css"
 import CalendarIcon from '../assets/icons/calendar.png'
@@ -162,7 +162,7 @@ export default function Dashboard(){
         <main className="dashboard">
             <header className="dashboard-topbar">
                 <div className="dashboard-brand">
-                    Gerenciador
+                    GManager
                 </div>
 
                 <nav className="dashboard-nav">
@@ -187,80 +187,50 @@ export default function Dashboard(){
             </header>
 
             <section className="dashboard-top">
-                <div className="dashboard-panel dashboard-panel-today">
-                    <div className="dashboard-head">
-                        <p>Hoje</p>
-                        <h1>Tarefas do dia</h1>
-                    </div>
-
-                    {erroPagina && <p className="dashboard-feedback dashboard-feedback-error">{erroPagina}</p>}
-                    {sucesso && <p className="dashboard-feedback dashboard-feedback-success">{sucesso}</p>}
-
-                    <div className="dashboard-progress">
+                <DayTasksPanel
+                    subtitulo="Hoje"
+                    titulo="Tarefas do dia"
+                    erro={erroPagina}
+                    sucesso={sucesso}
+                    loading={loading}
+                    tarefas={tarefasDeHoje}
+                    tarefasConcluidas={tarefasConcluidasHoje.length}
+                    progresso={progressoHoje}
+                    onConcluir={finalizarTarefa}
+                    onRemover={removerTarefa}
+                    botaoAcao={
                         <button
                             type="button"
                             className="dashboard-add-task"
                             onClick={() => {
+                                setErroForm("")
                                 setAddTarefa(true)
-                                setErroForm('')
                             }}
                         >
                             <img src={AddIcon} alt="Adicionar tarefas" className="day-icons"/>
                             Nova tarefa
                         </button>
+                    }
+                />
 
-                        <div className="dashboard-progress-info">
-                            <div className="dashboard-progress-text">
-                                <span>
-                                    {tarefasConcluidasHoje.length} de {tarefasDeHoje.length} concluí­das
-                                </span>
-                                <span>{Math.round(progressoHoje)}%</span>
-                            </div>
-
-                            <div className="dashboard-progress-bar">
-                                <div
-                                    className="dashboard-progress-fill"
-                                    style={{ width: `${progressoHoje}%` }}
-                                />
-                            </div>
+                {addTarefa && (
+                    <div className="task-modal-overlay" onClick={() => {
+                        setErroForm("")
+                        setAddTarefa(false)
+                    }}>
+                        <div className="task-modal" onClick={(e) => e.stopPropagation()}>
+                            <TaskForm
+                                criar={novaTarefa}
+                                cancelar={() => {
+                                    setErroForm("")
+                                    setAddTarefa(false)
+                                }}
+                                hoje={hoje}
+                                erro={erroForm}
+                            />
                         </div>
                     </div>
-
-                    {addTarefa && (
-                        <div className="task-modal-overlay" onClick={() => setAddTarefa(false)}>
-                            <div className="task-modal" onClick={(e) => e.stopPropagation()}>
-                                <TaskForm
-                                    criar={novaTarefa}
-                                    cancelar={() => {
-                                        setAddTarefa(false)
-                                        setErroForm('')
-                                    }}
-                                    hoje={hoje}
-                                    erro={erroForm}
-                                />
-                            </div>
-                        </div>
-                    )}
-
-                    <div className="dashboard-task-list">
-                        {loading ? (
-                            <p>Carregando tarefas...</p>
-                        ) : tarefasDeHoje.length > 0 ? (
-                            tarefasDeHoje.map((tarefa) => (
-                                <TaskCard 
-                                    key={tarefa.id}
-                                    tarefa={tarefa}
-                                    concluir={finalizarTarefa}
-                                    remover={removerTarefa}
-                                />
-                            ))
-                        ) : (
-                            <p>
-                                Nenhuma tarefa para hoje
-                            </p>
-                        )}
-                    </div>
-                </div>
+                )}
 
                 <div className="dashboard-panel dashboard-panel-calendar">
                     <button type="button" className="calendario" onClick={() => navigate("/calendario")}>

@@ -24,7 +24,7 @@ export default function TaskCard({tarefa, concluir, remover}){
       </div>
 
       <div className="task-card-actions">
-        {tarefa.status === "pendente" && (
+        {tarefa.status === "pendente" ? (
           <button
             type="button"
             className="task-card-icon"
@@ -33,7 +33,8 @@ export default function TaskCard({tarefa, concluir, remover}){
           >
             <img src={CheckIcon} alt="" className="task-card-icon-image"/>
           </button>
-        )}
+        ) : (
+          <div className="task-card-icon-placeholder"/>        )}
 
         <button
           type="button"

@@ -37,6 +37,7 @@ Este projeto tem dois objetivos:
 - página dedicada para um dia específico
 - criação de tarefa a partir do dia selecionado
 - modal para criação de tarefa no dashboard
+- página do dia com navegação entre datas e visual alinhado ao dashboard
 - tratamento inicial de erro e loading no frontend
 - feedback visual de sucesso nas ações principais de tarefa
 - validação inicial de entrada no backend
@@ -52,8 +53,6 @@ Este projeto tem dois objetivos:
 ## Problemas atuais mais relevantes
 - ainda falta feedback visual de sucesso nas ações
 - ainda há duplicação de lógica de tarefas no frontend
-- a visão semanal ainda não é clicável
-- a página do dia ainda pode evoluir bastante em UX
 - login e cadastro ainda precisam amadurecer visualmente
 - o calendário ainda pode ganhar mais contexto visual
 - ainda faltam edição de tarefas, testes e migrations
@@ -66,7 +65,6 @@ Este é o roadmap principal a seguir daqui para frente.
 Objetivo: fechar o ciclo essencial do produto com feedback claro e navegação melhor.
 
 - exibir confirmações visuais de sucesso para criar, concluir e excluir tarefas
-- melhorar a página do dia
 - adicionar edição de tarefa no frontend
 - melhorar ordenação por horário
 - adicionar confirmação visual antes de excluir
@@ -86,7 +84,8 @@ Objetivo: transformar a aplicação em uma experiência mais consistente e agrad
 - estilizar login
 - estilizar criar conta
 - revisar layout do dashboard
-- revisar layout da página do dia
+- revisar e refinar o layout da página do dia conforme a evolução do uso real
+- estilizar melhor o calendário
 - melhorar visual do calendário
 - melhorar feedback visual para ações do usuário
 - revisar responsividade em mobile e desktop
@@ -138,19 +137,16 @@ Objetivo: expandir o produto quando a base estiver confiável.
 ## Ordem prática recomendada
 Se estivermos seguindo uma fila única de trabalho, a ordem ideal agora é:
 
-1. feedback visual de sucesso nas tarefas
-2. visão semanal clicável
-3. melhorias da página do dia
-4. edição de tarefa
-5. organização do frontend
-6. revisão visual de login, cadastro, dashboard, calendário e day page
-7. notas
-8. base técnica madura
-9. filtros, busca, categorias e prioridade
-10. recursos avançados e deploy
+1. edição de tarefa
+2. organização do frontend
+3. revisão visual de login, cadastro, dashboard, calendário e day page
+4. notas
+5. base técnica madura
+6. filtros, busca, categorias e prioridade
+7. recursos avançados e deploy
 
 ## Próximo passo atual
-- melhorar a página do dia
+- adicionar edição de tarefa no frontend
 
 ### Detalhamento do próximo passo
 Este é o foco imediato da próxima sessão de desenvolvimento.

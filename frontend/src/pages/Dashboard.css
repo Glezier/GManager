@@ -143,7 +143,7 @@ body {
   border: 1px solid #999;
   border-radius: 12px;
   background: #e9e9e9;
-  font-size: 18px;
+  font-size: 20px;
   cursor: pointer;
 }
 
@@ -156,7 +156,7 @@ body {
 .dashboard-task-list {
   display: grid;
   gap: 12px;
-  max-height: 320px;
+  max-height: 360px;
   overflow-y: auto;
   padding-right: 6px;
 }
