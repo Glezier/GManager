@@ -1,10 +1,13 @@
-import { useEffect, useState, useCallback, useMemo  } from "react"
+import { useMemo  } from "react"
 import { useNavigate } from 'react-router-dom'
-import { listarTarefas, criarTarefa, deletarTarefa, concluirTarefa, atualizarTarefa } from "../api/api"
 import { getData, formatarData } from "../utils/date"
 
 import TaskForm from "../components/TaskForm"
 import DayTasksPanel from "../components/DayTasksPanel"
+
+import useTasks from "../hooks/useTasks"
+import useProgress from "../hooks/useProgress"
+import useSemana from "../hooks/useSemana"
 
 import "./Dashboard.css"
 import CalendarIcon from '../assets/icons/calendar.png'
@@ -14,14 +17,6 @@ import AddIcon from '../assets/icons/add.png'
 
 
 export default function Dashboard(){
-    const [tarefas, setTarefas] = useState([])
-    const [addTarefa, setAddTarefa ] = useState(false)
-    const [erroPagina, setErroPagina] = useState("")
-    const [erroForm, setErroForm] = useState('')
-    const [loading, setLoading] = useState(true)
-    const [sucesso, setSucesso] = useState("")
-    const [editando, setEditando] = useState(null)
-
     const navigate = useNavigate()
     const token = localStorage.getItem("token") || ""
     const hoje = getData()
@@ -32,140 +27,37 @@ export default function Dashboard(){
         return getData(data)
     })()
 
-    const carregarTarefas = useCallback(async () => {
-        try {
-            setErroPagina("")
-            setLoading(true)
-
-            const data = await listarTarefas(token, hoje, dataFim);
-            setTarefas(data);
-        } catch (error) {
-            setErroPagina(error.message)
-            if(
-                error.message === "Token inválido" ||
-                error.message === "Token não fornecido"
-            ){
-                localStorage.removeItem("token")
-                navigate("/")
-            }            
-        } finally{
-            setLoading(false)
-        }
-    }, [token, navigate, hoje, dataFim]);
-
-    async function novaTarefa(tarefa){
-        try{
-            setErroForm('')
-            setSucesso('')
-            if (editando){
-                await atualizarTarefa(token, editando.id, tarefa)
-                setSucesso("Tarefa atualizada com sucesso")
-            } else{
-                await criarTarefa(token, tarefa)
-                setSucesso("Tarefa cadastrada com sucesso")
-            }
-
-            setAddTarefa(false)
-            setEditando(null)
-            await carregarTarefas()
-            
-        }catch(error){
-            setErroForm(error.message)
-        }
-    }
-
-    async function removerTarefa(id){
-        try{
-            setErroPagina('')
-            setSucesso('')
-            await deletarTarefa(token, id)
-            await carregarTarefas()
-            setSucesso("Tarefa excluída com sucesso")
-        }catch(error){
-            setErroPagina(error.message)
-        }
-    }
-
-    async function finalizarTarefa(id){
-        try{
-            setErroPagina('')
-            setSucesso('')
-            await concluirTarefa(token, id)
-            await carregarTarefas()
-            setSucesso("Tarefa concluída com sucesso")
-        } catch(error){
-            setErroPagina(error.message)
-        }
-    }
+    const {
+        tarefas, 
+        loading,
+        erroPagina,
+        erroForm,
+        sucesso,
+        addTarefa,
+        editando,
+        salvarTarefa,
+        removerTarefa,
+        finalizarTarefa,
+        abrirCriacao,
+        abrirEdicao,
+        fecharModal,
+    } = useTasks({
+        token,
+        inicio: hoje,
+        fim: dataFim,
+        navigate,
+    })
 
     const tarefasDeHoje = useMemo(() => {
         return tarefas.filter((tarefa) => formatarData(tarefa.data) === hoje)
     }, [tarefas, hoje])
 
-    const tarefasConcluidasHoje = useMemo(() => {
-        return tarefasDeHoje.filter((tarefa) => tarefa.status === "concluida")
-    }, [tarefasDeHoje])
+    const {
+        quantidadeConcluidas: tarefasConcluidasHoje,
+        progresso: progressoHoje
+    } = useProgress(tarefasDeHoje)
 
-    const progressoHoje = tarefasConcluidasHoje.length / tarefasDeHoje.length * 100 || 0 
-
-    const semana = useMemo(() => {
-        const base = new Date(`${hoje}T00:00:00`)
-        const dias = []
-
-        for (let i = 1; i < 6; i++) {
-            const data = new Date(base)
-            data.setDate(base.getDate() + i)
-
-            const dataFormatada = getData(data)
-            const tarefasDoDia = tarefas.filter(
-                (tarefa) => formatarData(tarefa.data) === dataFormatada
-            ) // retorna todas as tarefas do dia
-
-            dias.push({
-                id: dataFormatada,
-                label: data.toLocaleDateString("pt-BR", { weekday: "short" }), // dia da semana abreviado
-                numero: data.getDate(),
-                tarefas: tarefasDoDia.slice(0, 3), // retorna no máximo 3 tarefas do dia
-            })
-        }
-
-        return dias
-    }, [tarefas, hoje])
-
-    useEffect(()=>{
-        if(!token){
-            navigate('/')
-            return
-        }
-
-        carregarTarefas()
-       
-    }, [token, navigate, carregarTarefas])
-
-
-    useEffect(() => {
-        if (addTarefa) {
-            document.body.style.overflow = "hidden"
-        } else {
-            document.body.style.overflow = "auto"
-        }
-
-        return () => {
-            document.body.style.overflow = "auto"
-        }
-    }, [addTarefa])
-
-    // Controle do tempo de exibição das mensagens de sucesso de ações do usuário
-    useEffect(()=>{
-        if (sucesso){
-            const timer = setTimeout(() => {
-                setSucesso('')
-            }, 2500)
-
-            return () => clearTimeout(timer)
-        }
-        return
-    }, [sucesso])
+    const semana = useSemana(hoje, tarefas)   
 
     return(
         <main className="dashboard">
@@ -203,24 +95,16 @@ export default function Dashboard(){
                     sucesso={sucesso}
                     loading={loading}
                     tarefas={tarefasDeHoje}
-                    tarefasConcluidas={tarefasConcluidasHoje.length}
+                    tarefasConcluidas={tarefasConcluidasHoje}
                     progresso={progressoHoje}
                     onConcluir={finalizarTarefa}
                     onRemover={removerTarefa}
-                    onEditar={(tarefa)=>{
-                        setErroForm('')
-                        setEditando(tarefa)
-                        setAddTarefa(true)
-                    }}
+                    onEditar={abrirEdicao}
                     botaoAcao={
                         <button
                             type="button"
                             className="dashboard-add-task"
-                            onClick={() => {
-                                setErroForm("")
-                                setAddTarefa(true)
-                                setEditando(null)
-                            }}
+                            onClick={abrirCriacao}
                         >
                             <img src={AddIcon} alt="Adicionar tarefas" className="day-icons"/>
                             Nova tarefa
@@ -229,17 +113,11 @@ export default function Dashboard(){
                 />
 
                 {addTarefa && (
-                    <div className="task-modal-overlay" onClick={() => {
-                        setErroForm("")
-                        setAddTarefa(false)
-                    }}>
+                    <div className="task-modal-overlay" onClick={fecharModal}>
                         <div className="task-modal" onClick={(e) => e.stopPropagation()}>
                             <TaskForm
-                                criar={novaTarefa}
-                                cancelar={() => {
-                                    setErroForm("")
-                                    setAddTarefa(false)
-                                }}
+                                criar={salvarTarefa}
+                                cancelar={fecharModal}
                                 hoje={hoje}
                                 erro={erroForm}
                                 tarefaInicial={editando}
@@ -302,15 +180,12 @@ export default function Dashboard(){
                     <div className="dashboard-notes-box">
                         Área reservada para notas gerais.
                     </div>
-                </div>
-
-                
+                </div>                
             </section>
 
             <footer className="dashboard-footer">
                 Gerenciador de tarefas
             </footer>
         </main>
-        
     )
 }
