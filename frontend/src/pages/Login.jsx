@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { login } from '../api/api'
 import { setToken } from '../utils/auth'
@@ -8,8 +8,15 @@ export default function Login(){
     const [senha, setSenha] = useState("")
     const [erro, setErro] = useState("")
     const [loading, setLoading] = useState(false)
+    const userRef = useRef(null)
 
     const navigate = useNavigate()
+
+    useEffect(()=>{
+        if(userRef.current){
+            userRef.current.focus()
+        }
+    }, [])
 
     const handleLogin = async(e) => {
         e.preventDefault()
@@ -43,6 +50,7 @@ export default function Login(){
                     placeholder='Digite seu email'
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}  
+                    ref={userRef}
                     required
                 />
 

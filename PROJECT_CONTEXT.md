@@ -1,45 +1,47 @@
 # Projeto: Gerenciador de Tarefas
 
-## VisÃ£o do produto
-AplicaÃ§Ã£o web de organizaÃ§Ã£o pessoal com foco em tarefas por dia, calendÃ¡rio mensal e navegaÃ§Ã£o simples entre datas.
+## Visão do produto
+Aplicação web de organização pessoal com foco em tarefas por dia, calendário mensal e navegação simples entre datas.
 
 Objetivos do projeto:
 1. ser uma ferramenta real de uso pessoal
-2. servir como prÃ¡tica consistente de desenvolvimento full-stack
+2. servir como prática consistente de desenvolvimento full-stack
 
 ## Stack atual
 - Frontend: React + Vite
 - Backend: Node.js + Express
 - Banco de dados: PostgreSQL
-- AutenticaÃ§Ã£o: JWT
-- CalendÃ¡rio: FullCalendar
+- Autenticação: JWT
+- Calendário: FullCalendar
 
 ## Estado atual
 
-### JÃ¡ implementado
-- cadastro e login de usuÃ¡rio
-- autenticaÃ§Ã£o com JWT
+### Já implementado
+- cadastro e login de usuário
+- autenticação com JWT
 - rotas privadas no frontend
-- criaÃ§Ã£o, ediÃ§Ã£o, conclusÃ£o e exclusÃ£o de tarefas
+- criação, edição, conclusão e exclusão de tarefas
 - busca de tarefas por intervalo
 - dashboard com tarefas do dia
-- visÃ£o semanal clicÃ¡vel
-- calendÃ¡rio mensal
-- pÃ¡gina dedicada para um dia
-- criaÃ§Ã£o e ediÃ§Ã£o de tarefa via modal
-- feedback visual bÃ¡sico de erro, loading e sucesso
-- padronizaÃ§Ã£o inicial de datas no frontend
+- visão semanal clicável
+- calendário mensal
+- página dedicada para um dia
+- criação e edição de tarefa via modal
+- feedback visual básico de erro, loading e sucesso
+- padronização inicial de datas no frontend
 - tratamento global de erro no backend
 
-### DecisÃµes tÃ©cnicas jÃ¡ tomadas
+### Decisões técnicas já tomadas
 - tarefas devem ser buscadas por intervalo
-- `data` segue o padrÃ£o `YYYY-MM-DD`
-- `hora` segue o padrÃ£o `HH:MM`
-- formataÃ§Ã£o humana em `pt-BR` acontece apenas na interface
+- `data` segue o padrão `YYYY-MM-DD`
+- `hora` segue o padrão `HH:MM`
+- formatação humana em `pt-BR` acontece apenas na interface
 - `created_at` pode continuar como timestamp
-- modal Ã© o padrÃ£o atual para criaÃ§Ã£o e ediÃ§Ã£o de tarefa
+- modal é o padrão atual para criação e edição de tarefa
+- componentes visuais reutilizáveis devem morar em `components` ou `components/ui`, e não em `utils`
 
 ### Ambiente
+
 #### Backend
 - `DB_URL`
 - `JWT_SECRET`
@@ -49,94 +51,99 @@ Objetivos do projeto:
 #### Frontend
 - `VITE_API_URL`
 
-## SituaÃ§Ã£o atual
-O fluxo principal do produto jÃ¡ existe e estÃ¡ funcional. O foco agora deve sair de "criar mais telas" e passar para:
-- reduzir repetiÃ§Ã£o no frontend
-- melhorar manutenÃ§Ã£o do cÃ³digo
+## Situação atual
+O fluxo principal do produto já existe e está funcional. O foco agora deve sair de "criar mais telas" e passar para:
+- reduzir repetição no frontend
+- melhorar manutenção do código
 - amadurecer a interface
 - preparar novas funcionalidades com menos retrabalho
 
 ## Roadmap oficial
 
-### Fase 1: OrganizaÃ§Ã£o do frontend
-- padronizar melhor o tratamento de token e navegaÃ§Ã£o
+### Fase 1: Organização do frontend
+- padronizar melhor o tratamento de token e navegação
 
 ### Fase 2: UX e identidade visual
 - revisar visual de login e cadastro
 - revisar visual do dashboard
-- revisar visual da pÃ¡gina do dia
-- estilizar melhor o calendÃ¡rio
-- revisar consistÃªncia geral do CSS
+- revisar visual da página do dia
+- estilizar melhor o calendário
+- revisar consistência geral do CSS
 - revisar responsividade
 
 ### Fase 3: Fluxo principal mais completo
-- melhorar ordenaÃ§Ã£o por horÃ¡rio
-- revisar a experiÃªncia de ediÃ§Ã£o
+- melhorar ordenação por horário
+- revisar a experiência de edição
 - melhorar estados vazios e mensagens da interface
 
-### Fase 4: Notas e organizaÃ§Ã£o pessoal
+### Fase 4: Notas e organização pessoal
 - adicionar notas
-- decidir se serÃ£o gerais, por dia ou ambas
+- decidir se serão gerais, por dia ou ambas
 - avaliar listas com checks
-- avaliar observaÃ§Ãµes ligadas a tarefas
+- avaliar observações ligadas a tarefas
 
-### Fase 5: Base tÃ©cnica madura
+### Fase 5: Base técnica madura
 - separar melhor responsabilidades no backend
 - reduzir SQL direto em controllers
 - criar migrations ou scripts versionados
 - preparar testes iniciais
-- revisar encoding e padronizaÃ§Ã£o textual
+- revisar encoding e padronização textual
 
-### Fase 6: Recursos avanÃ§ados
+### Fase 6: Recursos avançados
 - filtros por status e data
 - busca de tarefas
 - categorias e prioridade
-- recorrÃªncia
-- exportaÃ§Ã£o
-- mÃ©tricas simples
+- recorrência
+- exportação
+- métricas simples
 - deploy
-- Ã¡rea de gestÃ£o de gastos (a definir melhor)
-- Ã¡rea para metas futuras, a longo prazo (a definir melhor)
+- área de gestão de gastos (a definir melhor)
+- área para metas futuras, a longo prazo (a definir melhor)
 
-## PrÃ³ximo passo atual
-- melhorar estados vazios e mensagens da interface
+## Próximo passo atual
+- refinar a experiência do calendário com feedback visual mais claro e navegação mais consistente
 
-## DireÃ§Ã£o de arquitetura para confirmaÃ§Ã£o
-- a confirmaÃ§Ã£o deve nascer como componente reutilizÃ¡vel, nÃ£o como soluÃ§Ã£o especÃ­fica de tarefas
-- o padrÃ£o precisa ser reaproveitÃ¡vel para exclusÃ£o e aÃ§Ãµes sensÃ­veis em tarefas, notas, finanÃ§as e futuras Ã¡reas do produto
-- a API do componente deve aceitar tÃ­tulo, mensagem, rÃ³tulos de aÃ§Ã£o, variante visual e callbacks de confirmar/cancelar
-- a primeira integraÃ§Ã£o serÃ¡ no fluxo de remoÃ§Ã£o de tarefa, mantendo a base pronta para outras integraÃ§Ãµes futuras
+## Direção de arquitetura para confirmação
+- a confirmação deve nascer como componente reutilizável, não como solução específica de tarefas
+- o padrão precisa ser reaproveitável para exclusão e ações sensíveis em tarefas, notas, finanças e futuras áreas do produto
+- a API do componente deve aceitar título, mensagem, rótulos de ação, variante visual e callbacks de confirmar/cancelar
+- a primeira integração será no fluxo de remoção de tarefa, mantendo a base pronta para outras integrações futuras
+- futuros estados visuais compartilhados, como loading, devem nascer como componentes reutilizáveis em `components/ui`
 
 ## Status desta etapa
-- o fluxo de confirmaÃ§Ã£o visual reutilizÃ¡vel jÃ¡ foi integrado ao frontend para remoÃ§Ã£o de tarefa
-- a API do componente de confirmaÃ§Ã£o foi alinhada entre hook e pÃ¡ginas
-- a etapa foi validada no fluxo principal e pode ser considerada concluÃ­da para commit
-- a leitura, persistÃªncia e remoÃ§Ã£o de token no frontend foram padronizadas em util prÃ³prio
-- o acesso a rotas privadas e o redirecionamento por sessÃ£o invÃ¡lida ficaram mais consistentes
+- o fluxo de confirmação visual reutilizável já foi integrado ao frontend para remoção de tarefa
+- a API do componente de confirmação foi alinhada entre hook e páginas
+- a etapa foi validada no fluxo principal e pode ser considerada concluída para commit
+- a leitura, persistência e remoção de token no frontend foram padronizadas em util próprio
+- o acesso a rotas privadas e o redirecionamento por sessão inválida ficaram mais consistentes
+- Dashboard e DayPage passaram a compartilhar melhor estados de loading, erro, sucesso e vazio via hooks e componentes reutilizáveis
+- criação e edição de tarefa via modal ficaram mais consistentes entre as telas principais
+- a direção para o calendário já foi definida: feedbacks mais claros, barra de mês/ano mais enxuta e clique em eventos levando ao dia correspondente
 
-## PrÃ³xima direÃ§Ã£o recomendada
-- melhorar estados vazios e mensagens da interface para dashboard e pÃ¡gina do dia
-- revisar a clareza dos feedbacks de loading, erro e sucesso no calendÃ¡rio
+## Próxima direção recomendada
+- criar um loading reutilizável para a interface, começando pelo calendário
+- ajustar a barra de seleção de mês e ano para ocupar apenas o tamanho do conteúdo alinhado à direita
+- permitir que clicar em uma tarefa no FullCalendar também abra a DayPage do dia correspondente
+- depois disso, partir para revisão visual de login e cadastro
 
-
-## CritÃ©rios para o prÃ³ximo commit
-- este ciclo pode ser commitado apÃ³s validaÃ§Ã£o local do fluxo de autenticaÃ§Ã£o, logout e rotas privadas
-- o prÃ³ximo commit deve cobrir a primeira melhoria de estados vazios e mensagens da interface
+## Critérios para o próximo commit
+- este ciclo pode ser commitado após validação local do fluxo de autenticação, logout e rotas privadas
+- o próximo commit deve cobrir a melhoria dos feedbacks visuais do calendário e a correção de pequenas fragilidades restantes no hook de tarefas
 
 ## Acordo de trabalho atual
-- mudanÃ§as de cÃ³digo dos arquivos da aplicaÃ§Ã£o serÃ£o propostas no chat para o usuÃ¡rio aplicar manualmente
-- o Ãºnico arquivo que pode ser atualizado diretamente por esta sessÃ£o Ã© `PROJECT_CONTEXT.md`
-- este contexto deve ser atualizado a cada etapa relevante concluÃ­da
-- alteraÃ§Ãµes feitas por engano diretamente no cÃ³digo devem ser revertidas antes de seguir
+- mudanças de código dos arquivos da aplicação serão propostas no chat para o usuário aplicar manualmente
+- o único arquivo que pode ser atualizado diretamente por esta sessão é `PROJECT_CONTEXT.md`
+- este contexto deve ser atualizado a cada etapa relevante concluída
+- alterações feitas por engano diretamente no código devem ser revertidas antes de seguir
 
 ## Forma de trabalho
-- seguir este arquivo como referÃªncia principal
+- seguir este arquivo como referência principal
 - atualizar o contexto ao concluir etapas relevantes
 - evitar abrir frentes muito fora da ordem definida aqui
 
-## CritÃ©rio de prioridade
-1. corrigir fragilidade tÃ©cnica real
-2. melhorar o fluxo principal do usuÃ¡rio
-3. reduzir repetiÃ§Ã£o e dÃ­vida estrutural
+## Critério de prioridade
+1. corrigir fragilidade técnica real
+2. melhorar o fluxo principal do usuário
+3. reduzir repetição e dívida estrutural
 4. melhorar UX e visual
 5. adicionar novas funcionalidades

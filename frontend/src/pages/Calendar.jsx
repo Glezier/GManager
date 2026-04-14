@@ -91,6 +91,12 @@ export default function Calendar(){
         navigate(`/dia/${info.dateStr}`)
     }
 
+    // Clicar em tarefa do dia também abre o dia da tarefa
+    function handleDateClick(info){
+        const data = info.event.start
+        navigate(`/dia/${getData(data)}`)
+    }
+
     // Sincroniza os selects quando o usuário navega pelas setas do FullCalendar
     function handleDatesSet(info) {
         const inicio = getData(info.start)
@@ -124,28 +130,39 @@ export default function Calendar(){
                 Calendário
             </h1>
 
-            <div style={{ display: "flex", gap: "18px", alignItems: "center", justifyContent: "flex-end"}}>
-                <label htmlFor="select-mes">Mês:</label>
-                <select
-                    id="select-mes"
-                    value={mesSelecionado}
-                    onChange={(e) => setMesSelecionado(Number(e.target.value))}
-                >
-                    {meses.map((nome, index) => (
-                        <option key={index} value={index}>{nome}</option>
-                    ))}
-                </select>
+            {!loading && !erro && tarefas.length === 0 && (
+                <div className="dashboard-empty-state">
+                    <p className="dashboard-empty-title">Nenhuma tarefa neste período</p>
+                    <p className="dashboard-empty-message">
+                        Navegue entre os meses ou clique em um dia para começar a se organizar.
+                    </p>
+                </div>
+            )}
 
-                <label htmlFor="select-ano">Ano:</label>
-                <select
-                    id="select-ano"
-                    value={anoSelecionado}
-                    onChange={(e) => setAnoSelecionado(Number(e.target.value))}
-                >
-                    {anos.map((ano) => (
-                        <option key={ano} value={ano}>{ano}</option>
-                    ))}
-                </select>
+            <div className='calendar-toolbar-wrap'>
+                <div className='calendar-toolbar'>
+                    <label htmlFor="select-mes">Mês:</label>
+                    <select
+                        id="select-mes"
+                        value={mesSelecionado}
+                        onChange={(e) => setMesSelecionado(Number(e.target.value))}
+                    >
+                        {meses.map((nome, index) => (
+                            <option key={index} value={index}>{nome}</option>
+                        ))}
+                    </select>
+
+                    <label htmlFor="select-ano">Ano:</label>
+                    <select
+                        id="select-ano"
+                        value={anoSelecionado}
+                        onChange={(e) => setAnoSelecionado(Number(e.target.value))}
+                    >
+                        {anos.map((ano) => (
+                            <option key={ano} value={ano}>{ano}</option>
+                        ))}
+                    </select>
+                </div>
             </div>
 
             {erro && (
@@ -155,9 +172,12 @@ export default function Calendar(){
             )}
 
             {loading && (
-                <p className="dashboard-feedback dashboard-feedback-loading">
-                    Carregando calendário...
-                </p>
+                <div className='calendar-loading'>
+                    <div className='calendar-spinner'/>
+                        <p className="dashboard-feedback dashboard-feedback-loading">
+                            Carregando tarefas do calendário...
+                        </p>
+                </div>
             )}
 
             <button type='button' className='day-back' onClick={()=> navigate('/dashboard')}>
@@ -171,6 +191,7 @@ export default function Calendar(){
                 locale='pt-br'
                 events={eventos}
                 dateClick={handleDate}
+                eventClick={handleDateClick}
                 dayMaxEvents={3}
                 height="auto"
                 datesSet={handleDatesSet}

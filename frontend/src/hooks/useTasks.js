@@ -30,7 +30,7 @@ export default function useTasks({token, inicio, fim, navigate}){
             setTarefas(data);
         } catch (error) {
             setErroPagina(error.message)
-            if(isAuthError(error.mesage)){
+            if(isAuthError(error.message)){
                 removeToken()
                 navigate("/")
             }            
