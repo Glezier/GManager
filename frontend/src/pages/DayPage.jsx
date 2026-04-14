@@ -7,6 +7,7 @@ import useProgress from '../hooks/useProgress'
 import { formatarDataBR, getData } from '../utils/date'
 import TaskForm from '../components/TaskForm'
 import DayTasksPanel from '../components/DayTasksPanel'
+import ConfirmBox from '../components/ConfirmBox'
 import './DayPage.css'
 import AddIcon from '../assets/icons/add.png'
 import Next from '../assets/icons/next.png'
@@ -27,7 +28,10 @@ export default function DayPage(){
       addTarefa,
       salvarTarefa,
       editando,
-      removerTarefa,
+      confirmacao,
+      solicitarRemocao,
+      confirmarRemocao,
+      fecharConfirmacao,
       finalizarTarefa,
       abrirCriacao,
       abrirEdicao,
@@ -89,6 +93,18 @@ export default function DayPage(){
           </div>
         )}
 
+        <ConfirmBox 
+          open={confirmacao.open}
+          title={confirmacao.title}
+          message={confirmacao.message}
+          confirmLabel={confirmacao.confirmLabel}
+          cancelLabel={confirmacao.cancelLabel}
+          variant={confirmacao.variant}
+          loading={confirmacao.loading}
+          onConfirm={confirmarRemocao}
+          onCancel={fecharConfirmacao}
+        />
+
         <DayTasksPanel
           titulo={dataFormatada}
           erro={erroPagina}
@@ -98,7 +114,7 @@ export default function DayPage(){
           tarefasConcluidas={quantidadeConcluidas}
           progresso={progresso}
           onConcluir={finalizarTarefa}
-          onRemover={removerTarefa}
+          onRemover={solicitarRemocao}
           onEditar={abrirEdicao}
           botaoAcao={
             <button

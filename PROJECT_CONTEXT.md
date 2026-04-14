@@ -59,9 +59,6 @@ O fluxo principal do produto já existe e está funcional. O foco agora deve sai
 ## Roadmap oficial
 
 ### Fase 1: Organização do frontend
-- reduzir repetição entre `Dashboard` e `DayPage`
-- criar hook para centralizar o fluxo de tarefas
-- centralizar estados de loading, erro, sucesso, modal e edição
 - padronizar melhor o tratamento de token e navegação
 
 ### Fase 2: UX e identidade visual
@@ -74,7 +71,6 @@ O fluxo principal do produto já existe e está funcional. O foco agora deve sai
 
 ### Fase 3: Fluxo principal mais completo
 - melhorar ordenação por horário
-- adicionar confirmação antes de excluir
 - revisar a experiência de edição
 - melhorar estados vazios e mensagens da interface
 
@@ -103,21 +99,27 @@ O fluxo principal do produto já existe e está funcional. O foco agora deve sai
 - área para metas futuras, a longo prazo (a definir melhor)
 
 ## Próximo passo atual
-- implementar uma confirmação visual própria antes de excluir tarefa (pensando em ser escalável para necessidade futura similar)
+- revisar a experiência de edição e melhorar estados vazios e mensagens da interface
 
-## Status de implementação atual
-- `useTasks` já foi criado para centralizar listagem, criação, edição, conclusão, exclusão e estado do modal
-- `Dashboard` já está adaptado para consumir o hook
-- `DayPage` já foi consolidada para usar apenas o `useTasks`
-- o controle de bloqueio de scroll do modal foi movido para o hook
-- o `useTasks` já dispara `carregarTarefas()` corretamente no `useEffect`
-- um hook auxiliar de progresso/resumo já foi introduzido no frontend
-- a lógica da semana do `Dashboard` foi extraída para `useSemana`
-- a confirmação antes de excluir tarefa será implementada como componente visual próprio, não com `window.confirm`
+## Direção de arquitetura para confirmação
+- a confirmação deve nascer como componente reutilizável, não como solução específica de tarefas
+- o padrão precisa ser reaproveitável para exclusão e ações sensíveis em tarefas, notas, finanças e futuras áreas do produto
+- a API do componente deve aceitar título, mensagem, rótulos de ação, variante visual e callbacks de confirmar/cancelar
+- a primeira integração será no fluxo de remoção de tarefa, mantendo a base pronta para outras integrações futuras
+
+## Status desta etapa
+- o fluxo de confirmação visual reutilizável já foi integrado ao frontend para remoção de tarefa
+- a API do componente de confirmação foi alinhada entre hook e páginas
+- a etapa foi validada no fluxo principal e pode ser considerada concluída para commit
+
+## Próxima direção recomendada
+- revisar a experiência de edição de tarefa, com atenção ao preenchimento do modal e clareza do estado de edição
+- melhorar estados vazios e mensagens da interface para dashboard e página do dia
+
 
 ## Critérios para o próximo commit
 - este ciclo já pode ser commitado após validação local do `Dashboard` e da `DayPage`
-- o próximo commit deve cobrir a confirmação visual para exclusão de tarefa
+- o próximo commit deve cobrir a primeira versão do componente reutilizável de confirmação visual
 
 ## Acordo de trabalho atual
 - mudanças de código dos arquivos da aplicação serão propostas no chat para o usuário aplicar manualmente

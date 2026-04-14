@@ -4,6 +4,7 @@ import { getData, formatarData } from "../utils/date"
 
 import TaskForm from "../components/TaskForm"
 import DayTasksPanel from "../components/DayTasksPanel"
+import ConfirmBox from "../components/ConfirmBox"
 
 import useTasks from "../hooks/useTasks"
 import useProgress from "../hooks/useProgress"
@@ -35,8 +36,11 @@ export default function Dashboard(){
         sucesso,
         addTarefa,
         editando,
+        confirmacao,
+        solicitarRemocao,
+        confirmarRemocao,
+        fecharConfirmacao,
         salvarTarefa,
-        removerTarefa,
         finalizarTarefa,
         abrirCriacao,
         abrirEdicao,
@@ -98,7 +102,7 @@ export default function Dashboard(){
                     tarefasConcluidas={tarefasConcluidasHoje}
                     progresso={progressoHoje}
                     onConcluir={finalizarTarefa}
-                    onRemover={removerTarefa}
+                    onRemover={solicitarRemocao}
                     onEditar={abrirEdicao}
                     botaoAcao={
                         <button
@@ -110,6 +114,18 @@ export default function Dashboard(){
                             Nova tarefa
                         </button>
                     }
+                />
+
+                <ConfirmBox
+                    open={confirmacao.open}
+                    title={confirmacao.title}
+                    message={confirmacao.message}
+                    confirmLabel={confirmacao.confirmLabel}
+                    cancelLabel={confirmacao.cancelLabel}
+                    variant={confirmacao.variant}
+                    loading={confirmacao.loading}
+                    onConfirm={confirmarRemocao}
+                    onCancel={fecharConfirmacao}
                 />
 
                 {addTarefa && (

@@ -9,6 +9,16 @@ export default function useTasks({token, inicio, fim, navigate}){
     const [sucesso, setSucesso] = useState("")
     const [addTarefa, setAddTarefa] = useState(false)
     const [editando, setEditando] = useState(null)
+    const [confirmacao, setConfirmacao] = useState({
+        open: false,
+        title: '',
+        message: '',
+        confirmLabel: 'Confirmar',
+        cancelLabel: 'Cancelar',
+        variant: 'danger',
+        tarefa: null,
+        loading: false
+    })
 
     const carregarTarefas = useCallback(async () => {
          try {
@@ -52,18 +62,57 @@ export default function useTasks({token, inicio, fim, navigate}){
         }
     }
 
-    async function removerTarefa(id){
-        try{
+    function solicitarRemocao(tarefa) {
+        setErroPagina('')
+        setSucesso('')
+        setConfirmacao({
+            open: true,
+            title: 'Excluir tarefa?',
+            message: `Tem certeza que deseja excluir a tarefa "${tarefa.titulo}"? Essa ação não poderá ser desfeita.`,
+            confirmLabel: 'Excluir tarefa',
+            cancelLabel: 'Cancelar',
+            variant: 'danger',
+            tarefa,
+            loading: false,
+        })
+    }
+
+    function fecharConfirmacao() {
+        setConfirmacao((estadoAtual) => ({
+            ...estadoAtual,
+            open: false,
+            loading: false,
+            tarefa: null,
+        }))
+    }
+
+    async function confirmarRemocao() {
+        if (!confirmacao.tarefa) {
+            return
+        }
+
+        try {
             setErroPagina('')
             setSucesso('')
+            setConfirmacao((estadoAtual) => ({
+                ...estadoAtual,
+                loading: true,
+            }))
 
-            await deletarTarefa(token, id)
+            await deletarTarefa(token, confirmacao.tarefa.id)
             await carregarTarefas()
-            setSucesso("Tarefa excluída com sucesso")
-        }catch(error){
+
+            setSucesso('Tarefa excluída com sucesso')
+            fecharConfirmacao()
+        } catch (error) {
             setErroPagina(error.message)
+            setConfirmacao((estadoAtual) => ({
+                ...estadoAtual,
+                loading: false,
+            }))
         }
     }
+
 
     async function finalizarTarefa(id){
         try{
@@ -116,7 +165,7 @@ export default function useTasks({token, inicio, fim, navigate}){
 
     // Bloqueio do scroll ao adicionar tarefa
     useEffect(() => {
-        if (addTarefa) {
+        if (addTarefa || confirmacao.open) {
           document.body.style.overflow = 'hidden'
         } else {
           document.body.style.overflow = ''
@@ -125,7 +174,7 @@ export default function useTasks({token, inicio, fim, navigate}){
         return () => {
           document.body.style.overflow = ''
         }
-    }, [addTarefa])
+    }, [addTarefa, confirmacao.open])
 
     return {
         tarefas,
@@ -138,7 +187,10 @@ export default function useTasks({token, inicio, fim, navigate}){
         editando,
         carregarTarefas,
         salvarTarefa,
-        removerTarefa,
+        confirmacao,
+        solicitarRemocao,
+        confirmarRemocao,
+        fecharConfirmacao,
         finalizarTarefa,
         abrirCriacao,
         abrirEdicao,

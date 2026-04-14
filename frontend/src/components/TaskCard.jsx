@@ -45,7 +45,7 @@ export default function TaskCard({tarefa, concluir, remover, editar}){
         <button
           type="button"
           className="task-card-icon"
-          onClick={() => remover(tarefa.id)}
+          onClick={() => remover(tarefa)}
           title="Excluir tarefa"
         >
           <img src={DeleteIcon} className="task-card-icon-image" alt=""  />
