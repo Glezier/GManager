@@ -2,6 +2,8 @@ import { useMemo  } from "react"
 import { useNavigate } from 'react-router-dom'
 import { getData, formatarData } from "../utils/date"
 
+import { getToken, removeToken } from "../utils/auth"
+
 import TaskForm from "../components/TaskForm"
 import DayTasksPanel from "../components/DayTasksPanel"
 import ConfirmBox from "../components/ConfirmBox"
@@ -19,7 +21,7 @@ import AddIcon from '../assets/icons/add.png'
 
 export default function Dashboard(){
     const navigate = useNavigate()
-    const token = localStorage.getItem("token") || ""
+    const token = getToken()
     const hoje = getData()
 
     const dataFim = (() => {
@@ -83,7 +85,7 @@ export default function Dashboard(){
                     type="button"
                     className="dashboard-logout"
                     onClick={() =>{
-                        localStorage.removeItem("token")
+                        removeToken()
                         navigate("/")
                     }}
                 >

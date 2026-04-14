@@ -3,8 +3,11 @@ import dayGridPlugin from '@fullcalendar/daygrid'
 import interactionPlugin from '@fullcalendar/interaction'
 import { useState, useEffect, useMemo, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { listarTarefas } from '../api/api'
+import { listarTarefas, isAuthError } from '../api/api'
+
+import { getToken, removeToken } from '../utils/auth'
 import { getData, formatarData } from '../utils/date'
+
 import "./Calendar.css"
 import './DayPage.css'
 
@@ -17,7 +20,7 @@ const meses = [
 export default function Calendar(){
     const [tarefas, setTarefas] = useState([])
     const navigate = useNavigate()
-    const token = localStorage.getItem("token") || ""
+    const token = getToken()
     const [periodo, setPeriodo] = useState({
         inicio: "",
         fim:""
@@ -47,11 +50,8 @@ export default function Calendar(){
                 setTarefas(data)
             } catch (error){
                 setErro(error.message)
-                if (
-                    error.message === "Token inválido" ||
-                    error.message === "Token não fornecido"
-                ) {
-                    localStorage.removeItem("token")
+                if (isAuthError(error.message)) {
+                    removeToken()
                     navigate("/")
                 }
             } finally {

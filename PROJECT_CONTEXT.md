@@ -99,7 +99,7 @@ O fluxo principal do produto já existe e está funcional. O foco agora deve sai
 - área para metas futuras, a longo prazo (a definir melhor)
 
 ## Próximo passo atual
-- revisar a experiência de edição e melhorar estados vazios e mensagens da interface
+- melhorar estados vazios e mensagens da interface
 
 ## Direção de arquitetura para confirmação
 - a confirmação deve nascer como componente reutilizável, não como solução específica de tarefas
@@ -111,15 +111,17 @@ O fluxo principal do produto já existe e está funcional. O foco agora deve sai
 - o fluxo de confirmação visual reutilizável já foi integrado ao frontend para remoção de tarefa
 - a API do componente de confirmação foi alinhada entre hook e páginas
 - a etapa foi validada no fluxo principal e pode ser considerada concluída para commit
+- a leitura, persistência e remoção de token no frontend foram padronizadas em util próprio
+- o acesso a rotas privadas e o redirecionamento por sessão inválida ficaram mais consistentes
 
 ## Próxima direção recomendada
-- revisar a experiência de edição de tarefa, com atenção ao preenchimento do modal e clareza do estado de edição
 - melhorar estados vazios e mensagens da interface para dashboard e página do dia
+- revisar a clareza dos feedbacks de loading, erro e sucesso no calendário
 
 
 ## Critérios para o próximo commit
-- este ciclo já pode ser commitado após validação local do `Dashboard` e da `DayPage`
-- o próximo commit deve cobrir a primeira versão do componente reutilizável de confirmação visual
+- este ciclo pode ser commitado após validação local do fluxo de autenticação, logout e rotas privadas
+- o próximo commit deve cobrir a primeira melhoria de estados vazios e mensagens da interface
 
 ## Acordo de trabalho atual
 - mudanças de código dos arquivos da aplicação serão propostas no chat para o usuário aplicar manualmente

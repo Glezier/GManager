@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { login } from '../api/api'
+import { setToken } from '../utils/auth'
 
 export default function Login(){
     const [email, setEmail] = useState("")
@@ -19,7 +20,7 @@ export default function Login(){
             const data = await login(email, senha)
             
             if (data.token){
-                localStorage.setItem("token", data.token)
+                setToken(data.token)
                 navigate("/dashboard")
                 return
             }

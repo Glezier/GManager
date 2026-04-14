@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
-import { listarTarefas, criarTarefa, deletarTarefa, concluirTarefa, atualizarTarefa } from '../api/api'
+import { listarTarefas, criarTarefa, deletarTarefa, concluirTarefa, atualizarTarefa, isAuthError } from '../api/api'
+import { removeToken } from '../utils/auth'
 
 export default function useTasks({token, inicio, fim, navigate}){
     const [tarefas, setTarefas] = useState([])
@@ -29,11 +30,8 @@ export default function useTasks({token, inicio, fim, navigate}){
             setTarefas(data);
         } catch (error) {
             setErroPagina(error.message)
-            if(
-                error.message === "Token inválido" ||
-                error.message === "Token não fornecido"
-            ){
-                localStorage.removeItem("token")
+            if(isAuthError(error.mesage)){
+                removeToken()
                 navigate("/")
             }            
         } finally{

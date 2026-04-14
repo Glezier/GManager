@@ -5,6 +5,8 @@ import useTasks from '../hooks/useTasks'
 import useProgress from '../hooks/useProgress'
 
 import { formatarDataBR, getData } from '../utils/date'
+import { getToken } from '../utils/auth'
+
 import TaskForm from '../components/TaskForm'
 import DayTasksPanel from '../components/DayTasksPanel'
 import ConfirmBox from '../components/ConfirmBox'
@@ -17,7 +19,7 @@ import Preview from '../assets/icons/preview.png'
 export default function DayPage(){
   const { data } = useParams() // pega parâmetros da requisição
   const navigate = useNavigate()
-  const token = localStorage.getItem("token") || ""
+  const token = getToken()
   
   const {
       tarefas,

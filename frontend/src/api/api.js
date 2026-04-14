@@ -1,5 +1,13 @@
 const API_URL = import.meta.env.VITE_API_URL // URL para busca da API
 
+// Verificação e erro de autenticação
+export function isAuthError(message){
+    return(
+        message === 'Token inválido' ||
+        message === 'Token não fornecido'
+    )
+}
+
 // Retornar a mensagem de erro apropriada da requisição
 async function getError(response){
     try{
