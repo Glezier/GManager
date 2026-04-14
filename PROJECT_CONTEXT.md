@@ -125,6 +125,7 @@ O fluxo principal do produto já existe e está funcional. O foco agora deve sai
 - mudanças de código dos arquivos da aplicação serão propostas no chat para o usuário aplicar manualmente
 - o único arquivo que pode ser atualizado diretamente por esta sessão é `PROJECT_CONTEXT.md`
 - este contexto deve ser atualizado a cada etapa relevante concluída
+- alterações feitas por engano diretamente no código devem ser revertidas antes de seguir
 
 ## Forma de trabalho
 - seguir este arquivo como referência principal

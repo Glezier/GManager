@@ -83,6 +83,7 @@ export default function DayPage(){
           <div className='task-modal-overlay' onClick={fecharModal}> 
             <div className='task-modal' onClick={(e) => e.stopPropagation()}> {/* Impedir que o clique suba para o elemento pai */}
               <TaskForm
+                key={editando ? `editar-${editando.id}` : `criar-${data}`}
                 criar={salvarTarefa}
                 cancelar={fecharModal}
                 hoje={data}

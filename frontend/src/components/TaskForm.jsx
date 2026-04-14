@@ -10,6 +10,7 @@ export default function TaskForm ({ criar, cancelar, hoje, erro='', tarefaInicia
     const [hora, setHora] = useState(formatarHora(tarefaInicial?.hora) || "")
     const [status, setStatus] = useState(tarefaInicial?.status || 'pendente')
     const tituloRef = useRef(null)
+    const emEdicao = Boolean(tarefaInicial)
 
     function handleSubmit(e){
         e.preventDefault() // React controlar a execução do formulário
@@ -22,7 +23,7 @@ export default function TaskForm ({ criar, cancelar, hoje, erro='', tarefaInicia
             status
         })
 
-        if(!tarefaInicial){
+        if(!emEdicao){
             setTitulo("")
             setDescricao("")
             setData(hoje)
@@ -39,8 +40,8 @@ export default function TaskForm ({ criar, cancelar, hoje, erro='', tarefaInicia
     return(
         <form className="task-form" onSubmit={handleSubmit}>
             <div className="task-form-head">
-                <h3>{tarefaInicial ? "Editar tarefa": "Nova tarefa"}</h3>
-                <p>{tarefaInicial 
+                <h3>{emEdicao ? "Editar tarefa": "Nova tarefa"}</h3>
+                <p>{emEdicao 
                     ? "Atualize as informações da tarefa"
                     : "Preencha os dados para adicionar uma nova atividade."}
                 </p>
@@ -82,7 +83,7 @@ export default function TaskForm ({ criar, cancelar, hoje, erro='', tarefaInicia
                         onChange={(e)=>{setHora(e.target.value)}}
                     />
 
-                    {tarefaInicial && (
+                    {emEdicao && (
                         <select
                             className='task-form-input'
                             value={status}

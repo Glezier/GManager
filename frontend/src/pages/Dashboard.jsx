@@ -132,6 +132,7 @@ export default function Dashboard(){
                     <div className="task-modal-overlay" onClick={fecharModal}>
                         <div className="task-modal" onClick={(e) => e.stopPropagation()}>
                             <TaskForm
+                                key={editando ? `eitar-${editando.id}` : `criar-${hoje}`}
                                 criar={salvarTarefa}
                                 cancelar={fecharModal}
                                 hoje={hoje}
