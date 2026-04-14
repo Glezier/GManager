@@ -13,7 +13,7 @@ export default function DayTasksPanel({
     onConcluir,
     onRemover,
     onEditar,
-    emptyMessage = 'Nenhuma tarefa para este dia'
+    emptyMessage = 'Adicione uma nova tarefa para começar a organizar esse dia'
 }){
     return(
         <div className="dashboard-panel dashboard-panel-today">
@@ -51,7 +51,9 @@ export default function DayTasksPanel({
 
             <div className="dashboard-task-list">
                 {loading ? (
-                    <p>Carregando tarefas...</p>
+                    <p className="dashboard-feedback dashboard-feedback-loading">
+                        Carregando tarefas...
+                    </p>
                 ) : tarefas.length > 0 ? (
                     tarefas.map((tarefa) => (
                         <TaskCard
@@ -63,7 +65,10 @@ export default function DayTasksPanel({
                         />
                     ))
                 ) : (
-                    <p>{emptyMessage}</p>
+                    <div className="dashboard-empty-state">
+                        <p className="dashboard-empty-title">Nenhuma tarefa encontrada</p>
+                        <p className="dashboard-empty-message">{emptyMessage}</p>
+                    </div>
                 )}
             </div>
         </div>

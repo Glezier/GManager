@@ -148,8 +148,17 @@ export default function Calendar(){
                 </select>
             </div>
 
-            {erro && <p>{erro}</p>}
-            {loading && <p>Carregando calendário...</p>}
+            {erro && (
+                <p className="dashboard-feedback dashboard-feedback-error">
+                    {erro}
+                </p>
+            )}
+
+            {loading && (
+                <p className="dashboard-feedback dashboard-feedback-loading">
+                    Carregando calendário...
+                </p>
+            )}
 
             <button type='button' className='day-back' onClick={()=> navigate('/dashboard')}>
                 Voltar para Dashboard

@@ -106,6 +106,7 @@ export default function Dashboard(){
                     onConcluir={finalizarTarefa}
                     onRemover={solicitarRemocao}
                     onEditar={abrirEdicao}
+                    emptyMessage="Você ainda não tem tarefas para hoje. Que tal adicionar a primeira?"
                     botaoAcao={
                         <button
                             type="button"
