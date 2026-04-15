@@ -8,6 +8,8 @@ import { listarTarefas, isAuthError } from '../api/api'
 import { getToken, removeToken } from '../utils/auth'
 import { getData, formatarData } from '../utils/date'
 
+import LoadingState from '../components/ui/LoadingState'
+
 import "./Calendar.css"
 import './DayPage.css'
 
@@ -125,8 +127,8 @@ export default function Calendar(){
     }, [navigate])
 
     return(
-        <main style={{ margin: "35px"}}>
-            <h1>
+        <main style={{ margin: "30px"}}>
+            <h1 style={{ marginBottom: "10px"}}>
                 Calendário
             </h1>
 
@@ -140,6 +142,9 @@ export default function Calendar(){
             )}
 
             <div className='calendar-toolbar-wrap'>
+                <button type='button' className='day-back' onClick={()=> navigate('/dashboard')}>
+                    Voltar para Dashboard
+                </button>
                 <div className='calendar-toolbar'>
                     <label htmlFor="select-mes">Mês:</label>
                     <select
@@ -172,17 +177,8 @@ export default function Calendar(){
             )}
 
             {loading && (
-                <div className='calendar-loading'>
-                    <div className='calendar-spinner'/>
-                        <p className="dashboard-feedback dashboard-feedback-loading">
-                            Carregando tarefas do calendário...
-                        </p>
-                </div>
+                <LoadingState message="Carregano calendário..."/>
             )}
-
-            <button type='button' className='day-back' onClick={()=> navigate('/dashboard')}>
-                Voltar para Dashboard
-            </button>
 
             <FullCalendar
                 ref={calendarRef}

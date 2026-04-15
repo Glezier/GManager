@@ -1,0 +1,29 @@
+.loading-state {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: #f4f1ea;
+  color: #5f4b32;
+}
+
+.loading-state-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid #d7c7af;
+  border-top-color: #8b6b3f;
+  border-radius: 50%;
+  animation: loading-state-spin 0.8s linear infinite;
+  flex-shrink: 0;
+}
+
+.loading-state-text {
+  line-height: 1.4;
+}
+
+@keyframes loading-state-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

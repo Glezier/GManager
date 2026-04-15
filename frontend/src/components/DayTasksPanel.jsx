@@ -1,4 +1,5 @@
 import TaskCard from "./TaskCard"
+import LoadingState from "./ui/LoadingState"
 
 export default function DayTasksPanel({
     titulo,
@@ -51,9 +52,7 @@ export default function DayTasksPanel({
 
             <div className="dashboard-task-list">
                 {loading ? (
-                    <p className="dashboard-feedback dashboard-feedback-loading">
-                        Carregando tarefas...
-                    </p>
+                    <LoadingState message="Carregano tarefas..."/>
                 ) : tarefas.length > 0 ? (
                     tarefas.map((tarefa) => (
                         <TaskCard

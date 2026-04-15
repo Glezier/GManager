@@ -47,19 +47,23 @@ button{
   flex-wrap: wrap;
 }
 
+.day-page .dashboard-task-list {
+  max-height: none;
+}
+
 .day-back,
 .day-nav button {
   border: 1px solid #d4d4d4;
   border-radius: 14px;
   background: #ffffff;
-  padding: 6px 16px;
+  padding: 2px 16px;
   font-weight: 500;
   color: #222;
   transition: background 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 12px;
+  margin-bottom: 8px;
   font-size: 20px;
 }
 
@@ -81,6 +85,8 @@ button{
   color: white;
   border-color: #222;
   padding: 10px 16px;
+  display: flex;
+  justify-content: flex-start;
 }
 
 .day-back:hover {
