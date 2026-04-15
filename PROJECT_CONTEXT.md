@@ -43,6 +43,7 @@ Objetivos do projeto:
 - modal é o padrão atual para criação e edição de tarefa
 - componentes visuais reutilizáveis devem morar em `components` ou `components/ui`, e não em `utils`
 - estados visuais compartilhados, como loading e confirmação, devem nascer como componentes reutilizáveis
+- o projeto deve caminhar para um CSS global/base compartilhada, reduzindo regras globais espalhadas por páginas isoladas
 
 ### Ambiente
 
@@ -72,6 +73,7 @@ O fluxo principal do produto já existe e está funcional. O foco agora deve sai
 - estilizar melhor o calendário
 - revisar consistência geral do CSS
 - revisar responsividade
+- consolidar um CSS global/base visual compartilhada para a aplicação
 
 ### Fase 3: Fluxo principal mais completo
 - melhorar ordenação por horário
@@ -99,6 +101,7 @@ O fluxo principal do produto já existe e está funcional. O foco agora deve sai
 - exportação
 - métricas simples
 - deploy
+- recuperação de senha via email, com solicitação, envio e redefinição segura
 - área de gestão de gastos (a definir melhor)
 - área para metas futuras, a longo prazo (a definir melhor)
 
@@ -116,6 +119,7 @@ O fluxo principal do produto já existe e está funcional. O foco agora deve sai
 - ainda há textos com encoding quebrado visíveis em vários arquivos do frontend e do backend
 - há pequenos erros textuais em mensagens de interface, como "Carregano"
 - login e cadastro ainda estão visuais e estruturalmente bem crus em comparação ao restante do fluxo principal
+- a organização de estilos ainda depende demais de arquivos de página com regras globais misturadas
 - o backend ainda concentra SQL diretamente nos controllers
 
 ## Próximo passo atual
@@ -123,7 +127,9 @@ O fluxo principal do produto já existe e está funcional. O foco agora deve sai
 
 ## Próxima direção recomendada
 - depois de login e cadastro, revisar consistência visual do dashboard, da página do dia e do calendário
-- em seguida, atacar a revisão de encoding e padronização textual no restante da aplicação
+- em seguida, consolidar um CSS global/base compartilhada para reduzir repetição e conflito de estilo
+- depois disso, atacar a revisão de encoding e padronização textual no restante da aplicação
+- no médio prazo, preparar o terreno para recuperação de senha via email
 - depois disso, voltar para a base técnica madura no backend
 
 ## Critérios para o próximo commit
