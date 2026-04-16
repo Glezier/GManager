@@ -106,9 +106,9 @@ export default function Login(){
                                         aria-label={mostrarSenha ? "Ocultar senha" : "Mostrar senha"}
                                     >
                                     {mostrarSenha ? (
-                                        <img className='eye-icon' src={EyeClosed} alt="" />
+                                        <img className='eye-icon' src={EyeClosed} alt="Mostrar senha" title='Ocultar senha'/>
                                     ) : (
-                                        <img className='eye-icon' src={EyeOpen} alt="" />
+                                        <img className='eye-icon' src={EyeOpen} alt="Ocultar senha" title='Mostrar senha' />
                                     )}
                                 </button>
                             </div>

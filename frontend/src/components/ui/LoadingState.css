@@ -4,15 +4,16 @@
   gap: 10px;
   padding: 12px 14px;
   border-radius: 12px;
-  background: #e0dfdb;
-  color: #362929;
+  background: linear-gradient(180deg, #eef3f8 0%, #e4ebf3 100%);
+  border: 1px solid #d2dbe6;
+  color: #51606f;
 }
 
 .loading-state-spinner {
   width: 16px;
   height: 16px;
-  border: 2px solid #110e0e;
-  color: #362929;;
+  border: 2px solid #c3cfdd;
+  border-top-color: #607284;
   border-radius: 50%;
   animation: loading-state-spin 0.8s linear infinite;
   flex-shrink: 0;

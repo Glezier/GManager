@@ -68,8 +68,10 @@ export default function Dashboard(){
     return(
         <main className="dashboard">
             <header className="dashboard-topbar">
-                <div className="dashboard-brand">
-                    GManager
+                <div className="dashboard-brand-block">
+                    <div className="dashboard-brand">
+                        <strong>GManager</strong> 
+                    </div>
                 </div>
 
                 <nav className="dashboard-nav">
@@ -135,7 +137,7 @@ export default function Dashboard(){
                     <div className="task-modal-overlay" onClick={fecharModal}>
                         <div className="task-modal" onClick={(e) => e.stopPropagation()}>
                             <TaskForm
-                                key={editando ? `eitar-${editando.id}` : `criar-${hoje}`}
+                                key={editando ? `editar-${editando.id}` : `criar-${hoje}`}
                                 criar={salvarTarefa}
                                 cancelar={fecharModal}
                                 hoje={hoje}
@@ -147,10 +149,10 @@ export default function Dashboard(){
                 )}
 
                 <div className="dashboard-panel dashboard-panel-calendar">
+                    <p className="dashboard-panel-label">Planejamento</p>
                     <button type="button" className="calendario" onClick={() => navigate("/calendario")}>
                         Calendário
-                    </button>
-                    <h2>Visão mensal</h2>
+                    </button>   
                 </div>
             </section>
 
@@ -198,9 +200,10 @@ export default function Dashboard(){
                     </div>
 
                     <div className="dashboard-notes-box">
-                        Área reservada para notas gerais.
+                        Espaço reservado para notas gerais, lembretes e ideias rápidas.
                     </div>
-                </div>                
+                </div>
+              
             </section>
 
             <footer className="dashboard-footer">
