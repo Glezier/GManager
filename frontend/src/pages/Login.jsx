@@ -3,13 +3,15 @@ import { useNavigate, Link } from 'react-router-dom'
 import { login } from '../api/api'
 import { setToken } from '../utils/auth'
 import './Auth.css'
-import LoadingState from '../components/ui/LoadingState'
+import EyeClosed from '../assets/icons/eye-closed.png'
+import EyeOpen from '../assets/icons/eye-open.png'
 
 export default function Login(){
     const [email, setEmail] = useState("")
     const [senha, setSenha] = useState("")
     const [erro, setErro] = useState("")
     const [loading, setLoading] = useState(false)
+    const [mostrarSenha, setMostrarSenha] = useState(false)
     const userRef = useRef(null)
 
     const navigate = useNavigate()
@@ -89,27 +91,40 @@ export default function Login(){
 
                         <div className='auth-field'>
                             <label htmlFor="login-password">Senha</label>
-                            <input 
-                                id='login-password'
-                                type="password"
-                                placeholder='Digite sua senha'
-                                value={senha}
-                                onChange={(e) => setSenha(e.target.value)}
-                                required
-                            />
+                            <div className='auth-password-wrap'>
+                                <input 
+                                    id='login-password'
+                                    type={mostrarSenha ? "text" : "password"}
+                                    placeholder='Digite sua senha'
+                                    value={senha}
+                                    onChange={(e) => setSenha(e.target.value)}
+                                    required
+                                />
+                                <button className="auth-password-toggle" 
+                                        type='button'  
+                                        onClick={() => setMostrarSenha((valorAtual) => !valorAtual)}
+                                        aria-label={mostrarSenha ? "Ocultar senha" : "Mostrar senha"}
+                                    >
+                                    {mostrarSenha ? (
+                                        <img className='eye-icon' src={EyeClosed} alt="" />
+                                    ) : (
+                                        <img className='eye-icon' src={EyeOpen} alt="" />
+                                    )}
+                                </button>
+                            </div>
                         </div>
 
                         <button className='auth-submit' type='submit' disabled={loading}>
                             {loading ? "Entrando" : "Entrar"}
                         </button>
-
-                        {loading && 
-                            <LoadingState message="Realizando login..."/>    
-                        }
                     </form>
 
                     <p className='auth-alt'>
                         Não tem conta? <Link to='/register'>Clique aqui</Link>
+                    </p>
+
+                    <p className='auth-alt'>
+                        Recuperação de senha disponível em breve...
                     </p>
 
                 </div>

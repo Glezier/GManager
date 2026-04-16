@@ -174,9 +174,10 @@ body {
 }
 
 .auth-alt {
-  margin: 18px 0 0;
+  margin: 16px 0 0;
   color: #555;
   font-size: 14px;
+  line-height: 1.5;
 }
 
 .auth-alt a {
@@ -203,4 +204,41 @@ body {
   .auth-hero h2 {
     font-size: 2.2rem;
   }
+}
+
+
+.auth-password-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.auth-password-wrap input {
+  padding-right: 60px;
+}
+
+.auth-password-toggle {
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  transform: translateY(-50%);
+  width: 38px;
+  height: 38px;
+  border: none;
+  border-radius: 20px;
+  background: transparent;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  place-items: center;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.auth-password-toggle:hover {
+  background: rgba(0, 0, 0, 0.06);
+}
+
+.eye-icon{
+  width: 28px;
 }

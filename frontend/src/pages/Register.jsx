@@ -100,12 +100,8 @@ export default function Register(){
                         </div>
 
                         <button className="auth-submit" type="submit" disabled={loading}>
-                            {loading ? "Criando conta..." : "Registrar usuário"}
+                            {loading ? "Criando conta..." : "Criar conta"}
                         </button>
-
-                        {loading && 
-                            <LoadingState message="Criando conta..."/>    
-                        }
                     </form>
 
                     <p className="auth-alt">

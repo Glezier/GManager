@@ -1,9 +1,9 @@
 # Projeto: Gerenciador de Tarefas
 
-## Visão do produto
+## Projeto
 Aplicação web de organização pessoal com foco em tarefas por dia, calendário mensal e navegação simples entre datas.
 
-Objetivos do projeto:
+Objetivos:
 1. ser uma ferramenta real de uso pessoal
 2. servir como prática consistente de desenvolvimento full-stack
 
@@ -31,22 +31,13 @@ Objetivos do projeto:
 - feedbacks visuais de erro, sucesso, vazio e loading nas telas principais
 - loading reutilizável em `components/ui`
 - padronização de token e navegação no frontend
-- padronização inicial de datas no frontend
+- clique em eventos do calendário levando para a `DayPage`
+- barra de mês/ano do calendário mais enxuta
+- base visual compartilhada para login e cadastro
+- botão de mostrar/ocultar senha no login
 - tratamento global de erro no backend
 
-### Decisões técnicas já tomadas
-- tarefas devem ser buscadas por intervalo
-- `data` segue o padrão `YYYY-MM-DD`
-- `hora` segue o padrão `HH:MM`
-- formatação humana em `pt-BR` acontece apenas na interface
-- `created_at` pode continuar como timestamp
-- modal é o padrão atual para criação e edição de tarefa
-- componentes visuais reutilizáveis devem morar em `components` ou `components/ui`, e não em `utils`
-- estados visuais compartilhados, como loading e confirmação, devem nascer como componentes reutilizáveis
-- o projeto deve caminhar para um CSS global/base compartilhada, reduzindo regras globais espalhadas por páginas isoladas
-
 ### Ambiente
-
 #### Backend
 - `DB_URL`
 - `JWT_SECRET`
@@ -56,24 +47,20 @@ Objetivos do projeto:
 #### Frontend
 - `VITE_API_URL`
 
-## Situação atual
-O fluxo principal do produto já existe e está funcional. O foco agora deve sair de "criar mais telas" e passar para:
-- reduzir repetição no frontend
-- melhorar manutenção do código
+## Foco atual
 - amadurecer a interface
-- preparar novas funcionalidades com menos retrabalho
-- corrigir fragilidades visuais e textuais antes de abrir novas frentes grandes
+- corrigir fragilidades visuais e textuais
+- preparar a base para crescer sem retrabalho
 
-## Roadmap oficial
+## Roadmap
 
 ### Fase 2: UX e identidade visual
-- revisar visual de login e cadastro
 - revisar visual do dashboard
 - revisar visual da página do dia
-- estilizar melhor o calendário
-- revisar consistência geral do CSS
+- revisar visual do calendário
 - revisar responsividade
-- consolidar um CSS global/base visual compartilhada para a aplicação
+- consolidar CSS global/base compartilhada
+- revisar consistência geral do CSS
 
 ### Fase 3: Fluxo principal mais completo
 - melhorar ordenação por horário
@@ -101,55 +88,34 @@ O fluxo principal do produto já existe e está funcional. O foco agora deve sai
 - exportação
 - métricas simples
 - deploy
-- recuperação de senha via email, com solicitação, envio e redefinição segura
-- área de gestão de gastos (a definir melhor)
-- área para metas futuras, a longo prazo (a definir melhor)
+- recuperação de senha via email
+- área de gestão de gastos
+- área para metas futuras
 
-## Etapas concluídas recentemente
-- o fluxo de confirmação visual reutilizável foi integrado ao frontend para remoção de tarefa
-- a API do componente de confirmação foi alinhada entre hook e páginas
-- a leitura, persistência e remoção de token no frontend foram padronizadas em util próprio
-- o acesso a rotas privadas e o redirecionamento por sessão inválida ficaram mais consistentes
-- Dashboard e DayPage passaram a compartilhar melhor estados de loading, erro, sucesso e vazio via hooks e componentes reutilizáveis
-- criação e edição de tarefa via modal ficaram mais consistentes entre as telas principais
-- o loading visual foi extraído para componente reutilizável em `components/ui`
-- o calendário recebeu feedback visual mais claro, barra de mês/ano mais enxuta e navegação por clique em eventos
-
-## Fragilidades percebidas no estado atual
-- ainda há textos com encoding quebrado visíveis em vários arquivos do frontend e do backend
-- há pequenos erros textuais em mensagens de interface, como "Carregano"
-- login e cadastro ainda estão visuais e estruturalmente bem crus em comparação ao restante do fluxo principal
-- a organização de estilos ainda depende demais de arquivos de página com regras globais misturadas
+## Fragilidades atuais
+- ainda há pequenos erros textuais em mensagens da interface
+- a organização de estilos ainda depende demais de regras espalhadas por páginas
 - o backend ainda concentra SQL diretamente nos controllers
 
+## Etapas concluídas recentemente
+- login e cadastro receberam base visual compartilhada
+- login ganhou botão de mostrar/ocultar senha
+- o fluxo de autenticação no frontend ficou visualmente mais maduro
+
 ## Próximo passo atual
-- revisar visual e experiência de login e cadastro, já corrigindo textos visíveis quebrados nessas telas
+- revisar visual do dashboard
 
 ## Próxima direção recomendada
-- depois de login e cadastro, revisar consistência visual do dashboard, da página do dia e do calendário
-- em seguida, consolidar um CSS global/base compartilhada para reduzir repetição e conflito de estilo
-- depois disso, atacar a revisão de encoding e padronização textual no restante da aplicação
-- no médio prazo, preparar o terreno para recuperação de senha via email
-- depois disso, voltar para a base técnica madura no backend
+- depois do dashboard, revisar página do dia e calendário
+- em seguida, consolidar CSS global/base compartilhada
+- depois disso, voltar para a padronização textual e evolução técnica do backend
 
 ## Critérios para o próximo commit
 - este ciclo já pode ser commitado após validação local de autenticação, rotas privadas, loading reutilizável e navegação do calendário
-- o próximo commit deve cobrir a primeira revisão visual de login e cadastro com textos consistentes
+- o próximo commit deve cobrir a primeira revisão visual do dashboard
 
 ## Acordo de trabalho atual
 - mudanças de código dos arquivos da aplicação serão propostas no chat para o usuário aplicar manualmente
 - o único arquivo que pode ser atualizado diretamente por esta sessão é `PROJECT_CONTEXT.md`
 - este contexto deve ser atualizado a cada etapa relevante concluída
 - alterações feitas por engano diretamente no código devem ser revertidas antes de seguir
-
-## Forma de trabalho
-- seguir este arquivo como referência principal
-- atualizar o contexto ao concluir etapas relevantes
-- evitar abrir frentes muito fora da ordem definida aqui
-
-## Critério de prioridade
-1. corrigir fragilidade técnica real
-2. melhorar o fluxo principal do usuário
-3. reduzir repetição e dívida estrutural
-4. melhorar UX e visual
-5. adicionar novas funcionalidades
