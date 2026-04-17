@@ -1,19 +1,53 @@
-.evento-concluida {
-    background-color: rgb(36, 139, 36);
+.calendar-page {
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 10px;
 }
 
-.evento-pendente {
-    background-color: rgb(165, 33, 33);
+.calendar-hero {
+  margin-bottom: 18px;
+  padding: 22px 24px 10px;
+  border: 1px solid #d5dde8;
+  border-radius: 24px;
+  background:
+    radial-gradient(circle at top right, rgba(198, 210, 224, 0.28), transparent 24%),
+    linear-gradient(180deg, #f8fbff 0%, #edf3f9 100%);
+  box-shadow: 0 18px 38px rgba(41, 52, 68, 0.08);
 }
 
-.fc-daygrid-day {
-    cursor: pointer;
-}
-
-.calendar-toolbar-wrap {
+.calendar-hero-top {
   display: flex;
   justify-content: space-between;
-  margin: 15px 0;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 8px;
+}
+
+.calendar-hero-content {
+  max-width: 720px;
+}
+
+.calendar-hero-label {
+  margin: 0 0 8px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #526273;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.calendar-hero-title {
+  margin: 0 0 12px;
+  font-size: clamp(2.3rem, 4vw, 3.6rem);
+  line-height: 0.95;
+  color: #1f2a37;
+}
+
+.calendar-hero-text {
+  margin: 0;
+  color: #51606f;
+  line-height: 1.6;
+  max-width: 58ch;
 }
 
 .calendar-toolbar {
@@ -21,11 +55,18 @@
   gap: 12px;
   align-items: center;
   justify-content: flex-end;
-  padding: 8px 16px;
-  background: #f3f3f3;
-  border: 1px solid #d8d8d8;
+  flex-wrap: wrap;
+  padding: 10px 16px;
+  background: #f3f6fa;
+  border: 1px solid #d8e0ea;
   border-radius: 14px;
-  }
+}
+
+.calendar-toolbar label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #425466;
+}
 
 .calendar-toolbar select {
   min-width: 140px;
@@ -36,3 +77,45 @@
   background: white;
 }
 
+.calendar-shell {
+  padding: 20px;
+  background: #ffffff;
+  border: 1px solid #d5dde8;
+  border-radius: 24px;
+  box-shadow: 0 18px 38px rgba(41, 52, 68, 0.08);
+}
+
+.evento-concluida {
+  background-color: rgb(36, 139, 36);
+}
+
+.evento-pendente {
+  background-color: rgb(165, 33, 33);
+}
+
+.fc-daygrid-day {
+  cursor: pointer;
+}
+
+@media (max-width: 900px) {
+  .calendar-page {
+    padding: 16px;
+  }
+
+  .calendar-hero-top {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .calendar-toolbar {
+    justify-content: flex-start;
+  }
+
+  .calendar-toolbar select {
+    width: 100%;
+  }
+
+  .calendar-shell {
+    padding: 14px;
+  }
+}

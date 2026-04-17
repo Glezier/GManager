@@ -127,10 +127,57 @@ export default function Calendar(){
     }, [navigate])
 
     return(
-        <main style={{ margin: "30px"}}>
-            <h1 style={{ marginBottom: "10px"}}>
-                Calendário
-            </h1>
+        <main className='calendar-page'>
+            <section className='calendar-hero'>
+                <div className='calendar-hero-top'>
+                    <button 
+                        type='button' 
+                        className='day-back' 
+                        onClick={()=> navigate('/dashboard')}
+                    >
+                        Voltar para Dashboard
+                    </button>
+
+                    <div className='calendar-toolbar'>
+                        <label htmlFor="select-mes">Mês:</label>
+                        <select
+                            id="select-mes"
+                            value={mesSelecionado}
+                            onChange={(e) => setMesSelecionado(Number(e.target.value))}
+                        >
+                            {meses.map((nome, index) => (
+                                <option key={index} value={index}>{nome}</option>
+                            ))}
+                        </select>
+
+                        <label htmlFor="select-ano">Ano:</label>
+                        <select
+                            id="select-ano"
+                            value={anoSelecionado}
+                            onChange={(e) => setAnoSelecionado(Number(e.target.value))}
+                        >
+                            {anos.map((ano) => (
+                                <option key={ano} value={ano}>{ano}</option>
+                            ))}
+                        </select>
+                    </div>
+                </div>
+
+                <div className='calendar-hero-content'>
+                    <p className="calendar-hero-label">Visão mensal</p>
+                    <h1 className="calendar-hero-title">Calendário</h1>
+                </div>
+            </section>
+
+            {erro && (
+                <p className="dashboard-feedback dashboard-feedback-error">
+                    {erro}
+                </p>
+            )}
+
+            {loading && (
+                <LoadingState message="Carregando calendário..."/>
+            )}
 
             {!loading && !erro && tarefas.length === 0 && (
                 <div className="dashboard-empty-state">
@@ -141,57 +188,20 @@ export default function Calendar(){
                 </div>
             )}
 
-            <div className='calendar-toolbar-wrap'>
-                <button type='button' className='day-back' onClick={()=> navigate('/dashboard')}>
-                    Voltar para Dashboard
-                </button>
-                <div className='calendar-toolbar'>
-                    <label htmlFor="select-mes">Mês:</label>
-                    <select
-                        id="select-mes"
-                        value={mesSelecionado}
-                        onChange={(e) => setMesSelecionado(Number(e.target.value))}
-                    >
-                        {meses.map((nome, index) => (
-                            <option key={index} value={index}>{nome}</option>
-                        ))}
-                    </select>
-
-                    <label htmlFor="select-ano">Ano:</label>
-                    <select
-                        id="select-ano"
-                        value={anoSelecionado}
-                        onChange={(e) => setAnoSelecionado(Number(e.target.value))}
-                    >
-                        {anos.map((ano) => (
-                            <option key={ano} value={ano}>{ano}</option>
-                        ))}
-                    </select>
-                </div>
-            </div>
-
-            {erro && (
-                <p className="dashboard-feedback dashboard-feedback-error">
-                    {erro}
-                </p>
-            )}
-
-            {loading && (
-                <LoadingState message="Carregano calendário..."/>
-            )}
-
-            <FullCalendar
-                ref={calendarRef}
-                plugins={[dayGridPlugin, interactionPlugin]}
-                initialView='dayGridMonth'
-                locale='pt-br'
-                events={eventos}
-                dateClick={handleDate}
-                eventClick={handleDateClick}
-                dayMaxEvents={3}
-                height="auto"
-                datesSet={handleDatesSet}
-            />
+            <section className='calendar-shell'>
+                <FullCalendar
+                    ref={calendarRef}
+                    plugins={[dayGridPlugin, interactionPlugin]}
+                    initialView='dayGridMonth'
+                    locale='pt-br'
+                    events={eventos}
+                    dateClick={handleDate}
+                    eventClick={handleDateClick}
+                    dayMaxEvents={3}
+                    height="auto"
+                    datesSet={handleDatesSet}
+                />
+            </section>
         </main>
     )
 }

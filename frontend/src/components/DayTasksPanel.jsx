@@ -52,7 +52,7 @@ export default function DayTasksPanel({
 
             <div className="dashboard-task-list">
                 {loading ? (
-                    <LoadingState message="Carregano tarefas..."/>
+                    <LoadingState message="Carregando tarefas..."/>
                 ) : tarefas.length > 0 ? (
                     tarefas.map((tarefa) => (
                         <TaskCard

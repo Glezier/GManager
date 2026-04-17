@@ -7,6 +7,7 @@
   background: linear-gradient(180deg, #eef3f8 0%, #e4ebf3 100%);
   border: 1px solid #d2dbe6;
   color: #51606f;
+  margin-bottom: 14px;
 }
 
 .loading-state-spinner {

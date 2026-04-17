@@ -38,33 +38,37 @@ export default function DayPage(){
       abrirCriacao,
       abrirEdicao,
       fecharModal
-    }  = useTasks({
-      token,
-      inicio: data,
-      fim: data,
-      navigate
-    })
+  }  = useTasks({
+    token,
+    inicio: data,
+    fim: data,
+    navigate
+  })
 
-    const {
-      quantidadeConcluidas,
-      progresso,
-    } = useProgress(tarefas)
+  const {
+    quantidadeConcluidas,
+    progresso,
+  } = useProgress(tarefas)
 
-    const dataFormatada = useMemo(() => {
-        return formatarDataBR(data)
-    }, [data])
+  const dataFormatada = useMemo(() => {
+      return formatarDataBR(data)
+  }, [data])
     
-    function navegarDia(indice){
-      const novaData = new Date(`${data}T00:00:00`)
-      novaData.setDate(novaData.getDate() + indice)
-      navigate(`/dia/${getData(novaData)}`, {replace: true}) // Voltar do navegador não empilha coisas, troca a rota atual
-    }
+  function navegarDia(indice){
+    const novaData = new Date(`${data}T00:00:00`)
+    novaData.setDate(novaData.getDate() + indice)
+    navigate(`/dia/${getData(novaData)}`, {replace: true}) // Voltar do navegador não empilha coisas, troca a rota atual
+  }
 
-    return(
-      <main className='day-page'>
-
+  return(
+    <main className='day-page'>
+      <section className='day-hero'>
         <div className='day-topbar'>
-          <button type="button" className='day-back' onClick={() => navigate("/calendario")}>
+          <button 
+            type="button" 
+            className='day-back' 
+            onClick={() => navigate("/calendario")}
+          >
             Voltar para Calendário
           </button>
 
@@ -78,59 +82,67 @@ export default function DayPage(){
               <img src={Next} alt="Avançar um dia" className='icons' />
             </button>
           </div>
-
         </div>
 
-        {addTarefa && (
-          <div className='task-modal-overlay' onClick={fecharModal}> 
-            <div className='task-modal' onClick={(e) => e.stopPropagation()}> {/* Impedir que o clique suba para o elemento pai */}
-              <TaskForm
-                key={editando ? `editar-${editando.id}` : `criar-${data}`}
-                criar={salvarTarefa}
-                cancelar={fecharModal}
-                hoje={data}
-                erro={erroForm}
-                tarefaInicial={editando}
-              />
-            </div>
+        <div className="day-hero-content">
+          <p className="day-hero-label">Planejamento diário</p>
+          <p className="day-hero-text">
+            Organize as tarefas deste dia, acompanhe seu progresso e ajuste o que
+            for preciso com rapidez.
+          </p>
+        </div>
+      </section>
+
+      {addTarefa && (
+        <div className='task-modal-overlay' onClick={fecharModal}> 
+          <div className='task-modal' onClick={(e) => e.stopPropagation()}> {/* Impedir que o clique suba para o elemento pai */}
+            <TaskForm
+              key={editando ? `editar-${editando.id}` : `criar-${data}`}
+              criar={salvarTarefa}
+              cancelar={fecharModal}
+              hoje={data}
+              erro={erroForm}
+              tarefaInicial={editando}
+            />
           </div>
-        )}
+        </div>
+      )}
 
-        <ConfirmBox 
-          open={confirmacao.open}
-          title={confirmacao.title}
-          message={confirmacao.message}
-          confirmLabel={confirmacao.confirmLabel}
-          cancelLabel={confirmacao.cancelLabel}
-          variant={confirmacao.variant}
-          loading={confirmacao.loading}
-          onConfirm={confirmarRemocao}
-          onCancel={fecharConfirmacao}
-        />
+      <ConfirmBox 
+        open={confirmacao.open}
+        title={confirmacao.title}
+        message={confirmacao.message}
+        confirmLabel={confirmacao.confirmLabel}
+        cancelLabel={confirmacao.cancelLabel}
+        variant={confirmacao.variant}
+        loading={confirmacao.loading}
+        onConfirm={confirmarRemocao}
+        onCancel={fecharConfirmacao}
+      />
 
-        <DayTasksPanel
-          titulo={dataFormatada}
-          erro={erroPagina}
-          sucesso={sucesso}
-          loading={loading}
-          tarefas={tarefas}
-          tarefasConcluidas={quantidadeConcluidas}
-          progresso={progresso}
-          onConcluir={finalizarTarefa}
-          onRemover={solicitarRemocao}
-          onEditar={abrirEdicao}
-          botaoAcao={
-            <button
-              type="button"
-              className="dashboard-add-task"
-              onClick={abrirCriacao}
-          >
-              <img src={AddIcon} alt="Adicionar tarefas" className="day-icons"/>
-              Nova tarefa
-          </button>
-          }
-          emptyMessage="Nenhuma tarefa para este dia."
-        />
-      </main>
-    )
+      <DayTasksPanel
+        titulo={dataFormatada}
+        erro={erroPagina}
+        sucesso={sucesso}
+        loading={loading}
+        tarefas={tarefas}
+        tarefasConcluidas={quantidadeConcluidas}
+        progresso={progresso}
+        onConcluir={finalizarTarefa}
+        onRemover={solicitarRemocao}
+        onEditar={abrirEdicao}
+        botaoAcao={
+          <button
+            type="button"
+            className="dashboard-add-task"
+            onClick={abrirCriacao}
+        >
+            <img src={AddIcon} alt="Adicionar tarefas" className="day-icons"/>
+            Nova tarefa
+        </button>
+        }
+        emptyMessage="Nenhuma tarefa para este dia.Adicione a primeira para iniciar seu planejamento."
+      />
+    </main>
+  )
 }
