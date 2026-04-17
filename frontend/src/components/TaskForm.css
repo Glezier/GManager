@@ -2,20 +2,21 @@
   display: grid;
   gap: 18px;
   padding: 24px;
-  background: white;
-  border: 1px solid #d8d8d8;
+  background: linear-gradient(180deg, var(--bg-surface) 0%, var(--bg-surface-elevated) 100%);
+  border: 1px solid var(--border-subtle);
   border-radius: 20px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.18);
+  box-shadow: var(--shadow-elevated);
 }
 
 .task-form-head h3 {
   margin: 0 0 6px;
   font-size: 22px;
+  color: var(--text-primary);
 }
 
 .task-form-head p {
   margin: 0;
-  color: #666;
+  color: var(--text-muted);
   font-size: 14px;
 }
 
@@ -31,18 +32,8 @@
 }
 
 .task-form-input {
-  width: 100%;
   padding: 12px 14px;
-  border: 1px solid #cfcfcf;
-  border-radius: 12px;
-  background: white;
   font-size: 15px;
-  outline: none;
-}
-
-.task-form-input:focus {
-  border-color: #888;
-  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.08);
 }
 
 .task-form-actions {
@@ -53,21 +44,41 @@
 
 .task-form-save,
 .task-form-cancel {
-  border: none;
-  border-radius: 12px;
+  min-height: 46px;
+  border-radius: var(--radius-button);
   padding: 12px 16px;
   font-size: 15px;
   cursor: pointer;
+  border: 1px solid transparent;
+  transition: transform var(--transition-fast), background var(--transition-fast), border-color var(--transition-fast);
 }
 
 .task-form-save {
-  background: #222;
-  color: white;
+  background: var(--accent-primary);
+  color: #06120d;
+  border-color: var(--accent-primary);
+  font-weight: 700;
 }
 
 .task-form-cancel {
-  background: #e6e6e6;
-  color: #222;
+  background: var(--bg-surface-soft);
+  color: var(--text-primary);
+  border-color: var(--border-strong);
+}
+
+.task-form-save:hover,
+.task-form-cancel:hover {
+  transform: translateY(-1px);
+}
+
+.task-form-save:hover {
+  background: var(--accent-primary-hover);
+  border-color: var(--accent-primary-hover);
+}
+
+.task-form-cancel:hover {
+  background: #26303d;
+  border-color: var(--accent-primary);
 }
 
 @media (max-width: 700px) {
@@ -79,9 +90,9 @@
 .error {
   margin: 0;
   padding: 10px 12px;
-  border: 1px solid #f5c2c7;
+  border: 1px solid rgba(239, 68, 68, 0.36);
   border-radius: 12px;
-  background: #fde8e8;
-  color: #b42318;
+  background: var(--accent-danger-soft);
+  color: #fecaca;
   font-size: 14px;
 }

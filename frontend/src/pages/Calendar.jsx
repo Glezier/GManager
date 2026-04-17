@@ -11,7 +11,6 @@ import { getData, formatarData } from '../utils/date'
 import LoadingState from '../components/ui/LoadingState'
 
 import "./Calendar.css"
-import './DayPage.css'
 
 const meses = [
     "Janeiro", "Fevereiro", "Março", "Abril",
@@ -166,6 +165,9 @@ export default function Calendar(){
                 <div className='calendar-hero-content'>
                     <p className="calendar-hero-label">Visão mensal</p>
                     <h1 className="calendar-hero-title">Calendário</h1>
+                    <p className="calendar-hero-text">
+                        Navegue pelo mês, visualize seus compromissos e entre em cada dia para ajustar o planejamento.
+                    </p>
                 </div>
             </section>
 

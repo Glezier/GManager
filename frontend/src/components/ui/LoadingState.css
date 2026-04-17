@@ -4,17 +4,17 @@
   gap: 10px;
   padding: 12px 14px;
   border-radius: 12px;
-  background: linear-gradient(180deg, #eef3f8 0%, #e4ebf3 100%);
-  border: 1px solid #d2dbe6;
-  color: #51606f;
+  background: rgba(34, 41, 54, 0.8);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
   margin-bottom: 14px;
 }
 
 .loading-state-spinner {
   width: 16px;
   height: 16px;
-  border: 2px solid #c3cfdd;
-  border-top-color: #607284;
+  border: 2px solid rgba(16, 185, 129, 0.22);
+  border-top-color: var(--accent-primary);
   border-radius: 50%;
   animation: loading-state-spin 0.8s linear infinite;
   flex-shrink: 0;

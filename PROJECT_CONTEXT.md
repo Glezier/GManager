@@ -36,6 +36,10 @@ Objetivos:
 - base visual compartilhada para login e cadastro
 - botão de mostrar/ocultar senha no login
 - tratamento global de erro no backend
+- base global inicial de tema criada com `tokens.css` e `base.css`
+- `Dashboard`, `DayPage`, `Calendar` e telas de autenticação migrados para a nova direção visual base
+- `TaskCard`, `TaskForm`, `ConfirmBox` e `LoadingState` alinhados aos tokens visuais compartilhados
+- build e lint validados após a primeira passada de refatoração visual
 
 ### Ambiente
 #### Backend
@@ -47,21 +51,17 @@ Objetivos:
 #### Frontend
 - `VITE_API_URL`
 
-## Foco atual
-- amadurecer a interface
-- corrigir fragilidades visuais e textuais
-- preparar a base para crescer sem retrabalho
-- aplicar a nova direção de identidade visual de forma incremental nas telas principais
-
 ## Roadmap
 
 ### Fase 2: UX e identidade visual
+- em andamento: revisão geral da estilização para seguir o `Guia Style.md`
 - concluído: revisar visual do dashboard
-- próximo passo: revisar visual da página do dia
-- próximo passo: revisar visual do calendário
+- em andamento: revisar visual da página do dia
+- revisar visual do calendário
 - revisar responsividade
-- consolidar CSS global/base compartilhada
+- concluído: consolidar CSS global/base compartilhada
 - revisar consistência geral do CSS
+- revisar acabamento fino após a migração inicial do tema
 
 ### Fase 3: Fluxo principal mais completo
 - melhorar ordenação por horário
@@ -94,33 +94,6 @@ Objetivos:
 - área para metas futuras
 - integração com time de futebol
 
-## Fragilidades atuais
-- ainda há pequenos erros textuais em mensagens da interface, como textos de loading
-- a `DayPage` e o calendário ainda precisam alcançar o mesmo nível de acabamento visual do dashboard
-- a organização de estilos ainda depende demais de regras espalhadas por páginas
-- o backend ainda concentra SQL diretamente nos controllers
-
-## Etapas concluídas recentemente
-- login e cadastro receberam base visual compartilhada
-- login ganhou botão de mostrar/ocultar senha
-- o fluxo de autenticação no frontend ficou visualmente mais maduro
-- dashboard recebeu revisão visual inicial
-- estados vazios, loading reutilizável e confirmação visual já estão integrados no fluxo principal
-- `Guia Style.md` foi reescrito como guia de identidade visual do GManager focado na refatoração incremental do projeto atual
-
-## Próximo passo atual
-- revisar visual da `DayPage` e do calendário, junto com correções textuais visíveis da interface
-
-## Subfoco deste ciclo
-- alinhar a `DayPage` ao mesmo nível visual do dashboard
-- retirar estilos inline do calendário e dar uma estrutura visual própria para a página
-- corrigir textos visíveis com erro, principalmente mensagens de loading
-- aplicar a direção do `Guia Style.md` sem trocar stack e sem abrir uma refatoração estrutural fora do escopo atual
-
-## Próxima direção recomendada
-- depois da `DayPage` e do calendário, consolidar CSS global/base compartilhada
-- depois disso, voltar para a padronização textual e evolução técnica do backend
-
 ## Apoio de design
 - para as próximas revisões visuais, vale estruturar referências e componentes em uma ferramenta de design antes de codar
 - a prioridade é organizar tokens visuais, componentes-base e variações das telas principais
@@ -131,13 +104,28 @@ Objetivos:
 - o `Guia Style.md` passa a ser a principal referência visual para a Fase 2
 - ele deve orientar cores, superfícies, feedbacks, componentes-base e consistência entre telas
 - a implementação deve adaptar o guia ao GManager real, evitando copiar referências externas de forma literal
+- agora que a base visual inicial já foi criada, o guia passa a servir principalmente como referência de validação, ajuste fino e coerência entre telas
+- ele continua útil para evitar regressões visuais e para orientar o refinamento da `DayPage`, do `Calendar` e da consistência geral do frontend
 
-## Critérios para o próximo commit
-- este ciclo já pode ser commitado após validação local de autenticação, rotas privadas, loading reutilizável e navegação do calendário
-- o próximo commit deve cobrir a primeira revisão visual da `DayPage` e do calendário, além de correções textuais visíveis
+## Foco atual
+- fazer uma revisão guiada da `DayPage` com base no uso real da tela
+- corrigir desequilíbrios visuais, espaçamentos e transições entre superfícies
+- melhorar a leitura do topo, da área de progresso e da lista de tarefas
+- preparar o mesmo tipo de revisão guiada para o `Calendar` logo em seguida
+
+## Próximo passo atual
+- revisar a `DayPage` em detalhes após a primeira passada de tema global
+- corrigir problemas visuais percebidos no uso, como transição de fundo, proporção da hero e composição da área principal
+- fechar um padrão visual mais maduro para a tela antes de avançar para o `Calendar`
+
+## Subfoco deste ciclo
+- revisar o fundo global versus o conteúdo da `DayPage`
+- ajustar altura útil da página e distribuição vertical do layout
+- refinar a hero, os botões de navegação, o bloco de progresso e a lista de tarefas
+- validar a coerência entre `DayPage` e `Dashboard` antes de migrar o mesmo nível de acabamento para o `Calendar`
 
 ## Acordo de trabalho atual
-- mudanças de código dos arquivos da aplicação serão propostas no chat para o usuário aplicar manualmente
-- o único arquivo que pode ser atualizado diretamente por esta sessão é `PROJECT_CONTEXT.md`
+- mudanças de código dos arquivos da aplicação podem ser aplicadas diretamente por esta sessão quando alinhadas com o usuário
+- o `PROJECT_CONTEXT.md` continua podendo ser atualizado diretamente por esta sessão
 - este contexto deve ser atualizado a cada etapa relevante concluída
 - alterações feitas por engano diretamente no código devem ser revertidas antes de seguir

@@ -86,6 +86,7 @@ export default function DayPage(){
 
         <div className="day-hero-content">
           <p className="day-hero-label">Planejamento diário</p>
+          <h1 className="day-hero-title">{dataFormatada}</h1>
           <p className="day-hero-text">
             Organize as tarefas deste dia, acompanhe seu progresso e ajuste o que
             for preciso com rapidez.
@@ -121,7 +122,8 @@ export default function DayPage(){
       />
 
       <DayTasksPanel
-        titulo={dataFormatada}
+        subtitulo="Agenda do dia"
+        titulo="Tarefas"
         erro={erroPagina}
         sucesso={sucesso}
         loading={loading}
@@ -141,7 +143,7 @@ export default function DayPage(){
             Nova tarefa
         </button>
         }
-        emptyMessage="Nenhuma tarefa para este dia.Adicione a primeira para iniciar seu planejamento."
+        emptyMessage="Nenhuma tarefa para este dia. Adicione a primeira para iniciar seu planejamento."
       />
     </main>
   )

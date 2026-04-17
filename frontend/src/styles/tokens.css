@@ -1,0 +1,44 @@
+:root {
+  --bg-app: #0f1115;
+  --bg-app-alt: #141820;
+  --bg-surface: #171b22;
+  --bg-surface-elevated: #1d232c;
+  --bg-surface-soft: #222936;
+
+  --text-primary: #f3f5f7;
+  --text-secondary: #c7ced6;
+  --text-muted: #8f99a6;
+
+  --border-subtle: #2b3442;
+  --border-strong: #3a4657;
+
+  --accent-primary: #10b981;
+  --accent-primary-hover: #0ea371;
+  --accent-info: #38bdf8;
+  --accent-warning: #f59e0b;
+  --accent-danger: #ef4444;
+  --accent-success-soft: rgba(16, 185, 129, 0.14);
+  --accent-danger-soft: rgba(239, 68, 68, 0.14);
+  --accent-info-soft: rgba(56, 189, 248, 0.14);
+
+  --shadow-soft: 0 12px 32px rgba(0, 0, 0, 0.22);
+  --shadow-elevated: 0 20px 48px rgba(0, 0, 0, 0.28);
+
+  --radius-panel: 24px;
+  --radius-card: 18px;
+  --radius-input: 14px;
+  --radius-button: 14px;
+  --radius-pill: 999px;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-7: 32px;
+  --space-8: 40px;
+
+  --max-layout-width: 1300px;
+  --transition-fast: 0.2s ease;
+}

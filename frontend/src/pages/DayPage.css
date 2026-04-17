@@ -1,47 +1,19 @@
-button{
-  cursor: pointer;
-}
-
 .day-page {
-  max-width: 1100px;
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 24px;
-}
-
-.day-list {
-  display: grid;
-  gap: 12px;
-  margin-top: 20px;
-}
-
-.day-feedback {
-  margin: 16px 0;
-  padding: 12px 14px;
-  border-radius: 12px;
-  font-size: 14px;
-}
-
-.day-feedback-error {
-  background: #fde8e8;
-  color: #b42318;
-  border: 1px solid #f5c2c7;
-}
-
-.day-feedback-success {
-  background: #e7f6ec;
-  color: #1f7a35;
-  border: 1px solid #b7dfc2;
+  padding: 20px;
+  min-height: 100vh;
 }
 
 .day-hero {
   margin-bottom: 24px;
-  padding: 22px 24px 26px;
-  border: 1px solid #d5dde8;
-  border-radius: 24px;
+  padding: 28px;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-panel);
   background:
-    radial-gradient(circle at top left, rgba(198, 210, 224, 0.32), transparent 24%),
-    linear-gradient(180deg, #f8fbff 0%, #edf3f9 100%);
-  box-shadow: 0 18px 38px rgba(41, 52, 68, 0.08);
+    radial-gradient(circle at top left, rgba(16, 185, 129, 0.14), transparent 28%),
+    linear-gradient(180deg, var(--bg-surface) 0%, #11161d 100%);
+  box-shadow: var(--shadow-elevated);
 }
 
 .day-hero-content {
@@ -52,15 +24,22 @@ button{
   margin: 0 0 8px;
   font-size: 13px;
   font-weight: 700;
-  color: #526273;
+  color: var(--text-muted);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.08em;
+}
+
+.day-hero-title {
+  margin: 0 0 12px;
+  font-size: clamp(2.4rem, 4vw, 3.8rem);
+  line-height: 0.95;
+  color: var(--text-primary);
 }
 
 .day-hero-text {
   margin: 0;
   max-width: 56ch;
-  color: #51606f;
+  color: var(--text-secondary);
   line-height: 1.6;
 }
 
@@ -84,60 +63,52 @@ button{
 
 .day-back,
 .day-nav button {
-  border: 1px solid #d4d4d4;
-  border-radius: 14px;
-  background: #ffffff;
-  padding: 2px 16px;
-  font-weight: 500;
-  color: #222;
-  transition: background 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+  min-height: 46px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-button);
+  background: var(--bg-surface-soft);
+  padding: 0 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+  transition: background var(--transition-fast), transform var(--transition-fast), border-color var(--transition-fast);
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 8px;
-  font-size: 20px;
+  gap: 10px;
+  font-size: 0.95rem;
 }
 
 .day-back:hover,
 .day-nav button:hover {
-  background: #f3f6fa;
-  border-color: #bcc8d6;
+  background: #26303d;
+  border-color: var(--accent-primary);
   transform: translateY(-1px);
 }
 
 .day-back:focus,
 .day-nav button:focus {
-  outline: 2px solid #8a8a8a;
+  outline: 2px solid var(--accent-primary);
   outline-offset: 2px;
 }
 
 .day-back {
-  background: #263241;
-  color: white;
-  border-color: #263241;
-  padding: 10px 16px;
   display: flex;
   justify-content: flex-start;
 }
 
-.day-back:hover {
-  background: #334155;
-  border-color: #334155;
-}
-
-.day-title {
-  margin: 0 0 20px;
-}
-
 .icons{
-  width: 26px;
-  margin: 10px;
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  object-fit: contain;
+  filter: brightness(0) invert(1);
 }
 
 .task-modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.35);
+  background: rgba(8, 11, 15, 0.72);
+  backdrop-filter: blur(6px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -147,60 +118,6 @@ button{
 
 .task-modal {
   width: min(100%, 560px);
-}
-
-.day-header {
-  margin-bottom: 18px;
-}
-
-.day-label {
-  margin: 0 0 6px;
-  font-size: 15px;
-  font-weight: 600;
-  color: #666;
-}
-
-.day-title {
-  margin: 0;
-  font-size: 38px;
-}
-
-.day-actions {
-  margin-bottom: 20px;
-}
-
-.day-add-task {
-  border: 1px solid #cfcfcf;
-  border-radius: 12px;
-  background: #222;
-  color: white;
-  padding: 10px 16px;
-  ;
-}
-
-.day-section {
-  margin-top: 20px;
-}
-
-.day-section-head {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 16px;
-}
-
-.day-section-head h2,
-.day-section-head p {
-  margin: 0;
-}
-
-.day-empty {
-  margin: 0;
-  padding: 20px;
-  border-radius: 14px;
-  background: #f3f3f3;
-  color: #666;
 }
 
 @media (max-width: 900px) {
