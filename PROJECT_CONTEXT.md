@@ -40,6 +40,7 @@ Objetivos:
 - `Dashboard`, `DayPage`, `Calendar` e telas de autenticação migrados para a nova direção visual base
 - `TaskCard`, `TaskForm`, `ConfirmBox` e `LoadingState` alinhados aos tokens visuais compartilhados
 - build e lint validados após a primeira passada de refatoração visual
+- refinamento visual principal concluído em `Dashboard`, `DayPage` e `Calendar`
 
 ### Ambiente
 #### Backend
@@ -54,14 +55,7 @@ Objetivos:
 ## Roadmap
 
 ### Fase 2: UX e identidade visual
-- em andamento: revisão geral da estilização para seguir o `Guia Style.md`
-- concluído: revisar visual do dashboard
-- em andamento: revisar visual da página do dia
-- revisar visual do calendário
 - revisar responsividade
-- concluído: consolidar CSS global/base compartilhada
-- revisar consistência geral do CSS
-- revisar acabamento fino após a migração inicial do tema
 
 ### Fase 3: Fluxo principal mais completo
 - melhorar ordenação por horário
@@ -108,21 +102,17 @@ Objetivos:
 - ele continua útil para evitar regressões visuais e para orientar o refinamento da `DayPage`, do `Calendar` e da consistência geral do frontend
 
 ## Foco atual
-- fazer uma revisão guiada da `DayPage` com base no uso real da tela
-- corrigir desequilíbrios visuais, espaçamentos e transições entre superfícies
-- melhorar a leitura do topo, da área de progresso e da lista de tarefas
-- preparar o mesmo tipo de revisão guiada para o `Calendar` logo em seguida
+- encerrar o ciclo principal de identidade visual com a base já consolidada
+- manter a responsividade como pendência futura, fora do foco imediato
+- preparar o retorno para a próxima fase funcional do projeto
 
 ## Próximo passo atual
-- revisar a `DayPage` em detalhes após a primeira passada de tema global
-- corrigir problemas visuais percebidos no uso, como transição de fundo, proporção da hero e composição da área principal
-- fechar um padrão visual mais maduro para a tela antes de avançar para o `Calendar`
+- retomar a evolução funcional do projeto após o fechamento da estilização principal
+- deixar a revisão de responsividade para um ciclo posterior dedicado
 
 ## Subfoco deste ciclo
-- revisar o fundo global versus o conteúdo da `DayPage`
-- ajustar altura útil da página e distribuição vertical do layout
-- refinar a hero, os botões de navegação, o bloco de progresso e a lista de tarefas
-- validar a coerência entre `DayPage` e `Dashboard` antes de migrar o mesmo nível de acabamento para o `Calendar`
+- registrar o fechamento da refatoração visual principal
+- manter o tema global e os componentes compartilhados como base estável para as próximas fases
 
 ## Acordo de trabalho atual
 - mudanças de código dos arquivos da aplicação podem ser aplicadas diretamente por esta sessão quando alinhadas com o usuário

@@ -195,10 +195,11 @@ textarea:focus {
 .empty-state,
 .dashboard-empty-state {
   padding: 24px 18px;
-  border: 1px dashed var(--border-strong);
+  border: 1px;
   border-radius: var(--radius-card);
   background: rgba(34, 41, 54, 0.65);
   text-align: center;
+  margin-bottom: 16px;
 }
 
 .empty-title,

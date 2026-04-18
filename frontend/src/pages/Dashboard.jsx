@@ -70,7 +70,8 @@ export default function Dashboard(){
             <header className="dashboard-topbar">
                 <div className="dashboard-brand-block">
                     <div className="dashboard-brand">
-                        <strong>GManager</strong> 
+                        <strong>GManager</strong>
+                        <p>Visão geral da sua rotina</p>
                     </div>
                 </div>
 
@@ -150,9 +151,13 @@ export default function Dashboard(){
 
                 <div className="dashboard-panel dashboard-panel-calendar">
                     <p className="dashboard-panel-label">Planejamento</p>
+                    <h2>Veja o mês e ajuste os próximos dias</h2>
+                    <p className="dashboard-panel-text">
+                        Acesse o calendário para revisar compromissos, navegar entre datas e manter a semana sob controle.
+                    </p>
                     <button type="button" className="calendario" onClick={() => navigate("/calendario")}>
                         Calendário
-                    </button>   
+                    </button>
                 </div>
             </section>
 
@@ -200,7 +205,12 @@ export default function Dashboard(){
                     </div>
 
                     <div className="dashboard-notes-box">
-                        Espaço reservado para notas gerais, lembretes e ideias rápidas.
+                        <p className="dashboard-notes-lead">
+                            Espaço reservado para notas gerais, lembretes e ideias rápidas.
+                        </p>
+                        <p className="dashboard-notes-subtext">
+                            Aqui entram observações do dia a dia, pontos de atenção e tudo o que não precisa virar tarefa agora.
+                        </p>
                     </div>
                 </div>
               
