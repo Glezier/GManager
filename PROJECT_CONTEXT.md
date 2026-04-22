@@ -54,13 +54,9 @@ Objetivos:
 
 ## Roadmap
 
-### Fase 2: UX e identidade visual
-- revisar responsividade
-
 ### Fase 3: Fluxo principal mais completo
 - melhorar ordenação por horário
 - revisar a experiência de edição
-- em andamento: melhorar estados vazios e mensagens da interface
 
 ### Fase 4: Notas e organização pessoal
 - adicionar notas
@@ -76,6 +72,7 @@ Objetivos:
 - revisar encoding e padronização textual
 
 ### Fase 6: Recursos avançados
+- responsividade
 - filtros por status e data
 - busca de tarefas
 - categorias e prioridade
@@ -100,19 +97,6 @@ Objetivos:
 - a implementação deve adaptar o guia ao GManager real, evitando copiar referências externas de forma literal
 - agora que a base visual inicial já foi criada, o guia passa a servir principalmente como referência de validação, ajuste fino e coerência entre telas
 - ele continua útil para evitar regressões visuais e para orientar o refinamento da `DayPage`, do `Calendar` e da consistência geral do frontend
-
-## Foco atual
-- encerrar o ciclo principal de identidade visual com a base já consolidada
-- manter a responsividade como pendência futura, fora do foco imediato
-- preparar o retorno para a próxima fase funcional do projeto
-
-## Próximo passo atual
-- retomar a evolução funcional do projeto após o fechamento da estilização principal
-- deixar a revisão de responsividade para um ciclo posterior dedicado
-
-## Subfoco deste ciclo
-- registrar o fechamento da refatoração visual principal
-- manter o tema global e os componentes compartilhados como base estável para as próximas fases
 
 ## Acordo de trabalho atual
 - mudanças de código dos arquivos da aplicação podem ser aplicadas diretamente por esta sessão quando alinhadas com o usuário

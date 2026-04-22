@@ -4,6 +4,7 @@ import { getData, formatarData } from "../utils/date"
 
 import { getToken, removeToken } from "../utils/auth"
 
+import MiniCalendar from "../components/MiniCalendar"
 import TaskForm from "../components/TaskForm"
 import DayTasksPanel from "../components/DayTasksPanel"
 import ConfirmBox from "../components/ConfirmBox"
@@ -23,10 +24,17 @@ export default function Dashboard(){
     const navigate = useNavigate()
     const token = getToken()
     const hoje = getData()
-
+    // Busca iniciando por mes
+    const dataInicio = (() => {
+        const data = new Date(`${hoje}T00:00:00`)
+        data.setDate(1)
+        return getData(data)
+    }) ()
+    // Busca com termino por mês
     const dataFim = (() => {
         const data = new Date(`${hoje}T00:00:00`)
-        data.setDate(data.getDate() + 5)
+        data.setMonth(data.getMonth() + 1)
+        data.setDate(0)
         return getData(data)
     })()
 
@@ -49,7 +57,7 @@ export default function Dashboard(){
         fecharModal,
     } = useTasks({
         token,
-        inicio: hoje,
+        inicio: dataInicio,
         fim: dataFim,
         navigate,
     })
@@ -149,16 +157,10 @@ export default function Dashboard(){
                     </div>
                 )}
 
-                <div className="dashboard-panel dashboard-panel-calendar">
-                    <p className="dashboard-panel-label">Planejamento</p>
-                    <h2>Veja o mês e ajuste os próximos dias</h2>
-                    <p className="dashboard-panel-text">
-                        Acesse o calendário para revisar compromissos, navegar entre datas e manter a semana sob controle.
-                    </p>
-                    <button type="button" className="calendario" onClick={() => navigate("/calendario")}>
-                        Calendário
-                    </button>
-                </div>
+                <MiniCalendar 
+                    tarefas = {tarefas}
+                    onOpen = {() => navigate("/calendario")}
+                />
             </section>
 
             <section className="dashboard-panel">
