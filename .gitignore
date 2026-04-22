@@ -1,5 +1,11 @@
 node_modules/
-.env
 notes.txt
 dist/
 coverage/
+
+.env
+.env.*
+backend/.env
+frontend/.env
+backend/.env.*
+frontend/.env.*

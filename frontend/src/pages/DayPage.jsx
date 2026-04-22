@@ -6,6 +6,7 @@ import useProgress from '../hooks/useProgress'
 
 import { formatarDataBR, getData } from '../utils/date'
 import { getToken } from '../utils/auth'
+import { ordenarTarefas } from '../utils/taskOrder'
 
 import TaskForm from '../components/TaskForm'
 import DayTasksPanel from '../components/DayTasksPanel'
@@ -53,6 +54,10 @@ export default function DayPage(){
   const dataFormatada = useMemo(() => {
       return formatarDataBR(data)
   }, [data])
+
+  const tarefasOrdenadas = useMemo(() => {
+    return ordenarTarefas(tarefas)
+  }, [tarefas])
     
   function navegarDia(indice){
     const novaData = new Date(`${data}T00:00:00`)
@@ -127,7 +132,7 @@ export default function DayPage(){
         erro={erroPagina}
         sucesso={sucesso}
         loading={loading}
-        tarefas={tarefas}
+        tarefas={tarefasOrdenadas}
         tarefasConcluidas={quantidadeConcluidas}
         progresso={progresso}
         onConcluir={finalizarTarefa}

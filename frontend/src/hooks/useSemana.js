@@ -1,5 +1,6 @@
 import { useMemo } from "react"
 import { formatarData, getData } from "../utils/date"
+import { ordenarTarefas } from "../utils/taskOrder"
 
 export default function useSemana(data, tarefas = []){
     const semana = useMemo(()=>{
@@ -11,8 +12,8 @@ export default function useSemana(data, tarefas = []){
             data.setDate(base.getDate()+i)
 
             const dataFormatada = getData(data)
-            const tarefasDoDia = tarefas.filter(
-                (tarefa) => formatarData(tarefa.data) === dataFormatada
+            const tarefasDoDia = ordenarTarefas(
+                tarefas.filter((tarefa) => formatarData(tarefa.data) === dataFormatada)
             )
 
             dias.push({

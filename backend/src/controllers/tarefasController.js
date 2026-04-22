@@ -111,7 +111,7 @@ exports.listarTarefas = async (req,res, next) => {
             FROM tarefas
             WHERE usuario_id = $1
             AND data BETWEEN $2 AND $3
-            ORDER BY data ASC, hora ASC NULLS LAST`,
+            ORDER BY data ASC, hora ASC NULLS LAST, created_at ASC, id ASC`,
             [usuario_id, inicio, fim]
         )
 

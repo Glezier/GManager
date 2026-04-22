@@ -1,8 +1,9 @@
 import { useMemo  } from "react"
 import { useNavigate } from 'react-router-dom'
-import { getData, formatarData } from "../utils/date"
 
+import { getData, formatarData } from "../utils/date"
 import { getToken, removeToken } from "../utils/auth"
+import { ordenarTarefas } from "../utils/taskOrder"
 
 import MiniCalendar from "../components/MiniCalendar"
 import TaskForm from "../components/TaskForm"
@@ -62,8 +63,12 @@ export default function Dashboard(){
         navigate,
     })
 
+    // Ordenação das tarefas usando o util
     const tarefasDeHoje = useMemo(() => {
-        return tarefas.filter((tarefa) => formatarData(tarefa.data) === hoje)
+        const tarefasFiltradas = tarefas.filter(
+            (tarefa) => formatarData(tarefa.data) === hoje
+        )
+        return ordenarTarefas(tarefasFiltradas)
     }, [tarefas, hoje])
 
     const {

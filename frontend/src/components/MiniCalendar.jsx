@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 import { formatarData } from '../utils/date'
 import './MiniCalendar.css'
 
-const diasSemana = ['D', 'S', 'T', 'Q', 'Q', 'S', 'S']
+const diasSemana = ['DOM', 'SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SAB']
 
 export default function MiniCalendar({tarefas = [], onOpen}){
     const hoje = new Date()

@@ -68,7 +68,6 @@
   font-size: 12px;
   font-weight: 700;
   color: var(--text-muted);
-  text-transform: uppercase;
 }
 
 .mini-calendar-cell {
