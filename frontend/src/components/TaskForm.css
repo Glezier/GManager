@@ -36,6 +36,18 @@
   font-size: 15px;
 }
 
+.task-form-status-group {
+  display: grid;
+  gap: 8px;
+  width: 100%;
+}
+
+.task-form-status-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
 .task-form-actions {
   display: flex;
   gap: 10px;

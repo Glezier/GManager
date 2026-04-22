@@ -64,9 +64,6 @@ Objetivos:
 
 ## Roadmap
 
-### Fase 3: Fluxo principal mais completo
-- revisar a experiência de edição
-
 ### Fase 4: Validação por email
 - validar formato e experiência de email no fluxo de autenticação
 - preparar verificação de email no cadastro

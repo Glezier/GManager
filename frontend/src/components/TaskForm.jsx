@@ -42,7 +42,7 @@ export default function TaskForm ({ criar, cancelar, hoje, erro='', tarefaInicia
             <div className="task-form-head">
                 <h3>{emEdicao ? "Editar tarefa": "Nova tarefa"}</h3>
                 <p>{emEdicao 
-                    ? "Atualize as informações da tarefa"
+                    ? "Revise os dados abaixo e salve as alterações."
                     : "Preencha os dados para adicionar uma nova atividade."}
                 </p>
             </div>
@@ -84,21 +84,29 @@ export default function TaskForm ({ criar, cancelar, hoje, erro='', tarefaInicia
                     />
 
                     {emEdicao && (
-                        <select
-                            className='task-form-input'
-                            value={status}
-                            onChange={(e) => setStatus(e.target.value)}
-                        >
-                            <option value="pendente">Pendente</option>
-                            <option value="concluida">Concluida</option>
-                        </select>
+                        <div className='task-form-status-group'>
+                            <label htmlFor="task-status" className='task-form-status-label'>
+                                Status
+                            </label>
+
+                            <select
+                                id='task-status'
+                                className='task-form-input'
+                                value={status}
+                                onChange={(e) => setStatus(e.target.value)}
+                            >
+                                <option value="pendente">Pendente</option>
+                                <option value="concluida">Concluida</option>
+                            </select>
+
+                        </div>
                     )}
                 </div>
             </div>
 
             <div className="task-form-actions">
                 <button className="task-form-save" type="submit">
-                    Salvar tarefa
+                    {emEdicao ? "Salvar alterações": "Salvar tarefa"}
                 </button>
 
                 <button
@@ -106,7 +114,7 @@ export default function TaskForm ({ criar, cancelar, hoje, erro='', tarefaInicia
                     type="button"
                     onClick={cancelar}
                 >
-                    Cancelar
+                    {emEdicao ? "Descartar edição" : "Cancelar"}
                 </button>
             </div>
         </form>
