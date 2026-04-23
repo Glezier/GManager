@@ -3,10 +3,74 @@ const validator = require('validator')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const AppError = require('../utils/AppError')
+const {gerarTokenEmail, gerarHashToken, gerarExpiracaoEmailToken} =  require('../utils/EmailVerification')
 
 // Função para validação do email
 function isValidEmail(email){
     return validator.isEmail(email)
+}
+
+// Verificação de email
+exports.verificarEmail = async(req, res, next) => {
+    try{
+        const {token} = req.query
+
+        if (!token){
+            return next(new AppError(
+                'Token de verificação não informado',
+                400,
+                'VALIDATION_ERROR'
+            ))
+        }
+
+        const tokenHash = gerarHashToken(token)
+
+        // Busca token não usado nem expirado
+        const tokenResult = await pool.query(
+            `SELECT *
+            FROM email_verification_tokens
+            WHERE token_hash = $1
+            AND used_at IS NULL
+            AND expires_at > NOW()
+            LIMIT 1`,
+            [tokenHash]
+        )
+
+        if (tokenResult.rows.length === 0){
+            return next(new AppError(
+                'Token inválido ou expirado',
+                400,
+                'INVALID_TOKEN'
+            ))
+        }
+
+        const tokenData = tokenResult.rows[0]
+
+        // Atualiza o usuário para email verificado
+        await pool.query(
+            `UPDATE usuarios
+            SET email_verificado = true,
+            email_verificado_em = NOW(),
+            updated_at = NOW()
+            WHERE id = $1`,
+            [tokenData.usuario_id]
+        )
+
+        // Atualiza token para usado
+        await pool.query(
+            `UPDATE email_verification_tokens
+            SET used_at = NOW()
+            WHERE id = $1`,
+            [tokenData.id]
+        )
+
+        res.json({
+            message: 'Email verificado com sucesso'
+        })
+
+    } catch(error){
+        next(error)
+    }
 }
 
 // Registro
@@ -52,13 +116,39 @@ exports.registrar = async (req, res, next) => {
 
         // Inserção do usuário no banco de dados
         const result = await pool.query(
-            `INSERT INTO usuarios (nome, email, senha)
-            VALUES ($1, $2, $3)
-            RETURNING id, nome, email`,
-            [nome.trim(), emailCorrigido, senhaHash]
+            `INSERT INTO usuarios (nome, email, senha, email_verificado, provider)
+            VALUES ($1, $2, $3, $4, $5)
+            RETURNING id, nome, email, email_verificado`,
+            [nome.trim(), emailCorrigido, senhaHash, false, 'local',]
         )
 
-        res.status(201).json(result.rows[0])
+        const usuario = result.rows[0]
+
+        // Gerar token para ser enviado por email
+        const tokenEmail = gerarTokenEmail()
+
+        // Produz hash do token
+        const tokenHash = gerarHashToken(tokenEmail)
+
+        // Expiração do link de verificação
+        const tokenExpiraEm = gerarExpiracaoEmailToken()
+
+        await pool.query(
+            `INSERT INTO email_verification_tokens (usuario_id, token_hash, expires_at)
+            VALUES ($1, $2, $3)`,
+            [usuario.id, tokenHash, tokenExpiraEm]
+        )
+
+        const response = {
+            usuario,
+            message: 'Conta criada com sucesso. Verifique seu email para ativar a conta.',
+        }
+
+        if (process.env.NODE_ENV !== 'production'){
+            response.devVerificationToken = tokenEmail
+        }
+
+        res.status(201).json(response)
 
     }catch(error){
         next(error)
@@ -102,6 +192,15 @@ exports.login = async (req, res, next) => {
 
         if (!senhaValida){
             return next(new AppError('Email ou senha inválidos', 400, 'INVALID_CREDENTIALS'))
+        }
+
+        // Não permite logar sem verificar email antes
+        if(!usuario.email_verificado){
+            return next(new AppError(
+                'Verifique seu email antes de entrar na conta',
+                403,
+                'EMAIL_NOT_VERIFIED'
+            ))
         }
 
         // Emissão do token para o usuário com sucesso no login

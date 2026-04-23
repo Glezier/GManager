@@ -36,10 +36,12 @@ Objetivos:
 - base visual compartilhada para login e cadastro
 - botão de mostrar/ocultar senha no login
 - ordenação de tarefas por horário refinada
+- experiência de edição revisada
 - base global inicial de tema criada com `tokens.css` e `base.css`
 - build e lint já validados após a primeira passada de refatoração visual
 - `.gitignore` e arquivos `.env.example` já existem para a estrutura atual
 - tratamento global de erro no backend
+- base inicial de verificação por email no cadastro
 
 ### Segurança já observada no código
 - uso de `bcryptjs` para hash de senha
@@ -58,17 +60,19 @@ Objetivos:
 - `VITE_API_URL`
 
 ## Foco atual
-- fechar o que falta do fluxo principal
 - preparar autenticação mais madura antes de expor o produto
 - reduzir risco técnico antes do deploy público
+- evoluir segurança sem travar o avanço funcional
 
 ## Roadmap
 
-### Fase 4: Validação por email
+### Fase 4: Validação por email e autenticação avançada
 - validar formato e experiência de email no fluxo de autenticação
 - preparar verificação de email no cadastro
 - definir o fluxo de confirmação de conta antes do uso pleno do sistema
 - implementar refresh token
+- usar cookie `httpOnly`, `secure` e `sameSite` para refresh token em ambiente de produção
+- planejar social login com Google
 
 ### Fase 5: Segurança da aplicação
 - revisar CORS para produção
@@ -119,20 +123,23 @@ Objetivos:
 - ainda não há testes automatizados mínimos do fluxo principal
 - ainda não há estrutura de Docker no repositório
 - ainda faltam camadas de segurança importantes para produção, como `helmet`, rate limit e CORS restrito
-- a autenticação ainda não tem verificação de email antes do uso pleno do sistema
+- a autenticação ainda não usa refresh token em cookie `httpOnly`
 
 ## Próximo passo atual
-- concluir a última tarefa da Fase 3: revisar a experiência de edição
+- integrar envio real de email e fechar o fluxo de verificação
 
 ## Próxima direção recomendada
-- depois de encerrar a Fase 3, partir direto para validação por email
+- terminar validação por email primeiro
+- depois implementar refresh token com cookie `httpOnly`
+- depois planejar social login com Google
 - em seguida, fazer a rodada de segurança da aplicação
 - depois disso, estruturar testes mínimos
 - só então preparar o deploy com Docker
 
 ## Critérios para o próximo commit
-- ordenação por horário concluída e validada
-- o próximo commit deve cobrir o fechamento da Fase 3 para abrir a frente de validação por email
+- Fase 3 concluída com ordenação por horário e experiência de edição revisadas
+- a Fase 4 já foi iniciada com geração, persistência e consumo de token de verificação por email
+- o próximo commit deve fechar o fluxo de verificação de email
 
 ## Acordo de trabalho atual
 - mudanças de código dos arquivos da aplicação podem ser aplicadas diretamente por esta sessão quando alinhadas com o usuário
