@@ -2,7 +2,6 @@ import { useState } from "react"
 import { useNavigate, Link } from 'react-router-dom'
 import { registrar } from "../api/api"
 import './Auth.css'
-import LoadingState from "../components/ui/LoadingState"
 
 export default function Register(){
     const [nome, setNome ] = useState("")
@@ -19,8 +18,13 @@ export default function Register(){
         setLoading(true)
 
         try{
-            await registrar(nome, email, senha)
-            navigate("/")
+            const data = await registrar(nome, email, senha)
+            navigate("/validar-email", {
+                state: {
+                    email, 
+                    mensagem: data.message
+                }
+            })
         }catch(error){
             setErro(error.message)
         } finally{
@@ -33,7 +37,7 @@ export default function Register(){
             <section className="auth-card">
                 <aside className="auth-hero">
                     <div>
-                        <span className="auth-brand">GManager</span>
+                        <span className="auth-brand">My GManager</span>
                     </div>
 
                     <div>
@@ -54,7 +58,7 @@ export default function Register(){
                 <div className="auth-form-wrap">
                     <div className="auth-form-head">
                         <h2>Criar conta</h2>
-                        <p>Preencha seus dados para começar a usar o GManager.</p>
+                        <p>Preencha seus dados para começar a usar o My GManager.</p>
                     </div>
 
                     {erro && (

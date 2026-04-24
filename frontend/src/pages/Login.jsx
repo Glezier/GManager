@@ -1,20 +1,24 @@
 import { useState, useEffect, useRef } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
-import { login } from '../api/api'
+import { useNavigate, Link, useLocation } from 'react-router-dom'
+import { login, reenviarVerificacao } from '../api/api'
 import { setToken } from '../utils/auth'
 import './Auth.css'
 import EyeClosed from '../assets/icons/eye-closed.png'
 import EyeOpen from '../assets/icons/eye-open.png'
 
 export default function Login(){
-    const [email, setEmail] = useState("")
+    const navigate = useNavigate()
+    const location = useLocation()
+
+    const [email, setEmail] = useState(location.state?.emailPreenchido || '')
     const [senha, setSenha] = useState("")
     const [erro, setErro] = useState("")
     const [loading, setLoading] = useState(false)
     const [mostrarSenha, setMostrarSenha] = useState(false)
     const userRef = useRef(null)
 
-    const navigate = useNavigate()
+    const[emailNaoVerificado, setEmailNaoVerificado] = useState(false)
+    const[mensagemSucesso, setMensagemSucesso] = useState(location.state?.mensagemSucesso || '')
 
     useEffect(()=>{
         if(userRef.current){
@@ -26,6 +30,8 @@ export default function Login(){
         e.preventDefault()
         setErro("")
         setLoading(true)
+        setMensagemSucesso('')
+        setEmailNaoVerificado(false)
 
         try{
             const data = await login(email, senha)
@@ -35,6 +41,25 @@ export default function Login(){
                 navigate("/dashboard")
                 return
             }
+        } catch(error){
+            setErro(error.message)
+            // Só coloca email como não verificaso se esse for o caso
+            setEmailNaoVerificado(
+                error.message === 'Verifique seu email antes de entrar na conta'
+            )        
+        } finally{
+            setLoading(false)
+        }
+    }
+
+    async function handleReenviar(){
+        try{
+            setErro('')
+            setMensagemSucesso('')
+            setLoading(true)
+
+            const data = await reenviarVerificacao(email)
+            setMensagemSucesso(data.message)
         } catch(error){
             setErro(error.message)
         } finally{
@@ -74,6 +99,21 @@ export default function Login(){
                     {erro && 
                         <p className='auth-feedback auth-feedback-error'>{erro}</p>
                     }
+
+                    {emailNaoVerificado && (
+                        <button
+                            type='button'
+                            className='auth-submit'
+                            onClick={handleReenviar}
+                            disabled={loading}
+                        >
+                            Reenviar email de verificação
+                        </button>
+                    )}
+
+                    {mensagemSucesso && (
+                        <p className='auth-feedback dashboard-feedback-success'>{mensagemSucesso}</p>
+                    )}
 
                     <form className='auth-form' onSubmit={handleLogin}>
                         <div className='auth-field'>

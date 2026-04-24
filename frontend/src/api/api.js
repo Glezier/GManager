@@ -35,6 +35,34 @@ export async function registrar(nome, email, senha){
     return response.json()
 }
 
+// Verificar Email
+export async function verificarEmail(token){
+    const response = await fetch(`${API_URL}/auth/verificar-email?token=${token}`)
+
+    if(!response.ok){
+        throw new Error(await getError(response))
+    }
+
+    return response.json()
+}
+
+// Reenviar email
+export async function reenviarVerificacao(email){
+    const response = await fetch(`${API_URL}/auth/reenviar-verificacao`,{
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ email })
+    })
+
+    if(!response.ok){
+        throw new Error(await getError(response))
+    }
+
+    return response.json()
+}
+
 // Login
 export async function login(email,senha){
     const response = await fetch(`${API_URL}/auth/login`,{

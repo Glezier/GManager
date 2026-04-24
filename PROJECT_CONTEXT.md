@@ -41,7 +41,8 @@ Objetivos:
 - build e lint já validados após a primeira passada de refatoração visual
 - `.gitignore` e arquivos `.env.example` já existem para a estrutura atual
 - tratamento global de erro no backend
-- base inicial de verificação por email no cadastro
+- fluxo de verificação por email funcional com Resend, domínio próprio e validação por link
+- página intermediária de orientação após cadastro (`ValidarEmail`) já iniciada
 
 ### Segurança já observada no código
 - uso de `bcryptjs` para hash de senha
@@ -60,16 +61,13 @@ Objetivos:
 - `VITE_API_URL`
 
 ## Foco atual
-- preparar autenticação mais madura antes de expor o produto
-- reduzir risco técnico antes do deploy público
+- consolidar a experiência de autenticação antes de expor o produto
+- polir a UX de verificação por email já funcional
 - evoluir segurança sem travar o avanço funcional
 
 ## Roadmap
 
 ### Fase 4: Validação por email e autenticação avançada
-- validar formato e experiência de email no fluxo de autenticação
-- preparar verificação de email no cadastro
-- definir o fluxo de confirmação de conta antes do uso pleno do sistema
 - implementar refresh token
 - usar cookie `httpOnly`, `secure` e `sameSite` para refresh token em ambiente de produção
 - planejar social login com Google
@@ -114,6 +112,7 @@ Objetivos:
 - exportação
 - métricas simples
 - recuperação de senha via email
+- área de perfil pra alterar dados e definir modo escuro ou claro
 - área de gestão de gastos
 - área para metas futuras
 - integração com time de futebol
@@ -126,11 +125,15 @@ Objetivos:
 - a autenticação ainda não usa refresh token em cookie `httpOnly`
 
 ## Próximo passo atual
-- integrar envio real de email e fechar o fluxo de verificação
+- iniciar a implementação de refresh token após o fechamento do fluxo de verificação por email
+
+## Subfoco do ciclo atual
+- preparar a arquitetura de refresh token no backend e no frontend
+- definir a estratégia de cookie `httpOnly`, `secure` e `sameSite`
+- revisar o impacto dessa mudança no fluxo atual de autenticação
 
 ## Próxima direção recomendada
-- terminar validação por email primeiro
-- depois implementar refresh token com cookie `httpOnly`
+- implementar refresh token com cookie `httpOnly`
 - depois planejar social login com Google
 - em seguida, fazer a rodada de segurança da aplicação
 - depois disso, estruturar testes mínimos
@@ -138,8 +141,8 @@ Objetivos:
 
 ## Critérios para o próximo commit
 - Fase 3 concluída com ordenação por horário e experiência de edição revisadas
-- a Fase 4 já foi iniciada com geração, persistência e consumo de token de verificação por email
-- o próximo commit deve fechar o fluxo de verificação de email
+- a Fase 4 já conta com envio real, reenvio e consumo de token de verificação por email
+- o próximo commit deve iniciar a base de refresh token
 
 ## Acordo de trabalho atual
 - mudanças de código dos arquivos da aplicação podem ser aplicadas diretamente por esta sessão quando alinhadas com o usuário

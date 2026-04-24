@@ -83,7 +83,7 @@ export default function Dashboard(){
             <header className="dashboard-topbar">
                 <div className="dashboard-brand-block">
                     <div className="dashboard-brand">
-                        <strong>GManager</strong>
+                        <strong>My GManager</strong>
                         <p>Visão geral da sua rotina</p>
                     </div>
                 </div>
