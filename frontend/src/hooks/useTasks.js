@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
-import { listarTarefas, criarTarefa, deletarTarefa, concluirTarefa, atualizarTarefa, isAuthError } from '../api/api'
+import { listarTarefas, criarTarefa, deletarTarefa, concluirTarefa, atualizarTarefa} from '../api/api'
 import { removeToken } from '../utils/auth'
 
 export default function useTasks({token, inicio, fim, navigate}){
@@ -30,7 +30,7 @@ export default function useTasks({token, inicio, fim, navigate}){
             setTarefas(data);
         } catch (error) {
             setErroPagina(error.message)
-            if(isAuthError(error.message)){
+            if(error.message === 'Sessão expirada. Faça login novamente.'){
                 removeToken()
                 navigate("/")
             }            

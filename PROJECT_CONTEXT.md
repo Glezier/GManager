@@ -61,16 +61,11 @@ Objetivos:
 - `VITE_API_URL`
 
 ## Foco atual
-- consolidar a experiência de autenticação antes de expor o produto
-- polir a UX de verificação por email já funcional
+- iniciar a Fase 5 com foco em segurança básica de produção
+- revisar a infraestrutura de autenticação agora que refresh token já está funcional
 - evoluir segurança sem travar o avanço funcional
 
 ## Roadmap
-
-### Fase 4: Validação por email e autenticação avançada
-- implementar refresh token
-- usar cookie `httpOnly`, `secure` e `sameSite` para refresh token em ambiente de produção
-- planejar social login com Google
 
 ### Fase 5: Segurança da aplicação
 - revisar CORS para produção
@@ -78,6 +73,11 @@ Objetivos:
 - adicionar rate limit nas rotas de autenticação
 - revisar tratamento de erros para evitar vazamento desnecessário de detalhes internos
 - revisar política de segredos e configuração para deploy público
+- garantir ajuste de `NODE_ENV=production` no deploy
+- garantir `COOKIE_SECURE=true` em produção com HTTPS
+- revisar `FRONTEND_URL` e origem exata usada no CORS antes do deploy
+- rotacionar segredos expostos em desenvolvimento antes de publicar
+- usar cookie `httpOnly`, `secure` e `sameSite` para refresh token em ambiente de produção
 
 ### Fase 6: Testes
 - criar checklist manual do fluxo principal
@@ -96,6 +96,7 @@ Objetivos:
 - decidir se serão gerais, por dia ou ambas
 - avaliar listas com checks
 - avaliar observações ligadas a tarefas
+- retomar social login com Google em momento posterior, fora do foco atual de segurança
 
 ### Fase 9: Base técnica madura
 - separar melhor responsabilidades no backend
@@ -112,7 +113,7 @@ Objetivos:
 - exportação
 - métricas simples
 - recuperação de senha via email
-- área de perfil pra alterar dados e definir modo escuro ou claro
+- área de perfil pra alterar dados (senha, email) e definir modo escuro ou claro
 - área de gestão de gastos
 - área para metas futuras
 - integração com time de futebol
@@ -122,27 +123,28 @@ Objetivos:
 - ainda não há testes automatizados mínimos do fluxo principal
 - ainda não há estrutura de Docker no repositório
 - ainda faltam camadas de segurança importantes para produção, como `helmet`, rate limit e CORS restrito
-- a autenticação ainda não usa refresh token em cookie `httpOnly`
+- há variáveis de ambiente sensíveis que exigem revisão final antes do deploy, especialmente `NODE_ENV`, `COOKIE_SECURE`, `FRONTEND_URL` e segredos/autorizadores
 
 ## Próximo passo atual
-- iniciar a implementação de refresh token após o fechamento do fluxo de verificação por email
+- iniciar a revisão de CORS para produção
 
 ## Subfoco do ciclo atual
-- preparar a arquitetura de refresh token no backend e no frontend
-- definir a estratégia de cookie `httpOnly`, `secure` e `sameSite`
-- revisar o impacto dessa mudança no fluxo atual de autenticação
+- revisar origens permitidas no backend
+- alinhar `FRONTEND_URL`, `credentials` e cookies com o ambiente de produção
+- reduzir risco de configuração insegura antes de adicionar novas camadas
 
 ## Próxima direção recomendada
-- implementar refresh token com cookie `httpOnly`
-- depois planejar social login com Google
-- em seguida, fazer a rodada de segurança da aplicação
+- revisar CORS para produção
+- depois adicionar `helmet`
+- depois adicionar rate limit nas rotas de autenticação
 - depois disso, estruturar testes mínimos
 - só então preparar o deploy com Docker
 
 ## Critérios para o próximo commit
 - Fase 3 concluída com ordenação por horário e experiência de edição revisadas
 - a Fase 4 já conta com envio real, reenvio e consumo de token de verificação por email
-- o próximo commit deve iniciar a base de refresh token
+- a Fase 4 já conta com refresh token funcional no backend e no frontend
+- o próximo commit deve iniciar a Fase 5 com revisão de CORS para produção
 
 ## Acordo de trabalho atual
 - mudanças de código dos arquivos da aplicação podem ser aplicadas diretamente por esta sessão quando alinhadas com o usuário

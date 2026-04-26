@@ -5,6 +5,8 @@ import { getData, formatarData } from "../utils/date"
 import { getToken, removeToken } from "../utils/auth"
 import { ordenarTarefas } from "../utils/taskOrder"
 
+import { logout } from "../api/api"
+
 import MiniCalendar from "../components/MiniCalendar"
 import TaskForm from "../components/TaskForm"
 import DayTasksPanel from "../components/DayTasksPanel"
@@ -76,7 +78,18 @@ export default function Dashboard(){
         progresso: progressoHoje
     } = useProgress(tarefasDeHoje)
 
-    const semana = useSemana(hoje, tarefas)   
+    const semana = useSemana(hoje, tarefas)  
+    
+    async function handleLogout(){
+        try{
+            await logout()
+        } catch(error){
+            console.log('Erro ao fazer login' + error)
+        } finally{
+            removeToken()
+            navigate('/')
+        }
+    }
 
     return(
         <main className="dashboard">
@@ -100,10 +113,7 @@ export default function Dashboard(){
                 <button
                     type="button"
                     className="dashboard-logout"
-                    onClick={() =>{
-                        removeToken()
-                        navigate("/")
-                    }}
+                    onClick={handleLogout}
                 >
                     <img src={LogoutIcon} className="bar-icons" alt="Sair" title="Sair" />
                 </button>

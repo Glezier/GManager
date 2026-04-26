@@ -3,7 +3,7 @@ b fallback de porta para 3000 e expires para 1d
 f fallback para http://localhost:3000
 
 cd backend
-npm install nodemon validator resend
+npm install nodemon validator resend cookie-parser
 npm run dev
 
 cd frontend

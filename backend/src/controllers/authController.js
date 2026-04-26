@@ -5,12 +5,50 @@ const jwt = require('jsonwebtoken')
 const AppError = require('../utils/AppError')
 const {gerarTokenEmail, gerarHashToken, gerarExpiracaoEmailToken} =  require('../utils/EmailVerification')
 const { enviarEmailVerificacao } = require('../utils/EmailService')
+const { 
+    gerarRefreshToken,
+    gerarHashRefreshToken,
+    gerarExpiracaoRefreshToken
+} = require('../utils/RefreshToken')
 
 // Função para validação do email
 function isValidEmail(email){
     return validator.isEmail(email)
 }
 
+// Gerar token de acesso
+function gerarAccessToken(usuarioId){
+    return jwt.sign(
+        { id: usuarioId },
+        process.env.JWT_SECRET,
+        { expiresIn: process.env.JWT_EXPIRES || '30m'}
+    )
+}
+
+// Define regras do refresh token
+function getRefreshTokenOptions(){
+    return{
+        httpOnly: true, // Frontend não consegue ler
+        secure: process.env.COOKIE_SECURE === 'true', // Enviar apenas via HTTPS
+        sameSite: 'lax', // Reduz envios indevidos,
+        path: '/' // Válido em toda a aplicação
+    }
+}
+
+// Salvar refresh token no banco
+async function criarSessaoRefreshToken(usuarioId){
+    const refreshToken = gerarRefreshToken()
+    const tokenHash = gerarHashRefreshToken(refreshToken)
+    const expiresAt = gerarExpiracaoRefreshToken()
+
+    await pool.query(
+        `INSERT INTO refresh_tokens (usuario_id, token_hash, expires_at)
+        VALUES ($1, $2, $3)`,
+        [usuarioId, tokenHash, expiresAt]
+    )
+
+    return refreshToken
+}
 
 // Registro
 exports.registrar = async (req, res, next) => {
@@ -282,16 +320,105 @@ exports.login = async (req, res, next) => {
             ))
         }
 
-        // Emissão do token para o usuário com sucesso no login
-        const token = jwt.sign(
-            { id: usuario.id},
-            process.env.JWT_SECRET,
-            { expiresIn: process.env.JWT_EXPIRES || "1d"} // tempo de expiração do token com fallback de 1 dia
-        )
+        // Gerar token e refresh token
+        const accessToken = gerarAccessToken(usuario.id)
+        const refreshToken = await criarSessaoRefreshToken(usuario.id)
 
-        res.json({token})
+        // Adicionar cookie na resposta
+        res.cookie('refreshToken', refreshToken, getRefreshTokenOptions())
+        res.json({token: accessToken})
 
     }catch(error){
+        next(error)
+    }
+}
+
+// Refresh token
+exports.refreshToken = async (req,res,next) => {
+    try{
+        // Pega refresh token da requisição
+        const refreshToken = req.cookies.refreshToken
+
+        if (!refreshToken){
+            return next(new AppError(
+                'Refresh token não fornecido',
+                401,
+                'REFRESH_TOKEN_MISSING'
+            ))
+        }
+
+        //Gera hash do refresh token
+        const tokenHash = gerarHashRefreshToken(refreshToken)
+
+        // Confere no banco se é válido o refresh token informado
+        const result = await pool.query(
+            `SELECT *
+            FROM refresh_tokens
+            WHERE token_hash = $1
+            AND revoked_at IS NULL
+            AND expires_at > NOW()
+            LIMIT 1`,
+            [tokenHash]
+        )
+
+        if (result.rows.length === 0){
+            return next(new AppError(
+                'Refresh token inválido ou expirado',
+                401,
+                'INVALID_REFRESH_TOKEN'
+            ))
+        }
+
+        const tokenData = result.rows[0]
+
+        // Ajusta no banco a data de revogação do refresh token
+        await pool.query(
+            `UPDATE refresh_tokens
+            SET revoked_at = NOW()
+            WHERE id = $1`,
+            [tokenData.id]
+        )
+
+        // Gera novos tokens
+        const novoRefreshToken = await criarSessaoRefreshToken(tokenData.usuario_id)
+        const novoAccessToken = gerarAccessToken(tokenData.usuario_id)
+
+        res.cookie('refreshToken', novoRefreshToken, getRefreshTokenOptions())
+
+        res.json({token: novoAccessToken})
+    } catch(error){
+        next(error)
+    }
+}
+
+// Logout
+exports.logout = async(req,res,next) => {
+    try{
+        // Pega refresh token da requisição
+        const refreshToken = req.cookies.refreshToken
+
+        // Se houver refresh token
+        if (refreshToken){
+            const tokenHash = gerarHashRefreshToken(refreshToken)
+
+            // Revoga o token no banco
+            await pool.query(
+                `UPDATE refresh_tokens
+                SET revoked_at = NOW()
+                WHERE token_hash = $1 
+                AND revoked_at IS NULL`,
+                [tokenHash]
+            )
+        }
+
+        // Retira cookie
+        res.clearCookie('refreshToken', {
+            ...getRefreshTokenOptions(),
+        })
+
+        res.json({message: 'Logout realizado com sucesso'})
+        
+    } catch(error){
         next(error)
     }
 }
