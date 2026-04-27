@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import './TaskForm.css'  
-import { formatarData, formatarHora } from '../utils/date'
+import { formatarData, formatarHora, getDataLimiteAnos, getDataMinimaAnos } from '../utils/date'
 
 export default function TaskForm ({ criar, cancelar, hoje, erro='', tarefaInicial = null }){
 
@@ -9,8 +9,12 @@ export default function TaskForm ({ criar, cancelar, hoje, erro='', tarefaInicia
     const [data, setData] = useState(formatarData(tarefaInicial?.data) || hoje)
     const [hora, setHora] = useState(formatarHora(tarefaInicial?.hora) || "")
     const [status, setStatus] = useState(tarefaInicial?.status || 'pendente')
+    const [erroForm, setErroForm] = useState('')
     const tituloRef = useRef(null)
     const emEdicao = Boolean(tarefaInicial)
+
+    const dataMinima = getDataMinimaAnos(1) // Adicionar/editar tarefa no máximo 1 ano antes
+    const dataMaxima = getDataLimiteAnos(3) // Adicionar/editar tarefa no máximo 3 anos a frente
 
     function handleSubmit(e){
         e.preventDefault() // React controlar a execução do formulário
@@ -47,7 +51,7 @@ export default function TaskForm ({ criar, cancelar, hoje, erro='', tarefaInicia
                 </p>
             </div>
 
-            {erro && <p className='error'>{erro}</p>}
+            {(erro || erroForm) && <p className='error'>{erro || erroForm}</p>}
 
             <div className="task-form-fields">
                 <input 
@@ -56,7 +60,9 @@ export default function TaskForm ({ criar, cancelar, hoje, erro='', tarefaInicia
                     placeholder="Título da tarefa"
                     value={titulo}
                     onChange={(e)=>{setTitulo(e.target.value)}} 
+                    onInvalid={() => setErroForm('Título é obrigatório')}
                     ref={tituloRef}
+                    required
                 />
 
                 <input 
@@ -73,6 +79,17 @@ export default function TaskForm ({ criar, cancelar, hoje, erro='', tarefaInicia
                         type="date"
                         value={data}
                         onChange={(e)=>{setData(e.target.value)}}
+                        onInvalid={(e) => {
+                            const valor = e.target.value
+                            if (valor<dataMinima){
+                                setErroForm('Só é permitido adicionar tarefa retroativas num período de até 1 ano.')
+                            }
+                            if (valor>dataMaxima){
+                                setErroForm('Use a aba de tarefas sem data definida para datas distantes.')
+                            }
+                        }}
+                        min={dataMinima}
+                        max={dataMaxima}
                         required
                     />
 

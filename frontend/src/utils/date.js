@@ -50,3 +50,19 @@ export function formatarDataCompletaBR(data) {
     }
     return ""
 }
+
+// Limitar inserir tarefa com data máxima de 3 anos
+export function getDataLimiteAnos(anos = 3){
+    const data = new Date()
+    data.setFullYear(data.getFullYear() + anos)
+
+    return getData(data)
+}
+
+// Limitar inserir tarefa com data mínima de 1 ano
+export function getDataMinimaAnos(anos = 1){
+    const data = new Date()
+    data.setFullYear(data.getFullYear() - anos)
+
+    return getData(data)
+}

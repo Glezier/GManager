@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { listarTarefas, criarTarefa, deletarTarefa, concluirTarefa, atualizarTarefa} from '../api/api'
 import { removeToken } from '../utils/auth'
+import { getDataLimiteAnos, getDataMinimaAnos } from '../utils/date'
 
 export default function useTasks({token, inicio, fim, navigate}){
     const [tarefas, setTarefas] = useState([])
@@ -43,6 +44,20 @@ export default function useTasks({token, inicio, fim, navigate}){
         try{
             setErroForm('')
             setSucesso('')
+
+            const dataMinima = getDataMinimaAnos(1)
+            const dataMaxima = getDataLimiteAnos(3)
+
+            if (tarefa.data < dataMinima){
+                setErroForm('Só é permitido adicionar tarefa retroativas num período de até 1 ano.')
+                return
+            }
+
+            if (tarefa.data > dataMaxima){
+                setErroForm('Use a aba de tarefas sem data definida para datas distantes.')
+                return
+            }
+
             if (editando){
                 await atualizarTarefa(editando.id, tarefa)
                 setSucesso("Tarefa atualizada com sucesso")
