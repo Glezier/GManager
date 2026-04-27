@@ -21,7 +21,7 @@ function gerarAccessToken(usuarioId){
     return jwt.sign(
         { id: usuarioId },
         process.env.JWT_SECRET,
-        { expiresIn: process.env.JWT_EXPIRES || '30m'}
+        { expiresIn: process.env.JWT_EXPIRES || '15m'}
     )
 }
 

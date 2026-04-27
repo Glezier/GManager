@@ -190,7 +190,7 @@ export default function Dashboard(){
                             key={dia.id} 
                             type="button"
                             className="dashboard-day"
-                            onClick={() => navigate(`/dia/${dia.id}`)} 
+                            onClick={() => navigate(`/dia/${dia.id}`, {state: {from: 'dashboard'}})} 
                             title={`Tarefas de ${dia.label}`} 
                         >
                             <div className="dashboard-day-head">

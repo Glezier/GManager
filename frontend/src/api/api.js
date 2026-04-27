@@ -43,7 +43,7 @@ async function fetchAutenticado(url, options = {}){
 
     const errorMessage = await getError(response)
 
-    // Se der problema de autenticação, já sai
+    // Se não for problema de autenticação, já sai
     if(!isAuthError(errorMessage)){
         throw new Error(errorMessage)
     }
@@ -172,7 +172,7 @@ export async function logout(){
 }
 
 // Criar tarefa
-export async function criarTarefa(token, tarefa){
+export async function criarTarefa(tarefa){
     const response = await fetchAutenticado(`${API_URL}/tarefas`,{
         method: "POST",
         headers: {
@@ -185,14 +185,14 @@ export async function criarTarefa(token, tarefa){
 }
 
 // Listar tarefas
-export async function listarTarefas(token, inicio, fim){
+export async function listarTarefas( inicio, fim){
     const response = await fetchAutenticado(`${API_URL}/tarefas?inicio=${inicio}&fim=${fim}`)
 
     return response.json()
 }
 
 // Atualizar tarefa
-export async function atualizarTarefa(token, id, tarefa){
+export async function atualizarTarefa(id, tarefa){
     const response = await fetchAutenticado(`${API_URL}/tarefas/${id}`, {
         method: "PUT",
         headers: {
@@ -205,7 +205,7 @@ export async function atualizarTarefa(token, id, tarefa){
 }
 
 // Concluir tarefa
-export async function concluirTarefa(token, id){
+export async function concluirTarefa(id){
     const response = await fetchAutenticado(`${API_URL}/tarefas/${id}/concluir`,{
         method: "PATCH"
     })
@@ -214,7 +214,7 @@ export async function concluirTarefa(token, id){
 }
 
 // Deletar tarefa
-export async function deletarTarefa(token, id){
+export async function deletarTarefa(id){
     const response = await fetchAutenticado(`${API_URL}/tarefas/${id}`,{
         method : 'DELETE'
     })

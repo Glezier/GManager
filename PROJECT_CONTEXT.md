@@ -113,6 +113,7 @@ Objetivos:
 - exportação
 - métricas simples
 - recuperação de senha via email
+- confirmação de senha no cadastrar
 - área de perfil pra alterar dados (senha, email) e definir modo escuro ou claro
 - área de gestão de gastos
 - área para metas futuras

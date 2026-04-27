@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, useLocation } from 'react-router-dom'
 
 import useTasks from '../hooks/useTasks'
 import useProgress from '../hooks/useProgress'
@@ -62,8 +62,12 @@ export default function DayPage(){
   function navegarDia(indice){
     const novaData = new Date(`${data}T00:00:00`)
     novaData.setDate(novaData.getDate() + indice)
-    navigate(`/dia/${getData(novaData)}`, {replace: true}) // Voltar do navegador não empilha coisas, troca a rota atual
+    navigate(`/dia/${getData(novaData)}`, {replace: true, state:{from:origem}}) // Voltar do navegador não empilha coisas, troca a rota atual
   }
+
+  // Texto do botão voltar de acordo com a origem
+  const location = useLocation()
+  const origem = location.state?.from === 'dashboard' ? 'dashboard' : 'calendario'
 
   return(
     <main className='day-page'>
@@ -72,9 +76,9 @@ export default function DayPage(){
           <button 
             type="button" 
             className='day-back' 
-            onClick={() => navigate("/calendario")}
+            onClick={() => navigate(`/${origem}`)}
           >
-            Voltar para Calendário
+            Voltar para {origem}
           </button>
 
           <div className='day-nav'>

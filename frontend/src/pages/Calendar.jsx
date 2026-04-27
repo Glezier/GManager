@@ -47,7 +47,7 @@ export default function Calendar(){
                 setErro("")
                 setLoading(true)
 
-                const data = await listarTarefas(token, periodo.inicio, periodo.fim)
+                const data = await listarTarefas(periodo.inicio, periodo.fim)
                 setTarefas(data)
             } catch (error){
                 setErro(error.message)
@@ -134,7 +134,7 @@ export default function Calendar(){
                         className='day-back' 
                         onClick={()=> navigate('/dashboard')}
                     >
-                        Voltar para Dashboard
+                        Voltar para dashboard
                     </button>
 
                     <div className='calendar-toolbar'>

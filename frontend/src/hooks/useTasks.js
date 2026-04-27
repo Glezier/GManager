@@ -26,7 +26,7 @@ export default function useTasks({token, inicio, fim, navigate}){
             setErroPagina("")
             setLoading(true)
 
-            const data = await listarTarefas(token, inicio, fim);
+            const data = await listarTarefas(inicio, fim);
             setTarefas(data);
         } catch (error) {
             setErroPagina(error.message)
@@ -37,17 +37,17 @@ export default function useTasks({token, inicio, fim, navigate}){
         } finally{
             setLoading(false)
         }
-    }, [token, navigate, inicio, fim])
+    }, [ navigate, inicio, fim])
 
     async function salvarTarefa(tarefa){
         try{
             setErroForm('')
             setSucesso('')
             if (editando){
-                await atualizarTarefa(token, editando.id, tarefa)
+                await atualizarTarefa(editando.id, tarefa)
                 setSucesso("Tarefa atualizada com sucesso")
             } else{
-                await criarTarefa(token, tarefa)
+                await criarTarefa(tarefa)
                 setSucesso("Tarefa cadastrada com sucesso")
             }
 
@@ -97,7 +97,7 @@ export default function useTasks({token, inicio, fim, navigate}){
                 loading: true,
             }))
 
-            await deletarTarefa(token, confirmacao.tarefa.id)
+            await deletarTarefa(confirmacao.tarefa.id)
             await carregarTarefas()
 
             setSucesso('Tarefa excluída com sucesso')
@@ -116,7 +116,7 @@ export default function useTasks({token, inicio, fim, navigate}){
         try{
             setErroPagina('')
             setSucesso('')
-            await concluirTarefa(token, id)
+            await concluirTarefa(id)
             await carregarTarefas()
             setSucesso("Tarefa concluída com sucesso")
         } catch(error){
