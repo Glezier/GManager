@@ -1,5 +1,7 @@
 require('dotenv').config()
 const cookieParser = require('cookie-parser')
+const corsOptions = require('./src/config/corsOptions')
+const helmet = require('helmet') // Comportamento mais seguro no navegador
 
 //Validação de variáves de ambiente
 const requiredEnv = ['DB_URL', 'JWT_SECRET']
@@ -20,10 +22,8 @@ const errorMiddleware = require('./src/middleswares/errorMiddleware')
 const app = express()
 
 app.use(cookieParser())
-app.use(cors({
-  origin: process.env.FRONTEND_URL,
-  credentials: true
-}))
+app.use(cors(corsOptions))
+app.use(helmet())
 app.use(express.json())
 
 app.get('/', (req, res) => {

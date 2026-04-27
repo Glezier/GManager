@@ -72,7 +72,7 @@ export default function Login(){
             <section className='auth-card'>
                 <aside className='auth-hero'>
                     <div>
-                        <span className='auth-brand'>GManager</span>
+                        <span className='auth-brand'>My GManager</span>
                     </div>
                     <div>
                         <h1>Organize seu dia a dia com clareza</h1>
