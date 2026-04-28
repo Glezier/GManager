@@ -61,7 +61,8 @@ export default function Calendar(){
 
     // Anos mostrados no calendário pelo select
     const anos = useMemo(() => {
-        const anoAtual = hoje.getFullYear()
+        const dataAtual = new Date()
+        const anoAtual = dataAtual.getFullYear()
         const anoInicial = usuario?.created_at
             ? new Date(usuario.created_at).getFullYear() - 1 
             : anoAtual - 1
@@ -75,7 +76,7 @@ export default function Calendar(){
         }
 
         return lista
-    }, [usuario, hoje])
+    }, [usuario])
 
     // Controle de anos do calendario via full calendar
     const limiteCalendario = useMemo(() => {

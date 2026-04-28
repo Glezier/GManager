@@ -84,7 +84,6 @@ Objetivos:
 ## Roadmap
 
 ### Fase 5: Seguranca da aplicacao
-- revisar tratamento de erros para evitar vazamento desnecessario de detalhes internos
 - revisar politica de segredos e configuracao para deploy publico
 - garantir ajuste de `NODE_ENV=production` no deploy
 - garantir `COOKIE_SECURE=true` em producao com HTTPS

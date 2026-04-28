@@ -23,19 +23,33 @@ async function getError(response){
     }
 }
 
+// Falha em conexão com servidor
+function getNetworkError(){
+    return new Error('Não foi possível conectar ao servidor.')
+}
+
 // O usuário deve estar autenticado para todas as ações
 // Essa função protege as rotas de fetch contra usuarios nao autenticados
 async function fetchAutenticado(url, options = {}){
     const token = getToken()
 
-    // Tenta fetch com token atual
-    let response = await fetch(url, {
-        ...options,
-        headers: {
-            ...(options.headers || {}),
-            Authorization: `Bearer ${token}`
+    let response
+
+    try {
+        response = await fetch(url, {
+            ...options,
+            headers: {
+                ...(options.headers || {}),
+                Authorization: `Bearer ${token}`
+            }
+        })
+    } catch(error) {
+        if (error.name === 'TypeError'){
+            throw getNetworkError()
         }
-    })
+
+        throw error
+    }
 
     if (response.ok){
         return response
@@ -43,7 +57,7 @@ async function fetchAutenticado(url, options = {}){
 
     const errorMessage = await getError(response)
 
-    // Se não for problema de autenticação, já sai
+    // Se nao for problema de autenticacao, ja sai
     if(!isAuthError(errorMessage)){
         throw new Error(errorMessage)
     }
@@ -54,12 +68,12 @@ async function fetchAutenticado(url, options = {}){
 
         if (!refreshData.token){
             removeToken()
-            throw new Error('Sessão expirada. Faça login novamente.')
+            throw new Error('Sessao expirada. Faca login novamente.')
         }
 
         setToken(refreshData.token)
 
-        // Tenta requisição com esse novo token
+        // Tenta requisicao com esse novo token
         response = await fetch(url, {
             ...options,
             headers: {
@@ -73,11 +87,27 @@ async function fetchAutenticado(url, options = {}){
         }
 
         return response
-    } catch{
-        removeToken()
-        throw new Error('Sessão expirada. Faça login novamente.')
-    }
+    } catch(error){
+        if (error.name === 'TypeError'){
+            throw getNetworkError()
+        }
 
+        removeToken()
+        throw new Error('Sessao expirada. Faca login novamente.')
+    }
+}
+
+// Tratamento fetch para buscar com problema no servidor para funções não de tarefas
+async function fetchComTratamento(url, options = {}){
+    try{
+        return await fetch(url, options)
+    } catch(error){
+        if (error.name === 'TypeError'){
+            throw getNetworkError()
+        }
+
+        throw error
+    }
 }
 
 // Infosmações do usuário
@@ -89,15 +119,15 @@ export async function infosUser(){
 
 // Registrar
 export async function registrar(nome, email, senha){
-    const response = await fetch(`${API_URL}/auth/register`,{
+    const response = await fetchComTratamento(`${API_URL}/auth/register`,{
         method : "POST",
         headers: {
             "Content-Type" : "application/json"
         },
         body: JSON.stringify({ nome, email, senha })
     })
-    
-    if (!response.ok) {
+
+    if(!response.ok){
         throw new Error(await getError(response))
     }
     
@@ -106,7 +136,7 @@ export async function registrar(nome, email, senha){
 
 // Verificar Email
 export async function verificarEmail(token){
-    const response = await fetch(`${API_URL}/auth/verificar-email?token=${token}`)
+    const response = await fetchComTratamento(`${API_URL}/auth/verificar-email?token=${token}`)
 
     if(!response.ok){
         throw new Error(await getError(response))
@@ -117,7 +147,7 @@ export async function verificarEmail(token){
 
 // Reenviar email
 export async function reenviarVerificacao(email){
-    const response = await fetch(`${API_URL}/auth/reenviar-verificacao`,{
+    const response = await fetchComTratamento(`${API_URL}/auth/reenviar-verificacao`,{
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -134,7 +164,7 @@ export async function reenviarVerificacao(email){
 
 // Login
 export async function login(email,senha){
-    const response = await fetch(`${API_URL}/auth/login`,{
+    const response = await fetchComTratamento(`${API_URL}/auth/login`,{
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -152,7 +182,7 @@ export async function login(email,senha){
 
 // Refresh token
 export async function refreshToken(){
-    const response = await fetch(`${API_URL}/auth/refresh`,{
+    const response = await fetchComTratamento(`${API_URL}/auth/refresh`,{
         method: 'POST',
         credentials: 'include'
     })
@@ -166,7 +196,7 @@ export async function refreshToken(){
 
 // Logout
 export async function logout(){
-    const response = await fetch(`${API_URL}/auth/logout`, {
+    const response = await fetchComTratamento(`${API_URL}/auth/logout`, {
         method: 'POST',
         credentials: 'include'
     })
