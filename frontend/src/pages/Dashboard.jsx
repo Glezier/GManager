@@ -17,6 +17,7 @@ import useProgress from "../hooks/useProgress"
 import useSemana from "../hooks/useSemana"
 
 import "./Dashboard.css"
+import FullLogo from '../assets/icons/full_logo.png'
 import CalendarIcon from '../assets/icons/calendar.png'
 import NotesIcon from '../assets/icons/notes.png'
 import LogoutIcon from '../assets/icons/logout.png'
@@ -96,7 +97,7 @@ export default function Dashboard(){
             <header className="dashboard-topbar">
                 <div className="dashboard-brand-block">
                     <div className="dashboard-brand">
-                        <strong>My GManager</strong>
+                        <img src={FullLogo} alt="Logo My GManager" className='auth-logo' />
                         <p>Visão geral da sua rotina</p>
                     </div>
                 </div>

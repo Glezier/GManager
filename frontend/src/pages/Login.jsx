@@ -3,6 +3,7 @@ import { useNavigate, Link, useLocation } from 'react-router-dom'
 import { login, reenviarVerificacao } from '../api/api'
 import { setToken } from '../utils/auth'
 import './Auth.css'
+import FullLogo from '../assets/icons/full_logo.png'
 import EyeClosed from '../assets/icons/eye-closed.png'
 import EyeOpen from '../assets/icons/eye-open.png'
 
@@ -97,7 +98,9 @@ export default function Login(){
             <section className='auth-card'>
                 <aside className='auth-hero'>
                     <div>
-                        <span className='auth-brand'>My GManager</span>
+                        <span className='auth-brand'>
+                            <img src={FullLogo} alt="Logo My GManager" className='auth-logo'/>
+                        </span>
                     </div>
                     <div>
                         <h1>Organize seu dia a dia com clareza</h1>

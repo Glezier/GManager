@@ -45,6 +45,12 @@
   text-transform: uppercase;
 }
 
+.auth-logo{
+  width: 140px;
+  border: none;
+  padding: 0px;
+}
+
 .auth-hero h1,
 .auth-hero h2 {
   margin: 0 0 14px;

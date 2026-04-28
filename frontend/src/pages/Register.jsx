@@ -2,6 +2,7 @@ import { useState } from "react"
 import { useNavigate, Link } from 'react-router-dom'
 import { registrar } from "../api/api"
 import './Auth.css'
+import FullLogo from '../assets/icons/full_logo.png'
 
 export default function Register(){
     const [nome, setNome ] = useState("")
@@ -37,7 +38,9 @@ export default function Register(){
             <section className="auth-card">
                 <aside className="auth-hero">
                     <div>
-                        <span className="auth-brand">My GManager</span>
+                        <span className="auth-brand">
+                            <img src={FullLogo} alt="Logo My GManager" className='auth-logo'/>
+                        </span>
                     </div>
 
                     <div>
