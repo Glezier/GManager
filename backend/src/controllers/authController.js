@@ -50,6 +50,32 @@ async function criarSessaoRefreshToken(usuarioId){
     return refreshToken
 }
 
+// Dados do usuário
+exports.me = async(req,res,next) => {
+    try{
+        const usuario_id = req.userId
+
+        const result = await pool.query(
+            `SELECT id, nome, email, created_at
+            FROM usuarios
+            WHERE id = $1`,
+            [usuario_id]
+        )
+
+        if (result.rows.length === 0){
+            return next(new AppError(
+                'Usuário não encontrado',
+                404,
+                'USER_NOT_FOUND'
+            ))
+        }
+
+        res.json(result.rows[0])
+    } catch(error){
+        next(error)
+    }
+}
+
 // Registro
 exports.registrar = async (req, res, next) => {
     try{

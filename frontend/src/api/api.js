@@ -80,6 +80,13 @@ async function fetchAutenticado(url, options = {}){
 
 }
 
+// Infosmações do usuário
+export async function infosUser(){
+    const response = await fetchAutenticado(`${API_URL}/auth/me`)
+
+    return response.json()
+}
+
 // Registrar
 export async function registrar(nome, email, senha){
     const response = await fetch(`${API_URL}/auth/register`,{

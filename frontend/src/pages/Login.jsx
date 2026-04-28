@@ -13,6 +13,7 @@ export default function Login(){
     const [email, setEmail] = useState(location.state?.emailPreenchido || '')
     const [senha, setSenha] = useState("")
     const [erro, setErro] = useState("")
+    const [bloqueado, setBloqueado] = useState(false)
     const [loading, setLoading] = useState(false)
     const [mostrarSenha, setMostrarSenha] = useState(false)
     const userRef = useRef(null)
@@ -43,6 +44,11 @@ export default function Login(){
             }
         } catch(error){
             setErro(error.message)
+
+            setBloqueado(
+                error.message === 'Muitas tentativas de login. Tente novamente em 15 minutos.'
+            )
+
             // Só coloca email como não verificaso se esse for o caso
             setEmailNaoVerificado(
                 error.message === 'Verifique seu email antes de entrar na conta'
@@ -67,8 +73,27 @@ export default function Login(){
         }
     }
 
+    useEffect(() => {
+        if (!bloqueado) {
+            return
+        }
+
+        const timer = setTimeout(() => {
+            setBloqueado(false)
+            setErro('')
+        }, 15 * 60 * 1000)
+
+        return () => clearTimeout(timer)
+    }, [bloqueado])
+
+    function limparErro(){
+        if (erro && !bloqueado){
+            setErro('')
+        }
+    }
+
     return(   
-        <main className='auth-page'>
+        <main className='auth-page' onClick={limparErro}>
             <section className='auth-card'>
                 <aside className='auth-hero'>
                     <div>
@@ -125,6 +150,7 @@ export default function Login(){
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}  
                                 ref={userRef}
+                                disabled={bloqueado} 
                                 required
                             />
                         </div>
@@ -137,10 +163,11 @@ export default function Login(){
                                     type={mostrarSenha ? "text" : "password"}
                                     placeholder='Digite sua senha'
                                     value={senha}
+                                    disabled={bloqueado} 
                                     onChange={(e) => setSenha(e.target.value)}
                                     required
                                 />
-                                <button className="auth-password-toggle" 
+                                <button className="auth-password-toggle"
                                         type='button'  
                                         onClick={() => setMostrarSenha((valorAtual) => !valorAtual)}
                                         aria-label={mostrarSenha ? "Ocultar senha" : "Mostrar senha"}
@@ -154,7 +181,7 @@ export default function Login(){
                             </div>
                         </div>
 
-                        <button className='auth-submit' type='submit' disabled={loading}>
+                        <button className='auth-submit' type='submit' disabled={loading || bloqueado}>
                             {loading ? "Entrando" : "Entrar"}
                         </button>
                     </form>

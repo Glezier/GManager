@@ -1,7 +1,7 @@
 require('dotenv').config()
 const cookieParser = require('cookie-parser')
 const corsOptions = require('./src/config/corsOptions')
-const helmet = require('helmet') // Comportamento mais seguro no navegador
+const helmet = require('helmet') // Comportamento mais seguro no navegador, cuida dos headers
 
 //Validação de variáves de ambiente
 const requiredEnv = ['DB_URL', 'JWT_SECRET']
@@ -25,6 +25,7 @@ app.use(cookieParser())
 app.use(cors(corsOptions))
 app.use(helmet())
 app.use(express.json())
+app.set('trust proxy', 1)
 
 app.get('/', (req, res) => {
   res.json({ message: "API funcionando" })

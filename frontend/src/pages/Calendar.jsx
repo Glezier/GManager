@@ -3,7 +3,7 @@ import dayGridPlugin from '@fullcalendar/daygrid'
 import interactionPlugin from '@fullcalendar/interaction'
 import { useState, useEffect, useMemo, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { listarTarefas, isAuthError } from '../api/api'
+import { listarTarefas, isAuthError, infosUser } from '../api/api'
 
 import { getToken, removeToken } from '../utils/auth'
 import { getData, formatarData } from '../utils/date'
@@ -31,15 +31,71 @@ export default function Calendar(){
 
     const calendarRef = useRef(null)
 
+    const [usuario, setUsuario] = useState(null)
     const hoje = new Date()
     const [mesSelecionado, setMesSelecionado] = useState(hoje.getMonth())
     const [anoSelecionado, setAnoSelecionado] = useState(hoje.getFullYear())
 
-    const anos = []
-    
-    for (let ano = hoje.getFullYear() - 5; ano <= hoje.getFullYear() + 5; ano++) {
-        anos.push(ano)
-    }
+    useEffect(() => {
+        async function carregarUsuario(){
+            try{
+                const data = await infosUser()
+                setUsuario(data)
+            } catch(error){
+                setErro(error.message)
+
+                if (isAuthError(error.message)) {
+                    removeToken()
+                    navigate("/")
+                }
+            }
+        }
+
+        if(!token){
+            navigate('/')
+            return
+        }
+
+        carregarUsuario()
+    }, [token, navigate])
+
+    // Anos mostrados no calendário pelo select
+    const anos = useMemo(() => {
+        const anoAtual = hoje.getFullYear()
+        const anoInicial = usuario?.created_at
+            ? new Date(usuario.created_at).getFullYear() - 1 
+            : anoAtual - 1
+
+        const anoFinal = anoAtual + 3
+
+        const lista = []
+
+        for (let ano = anoInicial; ano <= anoFinal; ano++) {
+            lista.push(ano)
+        }
+
+        return lista
+    }, [usuario, hoje])
+
+    // Controle de anos do calendario via full calendar
+    const limiteCalendario = useMemo(() => {
+        const dataAtual = new Date()
+
+        const dataInicial = usuario?.created_at
+            ? new Date(usuario.created_at)
+            : dataAtual
+
+        dataInicial.setFullYear(dataInicial.getFullYear()-1)
+
+        const dataFinal = new Date(dataAtual)
+        dataFinal.setFullYear(dataFinal.getFullYear() + 3)
+        dataFinal.setDate(dataFinal.getDate() + 1)
+
+        return {
+            start: getData(dataInicial),
+            end: getData(dataFinal),
+        }
+    }, [usuario])
 
     useEffect(() => {
         async function carregar() {
@@ -202,6 +258,7 @@ export default function Calendar(){
                     dayMaxEvents={3}
                     height="auto"
                     datesSet={handleDatesSet}
+                    validRange={limiteCalendario}
                 />
             </section>
         </main>

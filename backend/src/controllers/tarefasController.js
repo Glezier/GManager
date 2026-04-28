@@ -59,6 +59,23 @@ exports.criarTarefa = async (req, res, next) => {
             ))
         }
 
+        // Permite no máximo 30 tarefas por dia
+        const totalNoDia = await pool.query(
+            `SELECT COUNT(*)::int AS total
+            FROM tarefas
+            WHERE usuario_id = $1
+            AND data = $2`,
+            [usuario_id, data]
+        )
+
+        if (totalNoDia.rows[0].total >= 30) {
+            return next(new AppError(
+                'Limite de 30 tarefas por dia atingido',
+                400,
+                'DAILY_TASK_LIMIT_REACHED'
+            ))
+        }
+
         // Inserção no banco de dados
         const result = await pool.query(
             `INSERT INTO tarefas (titulo, descricao, status, usuario_id, data, hora)
