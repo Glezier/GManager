@@ -106,6 +106,8 @@ Objetivos:
 - definir estrategia de deploy publico usando containers
 
 ### Fase 8: Notas e organizacao pessoal
+- Tarefas com datas contínuas ou frequência definida
+- Página inicial antes de login
 - adicionar notas
 - decidir se serao gerais, por dia ou ambas
 - avaliar listas com checks
@@ -139,6 +141,20 @@ Objetivos:
 - ainda nao ha estrutura de Docker no repositorio
 - ainda faltam revisoes de tratamento de erros, segredos e configuracao final de producao
 - ha variaveis de ambiente sensiveis que exigem revisao final antes do deploy, especialmente `NODE_ENV`, `COOKIE_SECURE`, `FRONTEND_URL` e segredos/autorizadores
+
+## Diretrizes de deploy e repositorio publico
+- o deploy publico deve ser conectado ao GitHub apenas quando a revisao basica de seguranca estiver concluida
+- a branch `main` deve representar o estado estavel/de producao
+- uma branch `dev` pode ser usada para desenvolvimento antes de mergear na `main`
+- o deploy automatico deve apontar preferencialmente para a `main`
+- alteracoes devem ser testadas localmente antes de chegar na `main`
+- para trabalho solo, o fluxo recomendado e: desenvolver em `dev`, testar, mergear em `main`, deixar o provedor publicar
+- se o repositorio ficar publico, nenhum `.env` real deve estar versionado
+- segredos antigos que ja apareceram no historico, prints, README, chat ou commits devem ser rotacionados antes de publicar
+- backend e frontend podem ficar publicos se nao houver segredos hardcoded, endpoints desprotegidos ou configuracao insegura
+- o README deve conter link do site no ar, screenshots, stack, recursos implementados, roadmap e instrucoes de execucao local
+- o README deve usar `.env.example` como referencia e nunca expor valores reais
+- caso o projeto vire produto com logica proprietaria sensivel, reavaliar se o repositorio deve continuar publico
 
 ## Proximo passo atual
 - revisar tratamento de erros para evitar vazamento desnecessario de detalhes internos

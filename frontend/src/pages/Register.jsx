@@ -3,11 +3,16 @@ import { useNavigate, Link } from 'react-router-dom'
 import { registrar } from "../api/api"
 import './Auth.css'
 import FullLogo from '../assets/icons/full_logo.png'
+import EyeClosed from '../assets/icons/eye-closed.png'
+import EyeOpen from '../assets/icons/eye-open.png'
 
 export default function Register(){
     const [nome, setNome ] = useState("")
     const [email, setEmail ] = useState("")
     const [senha, setSenha] = useState("")
+    const [confirmarSenha, setConfirmarSenha] = useState('')
+    const [mostrarSenha1, setMostrarSenha1] = useState(false)
+    const [mostrarSenha2, setMostrarSenha2] = useState(false)
     const [erro, setErro] = useState("")
     const [loading, setLoading] = useState(false)
 
@@ -16,6 +21,12 @@ export default function Register(){
     async function handleSubmit(e){
         e.preventDefault()
         setErro("")
+
+        if(senha !== confirmarSenha){
+            setErro('As senhas devem ser iguais')
+            return
+        }
+
         setLoading(true)
 
         try{
@@ -33,8 +44,14 @@ export default function Register(){
         }
     }
 
+    function limparErro(){
+        if (erro){
+            setErro('')
+        }
+    }
+
     return (
-        <main className="auth-page">
+        <main className="auth-page" onClick={limparErro}>
             <section className="auth-card">
                 <aside className="auth-hero">
                     <div>
@@ -95,15 +112,56 @@ export default function Register(){
 
                         <div className="auth-field">
                             <label htmlFor="register-password">Senha</label>
-                            <input 
-                                id="register-password"
-                                type="password"
-                                placeholder="Digite sua senha"
-                                value={senha}
-                                onChange={(e) => setSenha(e.target.value)}
-                                required
-                                minLength={8}
-                            />
+                            <div className="auth-password-wrap">
+                                <input 
+                                    id="register-password"
+                                    type={mostrarSenha1 ? 'text' : "password"}
+                                    placeholder="Digite sua senha (mínimo 8 caracteres)"
+                                    value={senha}
+                                    onChange={(e) => setSenha(e.target.value)}
+                                    required
+                                    minLength={8}
+                                />
+                                <button className="auth-password-toggle"
+                                    type='button'  
+                                    onClick={() => setMostrarSenha1((valorAtual) => !valorAtual)}
+                                    aria-label={mostrarSenha1 ? "Ocultar senha" : "Mostrar senha"}
+                                >
+                                    {mostrarSenha1 ? (
+                                        <img className='eye-icon' src={EyeClosed} alt="Mostrar senha" title='Ocultar senha'/>
+                                    ) : (
+                                        <img className='eye-icon' src={EyeOpen} alt="Ocultar senha" title='Mostrar senha' />
+                                    )}
+                                </button>
+
+                            </div>
+                        </div>
+
+                        <div className="auth-field">
+                            <label htmlFor="register-confirm-password">Confirmar senha</label>
+                            <div className="auth-password-wrap">
+                                <input 
+                                    id="register-confirm-password"
+                                    type={mostrarSenha2 ? 'text' : "password"}
+                                    placeholder="Confirme sua senha (igual a anterior)"
+                                    value={confirmarSenha}
+                                    onChange={(e) => setConfirmarSenha(e.target.value)}
+                                    required
+                                    minLength={8}
+                                />
+                                <button className="auth-password-toggle"
+                                    type='button'  
+                                    onClick={() => setMostrarSenha2((valorAtual) => !valorAtual)}
+                                    aria-label={mostrarSenha2 ? "Ocultar senha" : "Mostrar senha"}
+                                >
+                                    {mostrarSenha2 ? (
+                                        <img className='eye-icon' src={EyeClosed} alt="Mostrar senha" title='Ocultar senha'/>
+                                    ) : (
+                                        <img className='eye-icon' src={EyeOpen} alt="Ocultar senha" title='Mostrar senha' />
+                                    )}
+                                </button>
+
+                            </div>
                         </div>
 
                         <button className="auth-submit" type="submit" disabled={loading}>

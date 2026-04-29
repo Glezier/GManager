@@ -34,12 +34,16 @@ export default function Dashboard(){
         data.setDate(1)
         return getData(data)
     }) ()
-    // Busca com termino por mês
+    // Busca com termino por mês ou + 5 dias para a aba de semana
     const dataFim = (() => {
-        const data = new Date(`${hoje}T00:00:00`)
-        data.setMonth(data.getMonth() + 1)
-        data.setDate(0)
-        return getData(data)
+        const fimMes = new Date(`${hoje}T00:00:00`)
+        fimMes.setMonth(fimMes.getMonth() + 1)
+        fimMes.setDate(0)
+
+        const fimSemana = new Date(`${hoje}T00:00:00`)
+        fimSemana.setDate(fimSemana.getDate() + 5)
+        
+        return getData(fimSemana > fimMes ? fimSemana : fimMes)
     })()
 
     const {

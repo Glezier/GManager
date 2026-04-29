@@ -3,7 +3,7 @@ const validator = require('validator')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const AppError = require('../utils/AppError')
-const {gerarTokenEmail, gerarHashToken, gerarExpiracaoEmailToken} =  require('../utils/EmailVerification')
+const {gerarTokenEmail, gerarHashToken} =  require('../utils/EmailVerification')
 const { enviarEmailVerificacao } = require('../utils/EmailService')
 const { 
     gerarRefreshToken,
@@ -133,13 +133,10 @@ exports.registrar = async (req, res, next) => {
         // Produz hash do token
         const tokenHash = gerarHashToken(tokenEmail)
         
-        // Expiração do link de verificação
-        const tokenExpiraEm = gerarExpiracaoEmailToken()
-        
         await pool.query(
             `INSERT INTO email_verification_tokens (usuario_id, token_hash, expires_at)
-            VALUES ($1, $2, $3)`,
-            [usuario.id, tokenHash, tokenExpiraEm]
+            VALUES ($1, $2, CURRENT_TIMESTAMP AT TIME ZONE 'America/Sao_Paulo' + INTERVAL '10 minutes')`,
+            [usuario.id, tokenHash]
         )
         
         // Enviar email de varificação
@@ -186,7 +183,7 @@ exports.verificarEmail = async(req, res, next) => {
             FROM email_verification_tokens
             WHERE token_hash = $1
             AND used_at IS NULL
-            AND expires_at > NOW()
+            AND expires_at > CURRENT_TIMESTAMP AT TIME ZONE 'America/Sao_Paulo'
             LIMIT 1`,
             [tokenHash]
         )
@@ -205,8 +202,8 @@ exports.verificarEmail = async(req, res, next) => {
         await pool.query(
             `UPDATE usuarios
             SET email_verificado = true,
-            email_verificado_em = NOW(),
-            updated_at = NOW()
+            email_verificado_em = CURRENT_TIMESTAMP AT TIME ZONE 'America/Sao_Paulo',
+            updated_at = CURRENT_TIMESTAMP AT TIME ZONE 'America/Sao_Paulo'
             WHERE id = $1`,
             [tokenData.usuario_id]
         )
@@ -214,7 +211,7 @@ exports.verificarEmail = async(req, res, next) => {
         // Atualiza token para usado
         await pool.query(
             `UPDATE email_verification_tokens
-            SET used_at = NOW()
+            SET used_at = CURRENT_TIMESTAMP AT TIME ZONE 'America/Sao_Paulo'
             WHERE id = $1`,
             [tokenData.id]
         )
@@ -278,12 +275,11 @@ exports.reenviarVerificacao = async(req,res,next) => {
 
         const tokenEmail = gerarTokenEmail()
         const tokenHash = gerarHashToken(tokenEmail)
-        const tokenExpiraEm = gerarExpiracaoEmailToken()
 
         await pool.query(
             `INSERT INTO email_verification_tokens (usuario_id, token_hash, expires_at)
-            VALUES ($1, $2, $3)`,
-            [usuario.id, tokenHash, tokenExpiraEm]
+            VALUES ($1, $2, CURRENT_TIMESTAMP AT TIME ZONE 'America/Sao_Paulo' + INTERVAL '10 minutes')`,
+            [usuario.id, tokenHash]
         )
 
         await enviarEmailVerificacao({
@@ -382,7 +378,7 @@ exports.refreshToken = async (req,res,next) => {
             FROM refresh_tokens
             WHERE token_hash = $1
             AND revoked_at IS NULL
-            AND expires_at > NOW()
+            AND expires_at > (CURRENT_TIMESTAMP AT TIME ZONE 'America/Sao_Paulo')
             LIMIT 1`,
             [tokenHash]
         )
@@ -400,7 +396,7 @@ exports.refreshToken = async (req,res,next) => {
         // Ajusta no banco a data de revogação do refresh token
         await pool.query(
             `UPDATE refresh_tokens
-            SET revoked_at = NOW()
+            SET revoked_at = CURRENT_TIMESTAMP AT TIME ZONE 'America/Sao_Paulo'
             WHERE id = $1`,
             [tokenData.id]
         )
@@ -430,7 +426,7 @@ exports.logout = async(req,res,next) => {
             // Revoga o token no banco
             await pool.query(
                 `UPDATE refresh_tokens
-                SET revoked_at = NOW()
+                SET revoked_at = CURRENT_TIMESTAMP AT TIME ZONE 'America/Sao_Paulo'
                 WHERE token_hash = $1 
                 AND revoked_at IS NULL`,
                 [tokenHash]

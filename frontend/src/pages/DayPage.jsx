@@ -1,5 +1,7 @@
-import { useMemo } from 'react'
+import { useMemo, useEffect, useState } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
+
+import { infosUser } from '../api/api'
 
 import useTasks from '../hooks/useTasks'
 import useProgress from '../hooks/useProgress'
@@ -46,6 +48,45 @@ export default function DayPage(){
     navigate
   })
 
+  // Validação do dia a ser acessado
+  const [dataPermitida, setDataPermitida] = useState(false)
+
+  useEffect(() => {
+    async function validarDataPagina(){
+      const formatoValido = /^\d{4}-\d{2}-\d{2}$/.test(data)
+
+      if (!formatoValido) {
+        navigate('/calendario', { replace: true })
+        return
+      }
+
+      try{
+        const usuario = await infosUser()
+
+        const dataPagina = data
+        const dataMinima = new Date(`${usuario.created_at}`)
+        dataMinima.setFullYear(dataMinima.getFullYear() - 1)
+
+        const dataMaxima = new Date()
+        dataMaxima.setFullYear(dataMaxima.getFullYear() + 3)
+
+        const limiteMaximo = getData(dataMaxima)
+        const limiteMinimo = getData(dataMinima)
+
+        if(dataPagina < limiteMinimo || dataPagina > limiteMaximo){
+          navigate('/calendario', {replace: true})
+          return
+        }
+
+        setDataPermitida(true)
+
+      } catch{
+        navigate('/', {replace: true})
+      }
+    } 
+    validarDataPagina()
+  },[data, navigate])
+
   const {
     quantidadeConcluidas,
     progresso,
@@ -68,6 +109,11 @@ export default function DayPage(){
   // Texto do botão voltar de acordo com a origem
   const location = useLocation()
   const origem = location.state?.from === 'dashboard' ? 'dashboard' : 'calendario'
+
+  // Validação da data
+  if(!dataPermitida){
+    return null
+  }
 
   return(
     <main className='day-page'>

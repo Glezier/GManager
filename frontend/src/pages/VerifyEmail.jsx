@@ -1,16 +1,46 @@
 import { useSearchParams, Link, useNavigate } from 'react-router-dom'
 import { useState, useEffect, useRef } from 'react'
-import { verificarEmail } from '../api/api'
+import { verificarEmail, reenviarVerificacao } from '../api/api'
 import './Auth.css'
+import FullLogo from '../assets/icons/full_logo.png'
 
 export default function VerifyEmail(){
     // Lê os parâmetros da Url
     const [searchParams] = useSearchParams() 
     const [status, setStatus] = useState('loading')
     const [mensagem, setMensagem] = useState('Verificando seu email...')
+    const [emailReenvio, setEmailReenvio] = useState('')
+    const [loadingReenvio, setLoadingReenvio] = useState(false)
+    const [mensagemReenvio, setMensagemReenvio] = useState('')
+    const [bloqueado, setBloqueado] = useState(false)
     const jaExecutou = useRef(false) // StrictMode executa 2 vezes
     const navigate = useNavigate()
-    const email = searchParams.get('email') || ''
+
+    async function handleReenviar(){
+        if (!emailReenvio.trim()){
+            setStatus('error')
+            setMensagem('Informe seu email para reenviar verificação.')
+            return
+        }
+
+        try{
+            setLoadingReenvio(true)
+            setMensagemReenvio('')
+
+            const data = await reenviarVerificacao(emailReenvio.trim())
+            setMensagemReenvio(data.message)
+        } catch(error){
+            setMensagemReenvio('')
+            setStatus('error')
+            setMensagem(error.message)
+
+            if(error.message === 'Muitas tentativas. Tente novamente em 15 minutos.'){
+                setBloqueado(true)
+            }
+        } finally{
+            setLoadingReenvio(false)
+        }
+    }
 
     useEffect(()=>{
         // Evitar erro de dupla validação
@@ -43,12 +73,28 @@ export default function VerifyEmail(){
 
         validar()
     }, [searchParams])
+
+    useEffect(() => {
+        if (!bloqueado) {
+            return
+        }
+
+        const timer = setTimeout(() => {
+            setBloqueado(false)
+            setMensagem('')
+        }, 15 * 60 * 1000)
+
+        return () => clearTimeout(timer)
+    }, [bloqueado])
+
     return(
         <main className='auth-page'>
             <section className='auth-card'>
                 <aside className='auth-hero'>
                     <div>
-                        <span className='auth-brand'>My GManager</span>
+                        <span className='auth-brand'>
+                            <img src={FullLogo} alt="Logo My GManager" className='auth-logo'/>
+                        </span>
                     </div>
                     <div>
                         <h1>Verificação de email</h1>
@@ -66,7 +112,7 @@ export default function VerifyEmail(){
                         <p>{mensagem}</p>
                     </div>
 
-                    <p className='auth-alt'>
+                    <div className='auth-actions'>
                         {status === 'success' ? (
                             <button
                                 type='button'
@@ -74,7 +120,6 @@ export default function VerifyEmail(){
                                 onClick={()=>{
                                     navigate('/', {
                                         state:{
-                                            emailPreenchido: email,
                                             mensagemSucesso: 'Email verificado com sucesso.'
                                         }
                                     })
@@ -83,9 +128,45 @@ export default function VerifyEmail(){
                                 Ir para o login
                             </button>
                         ) : (
-                            <Link to='/'>Voltar para login</Link>
+                            <>
+                                {status === 'error' && (
+                                    <div className='auth-field'>
+                                        <p style={{margin : '0', marginBottom: '4px'
+                                        }}>Informe seu email novamente para reenvio</p>
+
+                                        <label htmlFor="verify-email-resend">Email</label>
+
+                                        <input 
+                                            id='verify-email-resend'
+                                            type="email"
+                                            placeholder='Confirme seu email'
+                                            value={emailReenvio}
+                                            disabled={bloqueado}
+                                            onChange={(e) => setEmailReenvio(e.target.value)}
+                                            required 
+                                        />
+                                    </div>
+                                )}
+
+                                <button
+                                    type='button'
+                                    className='auth-submit'
+                                    onClick={handleReenviar}
+                                    disabled={loadingReenvio || !emailReenvio.trim() || bloqueado}
+                                >
+                                    {loadingReenvio ? 'Reenviando...' : 'Reenviar email de verificação'}
+                                </button>
+
+                                {mensagemReenvio && (
+                                    <p className='auth-feedback dashboard-feedback-success'>
+                                        {mensagemReenvio}
+                                    </p>
+                                )}
+
+                                <p className='auth-alt'><Link to='/'>Voltar para login</Link></p>
+                            </>
                         )}
-                    </p>
+                    </div>
                 </div>
             </section>
         </main>

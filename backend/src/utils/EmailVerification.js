@@ -11,14 +11,7 @@ function gerarHashToken(token){
         .digest('hex')
 }
 
-function gerarExpiracaoEmailToken(){
-    const expiresAt = new Date()
-    expiresAt.setMinutes(expiresAt.getMinutes() + 10) // Expira após 10 minutos
-    return expiresAt
-}
-
 module.exports = {
     gerarTokenEmail,
-    gerarHashToken,
-    gerarExpiracaoEmailToken,
+    gerarHashToken
 }

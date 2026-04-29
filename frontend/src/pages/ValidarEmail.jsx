@@ -1,5 +1,6 @@
 import { Link, useLocation } from "react-router-dom"
 import './Auth.css'
+import FullLogo from '../assets/icons/full_logo.png'
 
 export default function ValidarEmail(){
     // Para acessar o state que é enviado ao registrar
@@ -13,7 +14,9 @@ export default function ValidarEmail(){
             <section className="auth-card">
                 <aside className="auth-hero">
                     <div>
-                        <span className="auth-brand">My GManager</span>
+                        <span className="auth-brand">
+                            <img src={FullLogo} alt="Logo My GManager" className='auth-logo'/>
+                        </span>
                     </div>
 
                     <div>

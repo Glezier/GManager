@@ -4,14 +4,20 @@ module.exports = (err, req, res, next) => {
     const isProduction = process.env.NODE_ENV === 'production'
     const isOperational = err.isOperational === true
     
-    console.error({
+    const logData = {
         message: err.message,
         code,
         statusCode,
         stack: err.stack,
         path: req.originalUrl,
         method: req.method
-    })
+    }
+
+    if (err.isOperational && statusCode < 500) {
+        console.warn(logData)
+    } else {
+        console.error(logData)
+    }
 
     const message = !isProduction || isOperational
     ? err.message 

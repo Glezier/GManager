@@ -164,6 +164,21 @@
   text-decoration: underline;
 }
 
+.auth-actions {
+  display: grid;
+  gap: 12px;
+  align-items: start;
+}
+
+.auth-actions .auth-submit {
+  width: 100%;
+  margin: 0;
+}
+
+.auth-actions .auth-alt {
+  margin-top: 0;
+}
+
 @media (max-width: 860px) {
   .auth-card {
     grid-template-columns: 1fr;

@@ -36,125 +36,122 @@ Use este checklist antes de commits importantes, antes de deploy e depois de alt
 - [x] Tentar usar token de verificacao expirado
 - [x] Tentar usar token ja utilizado
 
-obs: se nao velidado, a unica opcao é voltar para login, poderia ter logo um reenviar email
-e a mensagem de email verificado com sucesso ou reenviado nao sai ao clicar na tela como outros erros
-adicionar logo do MYgmanager nessa tela de verificacao tambem
 ## Reenvio de Verificacao
-- [ ] Tentar reenviar email para usuario nao verificado
-- [ ] Confirmar mensagem de sucesso
-- [ ] Confirmar recebimento do novo email
-- [ ] Tentar reenviar para email inexistente
-- [ ] Tentar reenviar para usuario ja verificado
-- [ ] Testar rate limit do reenvio de verificacao
+- [x] Tentar reenviar email para usuario nao verificado
+- [x] Confirmar mensagem de sucesso
+- [x] Confirmar recebimento do novo email
+- [x] Tentar reenviar para email inexistente
+- [x] Tentar reenviar para usuario ja verificado
+- [x] Testar rate limit do reenvio de verificacao
 
 ## Login
-- [ ] Login com email vazio
-- [ ] Login com senha vazia
-- [ ] Login com email invalido
-- [ ] Login com credenciais incorretas
-- [ ] Login com usuario nao verificado
-- [ ] Botao de reenviar verificacao aparece para usuario nao verificado
-- [ ] Login com usuario verificado e senha correta
-- [ ] Usuario autenticado vai para o dashboard
-- [ ] Token de acesso e salvo no frontend
-- [ ] Cookie de refresh token e criado
-- [ ] Botao de mostrar/ocultar senha funciona
-- [ ] Erro comum some ao clicar na tela
-- [ ] Backend desligado mostra erro amigavel de conexao
+- [x] Login com email vazio
+- [x] Login com senha vazia
+- [x] Login com email invalido
+- [x] Login com credenciais incorretas
+- [x] Login com usuario nao verificado
+- [x] Botao de reenviar verificacao aparece para usuario nao verificado
+- [x] Login com usuario verificado e senha correta
+- [x] Usuario autenticado vai para o dashboard
+- [x] Token de acesso e salvo no frontend
+- [x] Cookie de refresh token e criado
+- [x] Botao de mostrar/ocultar senha funciona
+- [x] Erro comum some ao clicar na tela
+- [x] Backend desligado mostra erro amigavel de conexao
 
 ## Rate Limit de Autenticacao
-- [ ] Exceder tentativas de login
-- [ ] Ver mensagem de rate limit no login
-- [ ] Botao de login fica bloqueado
-- [ ] Rate limit nao vaza stack trace ou erro interno
-- [ ] Apos janela configurada, login volta a funcionar
-- [ ] Exceder tentativas de cadastro
-- [ ] Exceder tentativas de reenvio de verificacao
-- [ ] Exceder tentativas de refresh, se aplicavel
+- [x] Exceder tentativas de login
+- [x] Ver mensagem de rate limit no login
+- [x] Botao de login fica bloqueado
+- [x] Rate limit nao vaza stack trace ou erro interno
+- [x] Apos janela configurada, login volta a funcionar
+- [x] Exceder tentativas de cadastro
+- [x] Exceder tentativas de reenvio de verificacao
+- [x] Exceder tentativas de refresh, se aplicavel
 
 ## Refresh Token e Sessao
-- [ ] Acessar rota privada com access token valido
-- [ ] Expirar access token e confirmar tentativa de refresh automatico
-- [ ] Confirmar que novo access token substitui o antigo
-- [ ] Confirmar que refresh token antigo e revogado no banco
-- [ ] Confirmar que refresh token novo e criado no banco
-- [ ] Remover/invalidar refresh token e tentar acessar rota privada
-- [ ] Usuario e redirecionado para login quando sessao expira
-- [ ] Backend desligado durante refresh mostra erro amigavel quando aplicavel
+- [x] Acessar rota privada com access token valido
+- [x] Expirar access token e confirmar tentativa de refresh automatico
+- [x] Confirmar que novo access token substitui o antigo
+- [x] Confirmar que refresh token antigo e revogado no banco
+- [x] Confirmar que refresh token novo e criado no banco
+- [x] Remover/invalidar refresh token e tentar acessar rota privada
+- [x] Usuario e redirecionado para login quando sessao expira
+- [x] Backend desligado durante refresh mostra erro amigavel quando aplicavel
 
 ## Logout
-- [ ] Clicar em sair no dashboard
-- [ ] Token local e removido
-- [ ] Cookie de refresh token e limpo
-- [ ] Refresh token e revogado no banco
-- [ ] Usuario volta para login
-- [ ] Tentar acessar dashboard apos logout
+- [x] Clicar em sair no dashboard
+- [x] Token local e removido
+- [x] Cookie de refresh token e limpo
+- [x] Refresh token e revogado no banco
+- [x] Usuario volta para login
+- [x] Tentar acessar dashboard apos logout
 
 ## Rotas Privadas
-- [ ] Acessar `/dashboard` sem token
-- [ ] Acessar `/calendario` sem token
-- [ ] Acessar `/dia/:data` sem token
-- [ ] Confirmar redirecionamento para login
-- [ ] Acessar rotas privadas com token valido
-- [ ] Acessar rotas privadas com token invalido
-- [ ] Acessar rotas privadas com token expirado e refresh valido
-- [ ] Acessar rotas privadas com token expirado e refresh invalido
+- [x] Acessar `/dashboard` sem token
+- [x] Acessar `/calendario` sem token
+- [x] Acessar `/dia/:data` sem token
+- [x] Confirmar redirecionamento para login
+- [x] Acessar rotas privadas com token valido
+- [x] Acessar rotas privadas com token invalido
+- [x] Acessar rotas privadas com token expirado e refresh valido
+- [x] Acessar rotas privadas com token expirado e refresh invalido
 
 ## Dashboard
-- [ ] Dashboard carrega tarefas de hoje
-- [ ] Estado de loading aparece durante carregamento
-- [ ] Estado vazio aparece quando nao ha tarefas
-- [ ] Feedback de sucesso aparece apos acao bem-sucedida
-- [ ] Feedback de erro aparece apos erro
-- [ ] Feedback de sucesso some automaticamente
-- [ ] Semana mostra dias corretos
-- [ ] Clique em dia da semana abre pagina do dia
-- [ ] Mini calendario abre calendario mensal
+- [x] Dashboard carrega tarefas de hoje
+- [x] Estado de loading aparece durante carregamento
+- [x] Estado vazio aparece quando nao ha tarefas
+- [x] Feedback de sucesso aparece apos acao bem-sucedida
+- [x] Feedback de erro aparece apos erro
+- [x] Feedback de sucesso some automaticamente
+- [x] Semana mostra dias corretos
+- [x] Clique em dia da semana abre pagina do dia
+- [x] Mini calendario abre calendario mensal
 
 ## Criacao de Tarefas
-- [ ] Abrir modal de nova tarefa no dashboard
-- [ ] Abrir modal de nova tarefa na pagina do dia
-- [ ] Campo titulo recebe foco
-- [ ] Tentar salvar sem titulo
-- [ ] Tentar salvar sem data
-- [ ] Criar tarefa valida sem hora
-- [ ] Criar tarefa valida com hora
-- [ ] Criar tarefa com descricao
-- [ ] Confirmar tarefa criada no banco
-- [ ] Confirmar tarefa aparece no dashboard quando for de hoje
-- [ ] Confirmar tarefa aparece no calendario
-- [ ] Confirmar modal fecha apos sucesso
-- [ ] Confirmar formulario limpa apos criacao
+- [x] Abrir modal de nova tarefa no dashboard
+- [x] Abrir modal de nova tarefa na pagina do dia
+- [x] Campo titulo recebe foco
+- [x] Tentar salvar sem titulo
+- [x] Tentar salvar sem data
+- [x] Criar tarefa valida sem hora
+- [x] Criar tarefa valida com hora
+- [x] Criar tarefa com descricao
+- [x] Confirmar tarefa criada no banco
+- [x] Confirmar tarefa aparece no dashboard quando for de hoje
+- [x] Confirmar tarefa aparece no calendario
+- [x] Confirmar modal fecha apos sucesso
+- [x] Confirmar formulario limpa apos criacao
 
 ## Validacao de Datas de Tarefas
-- [ ] Input de data impede data fora do limite inferior
-- [ ] Input de data impede data fora do limite superior
-- [ ] Backend recusa data invalida mesmo se frontend for burlado
-- [ ] Backend recusa formato de data invalido
-- [ ] Backend recusa hora invalida
-- [ ] Criar tarefa dentro do limite permitido
-- [ ] Editar tarefa dentro do limite permitido
-- [ ] Tentar acessar manualmente `/dia/:data` fora do limite e validar comportamento
+- [x] Input de data impede data fora do limite inferior
+- [x] Input de data impede data fora do limite superior
+- [x] Backend recusa data invalida mesmo se frontend for burlado
+- [x] Backend recusa formato de data invalido
+- [x] Backend recusa hora invalida
+- [x] Criar tarefa dentro do limite permitido
+- [x] Editar tarefa dentro do limite permitido
+- [x] Tentar acessar manualmente `/dia/:data` fora do limite e validar comportamento
 
 ## Edicao de Tarefas
-- [ ] Abrir modal de edicao
-- [ ] Campos aparecem preenchidos com dados da tarefa
-- [ ] Alterar titulo
-- [ ] Alterar descricao
-- [ ] Alterar data
-- [ ] Alterar hora
-- [ ] Alterar status, se disponivel
-- [ ] Salvar alteracoes
-- [ ] Confirmar atualizacao na lista
-- [ ] Confirmar atualizacao no banco
-- [ ] Cancelar edicao sem alterar tarefa
+- [x] Abrir modal de edicao
+- [x] Campos aparecem preenchidos com dados da tarefa
+- [x] Alterar titulo
+- [x] Alterar descricao
+- [x] Alterar data
+- [x] Alterar hora
+- [x] Alterar status, se disponivel
+- [x] Salvar alteracoes
+- [x] Confirmar atualizacao na lista
+- [x] Confirmar atualizacao no banco
+- [x] Cancelar edicao sem alterar tarefa
 
 ## Conclusao de Tarefas
-- [ ] Concluir tarefa pendente
-- [ ] Status muda para concluida
-- [ ] Botao de concluir desaparece ou fica indisponivel
-- [ ] Progresso do dia atualiza
-- [ ] Calendario reflete status correto
+- [x] Concluir tarefa pendente
+- [x] Status muda para concluida
+- [x] Botao de concluir desaparece ou fica indisponivel
+- [x] Progresso do dia atualiza
+- [x] Calendario reflete status correto
 - [ ] Tentar concluir tarefa inexistente ou de outro usuario via API
 
 ## Exclusao de Tarefas
@@ -244,3 +241,7 @@ adicionar logo do MYgmanager nessa tela de verificacao tambem
 - [ ] Confirmar `FRONTEND_URL` exata do frontend publicado
 - [ ] Confirmar politica de `sameSite` adequada ao dominio escolhido
 - [ ] Confirmar `trust proxy` conforme provedor de deploy
+
+validar entradas de título e descrição muito longas
+Ajustar o readme
+blur nas coisas por vir

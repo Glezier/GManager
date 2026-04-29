@@ -28,6 +28,19 @@ function getNetworkError(){
     return new Error('Não foi possível conectar ao servidor.')
 }
 
+// Garante que apenas uma requisição de refresh token aconteça por vez
+let refreshPromise = null
+
+async function renovarToken(){
+    if(!refreshPromise){
+        refreshPromise = refreshToken().finally(() => {
+            refreshPromise = null
+        })
+    }
+
+    return refreshPromise
+}
+
 // O usuário deve estar autenticado para todas as ações
 // Essa função protege as rotas de fetch contra usuarios nao autenticados
 async function fetchAutenticado(url, options = {}){
@@ -64,7 +77,7 @@ async function fetchAutenticado(url, options = {}){
 
     try{
         // Pega um novo refresh token
-        const refreshData = await refreshToken()
+        const refreshData = await renovarToken()
 
         if (!refreshData.token){
             removeToken()

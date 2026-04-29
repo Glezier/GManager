@@ -67,6 +67,7 @@ export default function Login(){
 
             const data = await reenviarVerificacao(email)
             setMensagemSucesso(data.message)
+            setEmailNaoVerificado(false)
         } catch(error){
             setErro(error.message)
         } finally{
@@ -87,14 +88,15 @@ export default function Login(){
         return () => clearTimeout(timer)
     }, [bloqueado])
 
-    function limparErro(){
-        if (erro && !bloqueado){
+    function limparTela(){
+        if ((erro && !bloqueado) || mensagemSucesso){
             setErro('')
+            setMensagemSucesso('')
         }
     }
 
     return(   
-        <main className='auth-page' onClick={limparErro}>
+        <main className='auth-page' onClick={limparTela}>
             <section className='auth-card'>
                 <aside className='auth-hero'>
                     <div>
@@ -164,7 +166,7 @@ export default function Login(){
                                 <input 
                                     id='login-password'
                                     type={mostrarSenha ? "text" : "password"}
-                                    placeholder='Digite sua senha'
+                                    placeholder='Digite sua senha (mínimo 8 caracteres)'
                                     value={senha}
                                     disabled={bloqueado} 
                                     onChange={(e) => setSenha(e.target.value)}

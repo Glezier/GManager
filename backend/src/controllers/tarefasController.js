@@ -19,6 +19,37 @@ function isValidStatus(status) {
     return validator.isIn(status, ['pendente', 'concluida'])
 }
 
+// Validação do periodo permitido para data de tarefa
+async function periodoPermitido(usuarioId, dataTarefa) {
+    const result = await pool.query(
+        `SELECT
+            $2::date BETWEEN
+                (created_at::date - INTERVAL '1 year')::date
+                AND ((CURRENT_TIMESTAMP AT TIME ZONE 'America/Sao_Paulo')::date + INTERVAL '3 years')::date
+            AS periodo_permitido
+        FROM usuarios
+        WHERE id = $1`,
+        [usuarioId, dataTarefa]
+    )
+
+    if (result.rows.length === 0) {
+        throw new AppError(
+            'Usuário não encontrado',
+            404,
+            'USER_NOT_FOUND'
+        )
+    }
+
+    if (!result.rows[0].periodo_permitido) {
+        throw new AppError(
+            'Data fora do período permitido',
+            400,
+            'TASK_DATE_OUT_OF_RANGE'
+        )
+    }
+}
+
+
 // Criar tarefa
 exports.criarTarefa = async (req, res, next) => {
     try{
@@ -50,6 +81,8 @@ exports.criarTarefa = async (req, res, next) => {
                 'VALIDATION_ERROR'
             ))
         }
+        // Validação do período
+        await periodoPermitido(usuario_id, data)
         // Validação da hora informada
         if (hora && !isValidTime(hora)) {
             return next(new AppError(
@@ -122,6 +155,10 @@ exports.listarTarefas = async (req,res, next) => {
             ))
         }
 
+        // Validação da data seguindo a regra de negócio
+        await periodoPermitido(usuario_id, inicio)
+        await periodoPermitido(usuario_id, fim)
+
         // Busca no bando de dados pelas tarefas no tempo informado
         const result = await pool.query(
             `SELECT * 
@@ -172,6 +209,11 @@ exports.atualizarTarefa = async (req, res, next) => {
                 400,
                 'VALIDATION_ERROR'
             ))
+        }
+
+        // Validação do período
+        if (data!== undefined){
+            await periodoPermitido(usuario_id, data)
         }
 
         // Verificação da hora informada
