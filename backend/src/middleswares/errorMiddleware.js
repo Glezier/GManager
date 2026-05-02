@@ -14,7 +14,7 @@ module.exports = (err, req, res, next) => {
     }
 
     if (err.isOperational && statusCode < 500) {
-        console.warn(logData)
+        console.warn(logData.code, logData.statusCode, logData.method, logData.path)
     } else {
         console.error(logData)
     }

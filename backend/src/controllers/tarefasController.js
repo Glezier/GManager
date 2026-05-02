@@ -19,6 +19,12 @@ function isValidStatus(status) {
     return validator.isIn(status, ['pendente', 'concluida'])
 }
 
+// Validação do tamanho das entradas
+const LIMITES_TAREFA = {
+    titulo: 60,
+    descricao: 120
+}
+
 // Validação do periodo permitido para data de tarefa
 async function periodoPermitido(usuarioId, dataTarefa) {
     const result = await pool.query(
@@ -49,7 +55,6 @@ async function periodoPermitido(usuarioId, dataTarefa) {
     }
 }
 
-
 // Criar tarefa
 exports.criarTarefa = async (req, res, next) => {
     try{
@@ -65,7 +70,7 @@ exports.criarTarefa = async (req, res, next) => {
                 'VALIDATION_ERROR'
             ))
         }
-        // Validação de título vazio
+        // Validação de título
         if (!titulo.trim()) {
             return next(new AppError(
                 'O título não pode estar vazio',
@@ -73,6 +78,24 @@ exports.criarTarefa = async (req, res, next) => {
                 'VALIDATION_ERROR'
             ))
         }
+
+        if (titulo.trim().length > LIMITES_TAREFA.titulo) {
+            return next(new AppError(
+                `O título deve possuir no máximo ${LIMITES_TAREFA.titulo} caracteres`,
+                400,
+                'VALIDATION_ERROR'
+            ))
+        }
+
+        // Validaçao da descrição
+        if (descricao !== undefined && descricao !== null && descricao.trim().length > LIMITES_TAREFA.descricao) {
+            return next(new AppError(
+                `A descrição deve possuir no máximo ${LIMITES_TAREFA.descricao} caracteres`,
+                400,
+                'VALIDATION_ERROR'
+            ))
+        }
+
         // Validação da data informada
         if (!isValidDate(data)) {
             return next(new AppError(
@@ -188,6 +211,23 @@ exports.atualizarTarefa = async (req, res, next) => {
         if (titulo !== undefined && !titulo.trim()) {
             return next(new AppError(
                 'O título não pode estar vazio',
+                400,
+                'VALIDATION_ERROR'
+            ))
+        }
+
+        if (titulo !== undefined && titulo.trim().length > LIMITES_TAREFA.titulo) {
+            return next(new AppError(
+                `O título deve possuir no máximo ${LIMITES_TAREFA.titulo} caracteres`,
+                400,
+                'VALIDATION_ERROR'
+            ))
+        }
+
+        // Validação da descrição
+        if (descricao !== undefined && descricao !== null && descricao.trim().length > LIMITES_TAREFA.descricao) {
+            return next(new AppError(
+                `A descrição deve possuir no máximo ${LIMITES_TAREFA.descricao} caracteres`,
                 400,
                 'VALIDATION_ERROR'
             ))

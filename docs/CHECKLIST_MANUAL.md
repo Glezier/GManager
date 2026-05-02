@@ -152,96 +152,93 @@ Use este checklist antes de commits importantes, antes de deploy e depois de alt
 - [x] Botao de concluir desaparece ou fica indisponivel
 - [x] Progresso do dia atualiza
 - [x] Calendario reflete status correto
-- [ ] Tentar concluir tarefa inexistente ou de outro usuario via API
+- [x] Tentar concluir tarefa inexistente ou de outro usuario via API
 
 ## Exclusao de Tarefas
-- [ ] Clicar em excluir tarefa
-- [ ] ConfirmBox abre com titulo e mensagem corretos
-- [ ] Cancelar exclusao
-- [ ] Confirmar exclusao
-- [ ] Tarefa some da lista
-- [ ] Tarefa some do calendario
-- [ ] Confirmar exclusao no banco
-- [ ] Tentar excluir tarefa inexistente ou de outro usuario via API
+- [x] Clicar em excluir tarefa
+- [x] ConfirmBox abre com titulo e mensagem corretos
+- [x] Cancelar exclusao
+- [x] Confirmar exclusao
+- [x] Tarefa some da lista
+- [x] Tarefa some do calendario
+- [x] Confirmar exclusao no banco
+- [x] Tentar excluir tarefa inexistente ou de outro usuario via API
 
 ## Rate Limit de Tarefas
-- [ ] Exceder limite de criacao/edicao/conclusao/exclusao
-- [ ] Ver mensagem de limite de alteracoes em tarefas
-- [ ] Confirmar que GET de tarefas continua funcionando
-- [ ] Confirmar que limite volta ao normal apos janela configurada
+- [x] Exceder limite de criacao/edicao/conclusao/exclusao
+- [x] Ver mensagem de limite de alteracoes em tarefas
+- [x] Confirmar que GET de tarefas continua funcionando
+- [x] Confirmar que limite volta ao normal apos janela configurada
 
 ## Calendario
-- [ ] Calendario mensal abre corretamente
-- [ ] Mes e ano selecionados refletem mes visivel
-- [ ] Trocar mes pelo select
-- [ ] Trocar ano pelo select
-- [ ] Navegar pelas setas do FullCalendar
-- [ ] Eventos aparecem nos dias corretos
-- [ ] Clique em dia abre `DayPage`
-- [ ] Clique em evento abre `DayPage`
-- [ ] Calendario respeita data minima baseada na criacao da conta
-- [ ] Calendario respeita horizonte futuro configurado
-- [ ] `validRange` impede navegacao visual fora do intervalo
-- [ ] Estado vazio aparece quando nao ha tarefas no periodo
-- [ ] Estado de erro aparece quando a API falha
+- [x] Calendario mensal abre corretamente
+- [x] Mes e ano selecionados refletem mes visivel
+- [x] Trocar mes pelo select
+- [x] Trocar ano pelo select
+- [x] Navegar pelas setas do FullCalendar
+- [x] Eventos aparecem nos dias corretos
+- [x] Clique em dia abre `DayPage`
+- [x] Clique em evento abre `DayPage`
+- [x] Calendario respeita data minima baseada na criacao da conta
+- [x] Calendario respeita horizonte futuro configurado
+- [x] `validRange` impede navegacao visual fora do intervalo
+- [x] Estado vazio aparece quando nao ha tarefas no periodo
+- [x] Estado de erro aparece quando a API falha
 
 ## Pagina do Dia
-- [ ] Abrir pagina do dia pelo dashboard
-- [ ] Abrir pagina do dia pelo calendario
-- [ ] Titulo mostra data correta
-- [ ] Botao de voltar respeita origem
-- [ ] Botao dia anterior funciona
-- [ ] Botao proximo dia funciona
-- [ ] Lista tarefas do dia correto
-- [ ] Criar tarefa preenche data do dia aberto
-- [ ] Editar tarefa do dia
-- [ ] Concluir tarefa do dia
-- [ ] Excluir tarefa do dia
+- [x] Abrir pagina do dia pelo dashboard
+- [x] Abrir pagina do dia pelo calendario
+- [x] Titulo mostra data correta
+- [x] Botao de voltar respeita origem
+- [x] Botao dia anterior funciona
+- [x] Botao proximo dia funciona
+- [x] Lista tarefas do dia correto
+- [x] Criar tarefa preenche data do dia aberto
+- [x] Editar tarefa do dia
+- [x] Concluir tarefa do dia
+- [x] Excluir tarefa do dia
+- [x] Tarefas concluídas ao final da lista
 
 ## API e Seguranca Basica
-- [ ] CORS permite origem local configurada
-- [ ] CORS bloqueia origem nao permitida
-- [ ] `helmet` adiciona headers de seguranca
-- [ ] `errorMiddleware` mantem formato `{ error: { code, message } }`
-- [ ] Erros esperados retornam mensagem especifica
-- [ ] Erros inesperados em producao retornam mensagem generica
-- [ ] Logs internos ainda mostram detalhes suficientes para debug
-- [ ] `COOKIE_SECURE=false` em desenvolvimento
-- [ ] `COOKIE_SECURE=true` validado em producao
+- [x] CORS permite origem local configurada
+- [x] CORS bloqueia origem nao permitida
+- [x] `helmet` adiciona headers de seguranca
+- [x] `errorMiddleware` mantem formato `{ error: { code, message } }`
+- [x] Erros esperados retornam mensagem especifica
+- [x] Erros inesperados em producao retornam mensagem generica
+- [x] Logs internos ainda mostram detalhes suficientes para debug
+- [x] `COOKIE_SECURE=false` em desenvolvimento
+- [x] `COOKIE_SECURE=true` validado em producao
 - [ ] `FRONTEND_URL` usa HTTPS em producao
-- [ ] `trust proxy` configurado apenas quando necessario para deploy
+- [x] `trust proxy` configurado apenas quando necessario para deploy
 
 ## Banco de Dados
-- [ ] Usuarios tem `created_at` correto
-- [ ] Usuarios tem `updated_at` correto
-- [ ] Tarefas usam `usuario_id` correto
-- [ ] Tarefas de um usuario nao aparecem para outro
-- [ ] Refresh tokens sao gravados com hash
-- [ ] Refresh tokens expirados nao renovam sessao
-- [ ] Refresh tokens revogados nao renovam sessao
+- [x] Usuarios tem `created_at` correto
+- [x] Usuarios tem `updated_at` correto
+- [x] Tarefas usam `usuario_id` correto
+- [x] Tarefas de um usuario nao aparecem para outro
+- [x] Refresh tokens sao gravados com hash
+- [x] Refresh tokens expirados nao renovam sessao
+- [x] Refresh tokens revogados nao renovam sessao
 
 ## Regressao Visual Basica
-- [ ] Login sem quebras visuais
-- [ ] Cadastro sem quebras visuais
-- [ ] Validacao de email sem quebras visuais
-- [ ] Dashboard sem sobreposicao de textos
-- [ ] Modal de tarefa centralizado
-- [ ] ConfirmBox centralizado
-- [ ] Calendario sem quebras visuais
-- [ ] Pagina do dia sem quebras visuais
-- [ ] Layout funciona em largura desktop comum
-- [ ] Layout funciona em largura mobile basica
+- [x] Login sem quebras visuais
+- [x] Cadastro sem quebras visuais
+- [x] Validacao de email sem quebras visuais
+- [x] Dashboard sem sobreposicao de textos
+- [x] Modal de tarefa centralizado
+- [x] ConfirmBox centralizado
+- [x] Calendario sem quebras visuais
+- [x] Pagina do dia sem quebras visuais
+- [x] Layout funciona em largura desktop comum
+- [x] Layout funciona em largura mobile basica
 
 ## Observacoes Para Antes Do Deploy
-- [ ] Rotacionar segredos finais antes de publicar
-- [ ] Confirmar que nenhum `.env` real esta versionado
-- [ ] Confirmar variaveis reais no provedor de deploy
-- [ ] Confirmar `NODE_ENV=production`
-- [ ] Confirmar `COOKIE_SECURE=true`
-- [ ] Confirmar `FRONTEND_URL` exata do frontend publicado
-- [ ] Confirmar politica de `sameSite` adequada ao dominio escolhido
-- [ ] Confirmar `trust proxy` conforme provedor de deploy
-
-validar entradas de título e descrição muito longas
-Ajustar o readme
-blur nas coisas por vir
+- [x] Rotacionar segredos finais antes de publicar
+- [x] Confirmar que nenhum `.env` real esta versionado
+- [x] Confirmar variaveis reais no provedor de deploy
+- [x] Confirmar `NODE_ENV=production`
+- [x] Confirmar `COOKIE_SECURE=true`
+- [x] Confirmar `FRONTEND_URL` exata do frontend publicado
+- [x] Confirmar politica de `sameSite` adequada ao dominio escolhido
+- [x] Confirmar `trust proxy` conforme provedor de deploy

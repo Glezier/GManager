@@ -7,49 +7,51 @@ import { formatarHora } from "../utils/date"
 export default function TaskCard({tarefa, concluir, remover, editar}){
   return (
     <article className="task-card">
-      <div className="task-card-info">
-        <h3 className="task-card-title">{tarefa.titulo}</h3>
-        {tarefa.descricao && (
-          <p className="task-card-description">{tarefa.descricao}</p>
-        )}
-      </div>
+      <div className="task-card-shell">
+        <div className="task-card-info">
+          <h3 className="task-card-title">{tarefa.titulo}</h3>
+          {tarefa.descricao && (
+            <p className="task-card-description">{tarefa.descricao}</p>
+          )}
+        </div>
 
-      <div className="task-card-center">
-        {tarefa.hora && (
-          <span className="task-card-time">{formatarHora(tarefa.hora)}</span>
-        )}
+        <div className="task-card-center">
+          {tarefa.hora && (
+            <span className="task-card-time">{formatarHora(tarefa.hora)}</span>
+          )}
 
-        <span className={`task-card-status task-card-status-${tarefa.status}`}>
-          {tarefa.status}
-        </span>
-      </div>
+          <span className={`task-card-status task-card-status-${tarefa.status}`}>
+            {tarefa.status}
+          </span>
+        </div>
 
-      <div className="task-card-actions">
-        {tarefa.status === "pendente" ? (
+        <div className="task-card-actions">
+          {tarefa.status === "pendente" ? (
+            <button
+              type="button"
+              className="task-card-icon"
+              onClick={() => concluir(tarefa.id)}
+              title="Concluir tarefa"
+            >
+              <img src={CheckIcon} alt="" className="task-card-icon-image"/>
+            </button>
+          ) : (
+            <div className="task-card-icon-placeholder"/>
+          )}
+
+          <button type="button" className="task-card-icon" onClick={()=> editar(tarefa)}>
+            <img src={EditIcon} alt="" className="task-card-icon-image"/>
+          </button>
+
           <button
             type="button"
             className="task-card-icon"
-            onClick={() => concluir(tarefa.id)}
-            title="Concluir tarefa"
+            onClick={() => remover(tarefa)}
+            title="Excluir tarefa"
           >
-            <img src={CheckIcon} alt="" className="task-card-icon-image"/>
+            <img src={DeleteIcon} className="task-card-icon-image" alt=""  />
           </button>
-        ) : (
-          <div className="task-card-icon-placeholder"/>
-        )}
-
-        <button type="button" className="task-card-icon" onClick={()=> editar(tarefa)}>
-          <img src={EditIcon} alt="" className="task-card-icon-image"/>
-        </button>
-
-        <button
-          type="button"
-          className="task-card-icon"
-          onClick={() => remover(tarefa)}
-          title="Excluir tarefa"
-        >
-          <img src={DeleteIcon} className="task-card-icon-image" alt=""  />
-        </button>
+        </div>
       </div>
     </article>
   )

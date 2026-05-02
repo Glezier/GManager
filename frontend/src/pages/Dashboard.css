@@ -94,13 +94,18 @@
 
 .dashboard-bottom {
   display: grid;
-  grid-template-columns: 1fr 1.2fr;
+  grid-template-columns: 1fr 1fr;
   gap: 24px;
+}
+
+.dashboard-stack {
+  display: grid;
+  gap: 8px;
   margin-bottom: 24px;
 }
 
 .dashboard-panel {
-  padding: 28px;
+  padding: 24px;
   margin-bottom: 24px;
   background: linear-gradient(180deg, var(--bg-surface) 0%, var(--bg-surface-elevated) 100%);
   border: 1px solid var(--border-subtle);
@@ -296,7 +301,7 @@
 }
 
 .dashboard-notes-box {
-  min-height: 280px;
+ 
   display: grid;
   align-content: start;
   gap: 14px;
@@ -318,8 +323,12 @@
 }
 
 .dashboard-notes-subtext {
-  max-width: 46ch;
+  max-width: 58ch;
   color: var(--text-muted);
+}
+
+.dashboard-panel-wide .dashboard-notes-subtext {
+  max-width: none;
 }
 
 .dashboard-all-tasks {
@@ -351,6 +360,10 @@
   .dashboard-bottom,
   .dashboard-week {
     grid-template-columns: 1fr;
+  }
+
+  .dashboard-stack {
+    gap: 0;
   }
 
   .dashboard-topbar {

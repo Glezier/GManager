@@ -18,6 +18,9 @@ module.exports = (req, res, next) =>{
         next()
 
     }catch(error){
+        if (error.name === 'TokenExpiredError'){
+            return next(new AppError('Token expirado', 401, 'TOKEN_EXPIRED'))
+        }
         return next(new AppError("Token inválido", 401, "TOKEN_INVALID"))
     }
 }

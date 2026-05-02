@@ -195,27 +195,31 @@ export default function Calendar(){
                     </button>
 
                     <div className='calendar-toolbar'>
-                        <label htmlFor="select-mes">Mês:</label>
-                        <select
-                            id="select-mes"
-                            value={mesSelecionado}
-                            onChange={(e) => setMesSelecionado(Number(e.target.value))}
-                        >
-                            {meses.map((nome, index) => (
-                                <option key={index} value={index}>{nome}</option>
-                            ))}
-                        </select>
+                        <div className='calendar-toolbar-group'>
+                            <label htmlFor="select-mes">Mês:</label>
+                            <select
+                                id="select-mes"
+                                value={mesSelecionado}
+                                onChange={(e) => setMesSelecionado(Number(e.target.value))}
+                            >
+                                {meses.map((nome, index) => (
+                                    <option key={index} value={index}>{nome}</option>
+                                ))}
+                            </select>
+                        </div>
 
-                        <label htmlFor="select-ano">Ano:</label>
-                        <select
-                            id="select-ano"
-                            value={anoSelecionado}
-                            onChange={(e) => setAnoSelecionado(Number(e.target.value))}
-                        >
-                            {anos.map((ano) => (
-                                <option key={ano} value={ano}>{ano}</option>
-                            ))}
-                        </select>
+                        <div className='calendar-toolbar-group'>
+                            <label htmlFor="select-ano">Ano:</label>
+                            <select
+                                id="select-ano"
+                                value={anoSelecionado}
+                                onChange={(e) => setAnoSelecionado(Number(e.target.value))}
+                            >
+                                {anos.map((ano) => (
+                                    <option key={ano} value={ano}>{ano}</option>
+                                ))}
+                            </select>
+                        </div>
                     </div>
                 </div>
 

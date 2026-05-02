@@ -110,9 +110,9 @@ export default function Dashboard(){
                     <button type="button" onClick={() => navigate("/calendario")}>
                         <img src={CalendarIcon} alt="Calendário" className="bar-icons" title="Calendário"/>
                     </button>
-                    <button type="button">
+                    {/*<button type="button">
                         <img src={NotesIcon} alt="Notas" className="bar-icons" title="Notas"/>
-                    </button>
+                    </button> */}
                 </nav>
 
                 <button
@@ -222,7 +222,7 @@ export default function Dashboard(){
             <section className="dashboard-bottom">
                 <div className="dashboard-panel">
                     <div className="dashboard-head">
-                        <p>Notas rápidas</p>
+                        <p>Em breve</p>
                         <h2>Anotações gerais</h2>
                     </div>
 
@@ -236,6 +236,73 @@ export default function Dashboard(){
                     </div>
                 </div>
               
+                <div className="dashboard-panel">
+                    <div className="dashboard-head">
+                        <p>Em breve</p>
+                        <h2>Checklists</h2>
+                    </div>
+
+                    <div className="dashboard-notes-box">
+                        <p className="dashboard-notes-lead">
+                            Um espaço pensado para listas reutilizáveis e conferências rápidas do que precisa ser acompanhado.
+                        </p>
+                        <p className="dashboard-notes-subtext">
+                            Aqui podem entrar checklists de rotina, compras, revisões, preparos...
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <section className="dashboard-stack">
+                <div className="dashboard-panel dashboard-panel-wide">
+                    <div className="dashboard-head">
+                        <p>Em breve</p>
+                        <h2>Gerenciamento de finanças</h2>
+                    </div>
+
+                    <div className="dashboard-notes-box">
+                        <p className="dashboard-notes-lead">
+                            Uma área para acompanhar entradas, saídas, metas financeiras e compromissos recorrentes dentro da sua organização pessoal.
+                        </p>
+                        <p className="dashboard-notes-subtext">
+                            A proposta é centralizar visão mensal, controle de despesas e planejamento financeiro e vendo exatamente as contas batendo ao final do mês.
+                        </p>
+                    </div>
+                </div>
+
+                <div className="dashboard-bottom">
+                    <div className="dashboard-panel">
+                        <div className="dashboard-head">
+                            <p>Em breve</p>
+                            <h2>Eventos sem data definida</h2>
+                        </div>
+
+                        <div className="dashboard-notes-box">
+                            <p className="dashboard-notes-lead">
+                                Um lugar para guardar compromissos, ideias e planos que ainda não tem dia fechado, mas já merecem organização.
+                            </p>
+                            <p className="dashboard-notes-subtext">
+                                Vai servir para metas futuras, viagens, encontros, projetos e lembretes maiores que estão no radar, mas ainda sem data no calendário.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div className="dashboard-panel">
+                        <div className="dashboard-head">
+                            <p>Em breve</p>
+                            <h2>Integração com futebol e implementação de IA</h2>
+                        </div>
+
+                        <div className="dashboard-notes-box">
+                            <p className="dashboard-notes-lead">
+                                Ideias mais fortes mas que devem sair do papel.
+                            </p>
+                            <p className="dashboard-notes-subtext">
+                                No My GManager você poderá também acompanhar seu time do coração e conseguir algumas dicas com IA para realização de tarefas.
+                            </p>
+                        </div>
+                    </div>
+                </div>
             </section>
 
             <footer className="dashboard-footer">

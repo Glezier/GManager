@@ -1,4 +1,4 @@
-const { rateLimit } =  require('express-rate-limit')
+const { rateLimit, ipKeyGenerator } =  require('express-rate-limit')
 
 const authLimiter = rateLimit({
     windowMs: 15 * 60 * 1000, // Intervalo de tempo de 15 minutos
@@ -28,9 +28,12 @@ const loginLimiter = rateLimit({
 
 const tasksWriterLimiter = rateLimit({
     windowMs: 60 * 1000,
-    limit: 30,
+    limit: 40,
     standardHeaders: true,
     legacyHeaders: false,
+    keyGenerator: (req) => { // Limita por IP ou por id do usuário
+        return req.userId ? `user:${req.userId}` : `ip:${ipKeyGenerator(req.ip)}`
+    },
     message: {
         error:{
             code: 'TASK_WRITE_RATE_LIMIT_EXCEEDED',

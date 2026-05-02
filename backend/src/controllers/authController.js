@@ -16,6 +16,15 @@ function isValidEmail(email){
     return validator.isEmail(email)
 }
 
+// Limites para campos do usuário
+const LIMITES_USUARIO = {
+    nome_minimo: 2,
+    nome_maximo: 100,
+    email: 120,
+    senha_minima: 8,
+    senha_maxima: 50
+}
+
 // Gerar token de acesso
 function gerarAccessToken(usuarioId){
     return jwt.sign(
@@ -87,22 +96,39 @@ exports.registrar = async (req, res, next) => {
         }
         
         // Verificação do tamanho do nome informado
-        if (nome.trim().length < 2){
-            return next(new AppError('O nome deve possuir pelo menos 2 caracteres', 400, 'VALIDATION_ERROR'))
+        if (nome.trim().length < LIMITES_USUARIO.nome_minimo || nome.trim().length > LIMITES_USUARIO.nome_maximo){
+            return next(new AppError(
+                `O nome deve possuir tamanho entre ${LIMITES_USUARIO.nome_minimo} e ${LIMITES_USUARIO.nome_maximo} caracteres`, 
+                400, 
+                'VALIDATION_ERROR'
+            ))
         }
         
         // Verificação se o email informado é válido
         if (!isValidEmail(email)){
             return next(new AppError('Email inválido', 400, 'VALIDATION_ERROR'))
         }
-        
-        // Verificação do tamanho da senha
-        if (senha.length < 8){
-            return next(new AppError('A senha deve possuir pelo menos 8 caracteres', 400, 'VALIDATION_ERROR'))
+
+        // Verificação do tamanho  da senha
+        if (senha.length < LIMITES_USUARIO.senha_minima || senha.length > LIMITES_USUARIO.senha_maxima){
+            return next(new AppError(
+                `A senha deve possuir entre ${LIMITES_USUARIO.senha_minima} e ${LIMITES_USUARIO.senha_maxima} caracteres`, 
+                400, 
+                'VALIDATION_ERROR'
+            ))
         }
         
         // Eliminação de espaços e transformação para caracteres minúsculos
         const emailCorrigido = email.trim().toLowerCase()
+
+        // Validação do tamanho máximo no email
+        if (emailCorrigido.length > LIMITES_USUARIO.email){
+            return next(new AppError(
+                `O email deve possuir no máximo ${LIMITES_USUARIO.email} caracteres`,
+                400,
+                'VALIDATION_ERROR'
+            ))
+        }
         
         // Busca pelo email no banco de dados
         const emailExist = await pool.query(
@@ -248,6 +274,14 @@ exports.reenviarVerificacao = async(req,res,next) => {
 
         const emailCorrigido = email.trim().toLowerCase()
 
+        if (emailCorrigido.length > LIMITES_USUARIO.email){
+            return next(new AppError(
+                `O email deve possuir no máximo ${LIMITES_USUARIO.email} caracteres`,
+                400,
+                'VALIDATION_ERROR'
+            ))
+        }
+
         const result = await pool.query(
             `SELECT id, nome, email, email_verificado
             FROM usuarios
@@ -304,6 +338,15 @@ exports.login = async (req, res, next) => {
             return next(new AppError('Email e senha são obrigatórios', 400, 'VALIDATION_ERROR'))
         }
 
+        // Validação do tamanho da senha
+        if (senha.length > LIMITES_USUARIO.senha_maxima){
+            return next(new AppError(
+                `A senha deve possuir no máximo ${LIMITES_USUARIO.senha_maxima} caracteres`,
+                400,
+                'VALIDATION_ERROR'
+            ))
+        }
+
         // Verificação de validade do email
         if (!isValidEmail(email)){
             return next(new AppError('Email inválido', 400, 'VALIDATION_ERROR'))
@@ -311,6 +354,15 @@ exports.login = async (req, res, next) => {
 
         // Eliminação de espaços e transformação para caracteres minúsculos
         const emailCorrigido = email.trim().toLowerCase()
+
+        // Validação do tamanho máximo do email
+        if (emailCorrigido.trim().length > LIMITES_USUARIO.email){
+            return next(new AppError(
+                `O email deve possuir no máximo ${LIMITES_USUARIO.email} caracteres`,
+                400,
+                'VALIDATION_ERROR'
+            ))
+        }
 
         // Busca pelo email no banco de dados
         const result = await pool.query(

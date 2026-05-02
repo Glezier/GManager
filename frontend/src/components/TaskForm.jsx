@@ -62,6 +62,7 @@ export default function TaskForm ({ criar, cancelar, hoje, erro='', tarefaInicia
                     onChange={(e)=>{setTitulo(e.target.value)}} 
                     onInvalid={() => setErroForm('Título é obrigatório')}
                     ref={tituloRef}
+                    maxLength={60}
                     required
                 />
 
@@ -70,6 +71,7 @@ export default function TaskForm ({ criar, cancelar, hoje, erro='', tarefaInicia
                     type="text"
                     placeholder="Descrição da tarefa" 
                     value={descricao}
+                    maxLength={120}
                     onChange={(e)=>{setDescricao(e.target.value)}}
                 />
 

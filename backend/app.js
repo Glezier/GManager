@@ -23,8 +23,6 @@ if (process.env.NODE_ENV === 'production'){
   if (process.env.COOKIE_SECURE !== 'true') {
     throw new Error('COOKIE_SECURE deve ser true em producao')
   }
-
-
 }
 
 const express = require('express')
@@ -44,7 +42,6 @@ app.use(express.json())
 if (process.env.NODE_ENV === 'production') {
   app.set('trust proxy', 1)
 }
-
 
 app.get('/', (req, res) => {
   res.json({ message: "API funcionando" })

@@ -7,6 +7,7 @@ export function isAuthError(message){
     return(
         message === 'Token inválido' ||
         message === 'Token não fornecido' ||
+        message === 'Token expirado' ||
         // Mensagens que vem do arquivo verify da pasta jsonwebtoken
         message === 'jwt expired' || 
         message === 'invalid token'
@@ -81,7 +82,7 @@ async function fetchAutenticado(url, options = {}){
 
         if (!refreshData.token){
             removeToken()
-            throw new Error('Sessao expirada. Faca login novamente.')
+            throw new Error('Sessão expirada. Faça login novamente.')
         }
 
         setToken(refreshData.token)
@@ -106,7 +107,7 @@ async function fetchAutenticado(url, options = {}){
         }
 
         removeToken()
-        throw new Error('Sessao expirada. Faca login novamente.')
+        throw new Error('Sessão expirada. Faça login novamente.')
     }
 }
 

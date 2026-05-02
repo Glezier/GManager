@@ -94,6 +94,7 @@ export default function Register(){
                                 placeholder="Digite seu nome"
                                 value={nome}
                                 onChange={(e) => setNome(e.target.value)}
+                                maxLength={100}
                                 required
                             />
                         </div>
@@ -106,6 +107,7 @@ export default function Register(){
                                 placeholder="Digite seu email"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
+                                maxLength={120}
                                 required
                             />
                         </div>
@@ -121,6 +123,7 @@ export default function Register(){
                                     onChange={(e) => setSenha(e.target.value)}
                                     required
                                     minLength={8}
+                                    maxLength={50}
                                 />
                                 <button className="auth-password-toggle"
                                     type='button'  
@@ -148,6 +151,7 @@ export default function Register(){
                                     onChange={(e) => setConfirmarSenha(e.target.value)}
                                     required
                                     minLength={8}
+                                    maxLength={50}
                                 />
                                 <button className="auth-password-toggle"
                                     type='button'  

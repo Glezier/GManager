@@ -10,8 +10,19 @@ function getHora(hora){
     return horaFormatada
 }
 
+function getPesoStatus(status){
+    return status === 'concluida' ? 1 : 0
+}
+
 export function ordenarTarefas(tarefas = []){
     return [...tarefas].sort((a,b) => { // Trabalha com cópia do array
+        const statusA = getPesoStatus(a.status)
+        const statusB = getPesoStatus(b.status)
+
+        if (statusA !== statusB) {
+            return statusA - statusB
+        }
+        
         const horaA = getHora(a.hora)
         const horaB = getHora(b.hora)
 

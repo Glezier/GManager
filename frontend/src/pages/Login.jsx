@@ -167,6 +167,7 @@ export default function Login(){
                                     id='login-password'
                                     type={mostrarSenha ? "text" : "password"}
                                     placeholder='Digite sua senha (mínimo 8 caracteres)'
+                                    minLength={8}
                                     value={senha}
                                     disabled={bloqueado} 
                                     onChange={(e) => setSenha(e.target.value)}
