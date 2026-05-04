@@ -7,15 +7,21 @@ const defaultDevOrigins = ['http://localhost:5173']
 // Definir a origem das requisições podendo ser react default ou do deploy
 function getAllowedOrigins(){
     const configuredOrigins = process.env.CORS_ALLOWED_ORIGINS
-    ? process.env.FRONTEND_URL.split(',').map((origin) => origin.trim()).filter(Boolean)
-    : []
+        ? process.env.CORS_ALLOWED_ORIGINS
+            .split(',')
+            .map((origin) => origin.trim())
+            .filter(Boolean)
+        : process.env.FRONTEND_URL
+            ? [process.env.FRONTEND_URL.trim()]
+            : []
 
     if (process.env.NODE_ENV === 'production' && configuredOrigins.length === 0){
-        throw new Error('FRONTEND_URL deve ser configurada em produção')
+        throw new Error('CORS_ALLOWED_ORIGINS ou FRONTEND_URL deve ser configurada em producao')
     }
 
     return configuredOrigins.length > 0 ? configuredOrigins : defaultDevOrigins
 }
+
 
 const allowedOrigins = getAllowedOrigins()
 
