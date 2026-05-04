@@ -197,7 +197,7 @@ export default function Login(){
                     </p>
 
                     <p className='auth-alt'>
-                        Recuperação de senha disponível em breve...
+                        Recuperação de senha e social login disponiveis em breve...
                     </p>
 
                 </div>
