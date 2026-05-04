@@ -6,7 +6,7 @@ const defaultDevOrigins = ['http://localhost:5173']
 
 // Definir a origem das requisições podendo ser react default ou do deploy
 function getAllowedOrigins(){
-    const configuredOrigins = process.env.FRONTEND_URL
+    const configuredOrigins = process.env.CORS_ALLOWED_ORIGINS
     ? process.env.FRONTEND_URL.split(',').map((origin) => origin.trim()).filter(Boolean)
     : []
 
