@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate, Link, useLocation } from 'react-router-dom'
-import { login, reenviarVerificacao } from '../api/api'
-import { setToken } from '../utils/auth'
+import { login, reenviarVerificacao, refreshToken } from '../api/api'
+import { getToken, setToken } from '../utils/auth'
 import './Auth.css'
 import FullLogo from '../assets/icons/full_logo.png'
 import EyeClosed from '../assets/icons/eye-closed.png'
@@ -75,6 +75,32 @@ export default function Login(){
         }
     }
 
+    // Manda direto pra dashboard se já estiver logado
+    useEffect(() => {
+        async function verificarSessao(){
+            const token = getToken()
+
+            if (token){
+                navigate('/dashboard', {replace: true})
+                return
+            }
+
+            try{
+                const data = await refreshToken()
+
+                if (data.token){
+                    setToken(data.token)
+                    navigate('/dashboard', {replace: true})
+                }
+            } catch{
+                return
+            }
+        }
+
+        verificarSessao()
+    }, [navigate])
+
+    // Bloqueio da tela por rate limit
     useEffect(() => {
         if (!bloqueado) {
             return

@@ -1,184 +1,113 @@
-# Projeto: Gerenciador de Tarefas
+# Projeto: My GManager
 
-## Projeto
-Aplicacao web de organizacao pessoal com foco em tarefas por dia, calendario mensal e navegacao simples entre datas.
+## Visao
+Aplicacao full-stack de organizacao pessoal, com foco inicial em tarefas, dashboard, calendario e rotina diaria.
 
-Objetivos:
-1. ser uma ferramenta real de uso pessoal
-2. servir como pratica consistente de desenvolvimento full-stack
+Objetivo do projeto:
+- construir uma ferramenta real de uso pessoal
+- evoluir o sistema com praticas profissionais de desenvolvimento full-stack
+- manter seguranca, confiabilidade, deploy e banco de dados como partes centrais do aprendizado
 
-## Stack atual
-- Frontend: React + Vite
+## Stack
+- Frontend: React + Vite + React Router + FullCalendar
 - Backend: Node.js + Express
-- Banco de dados: PostgreSQL
-- Autenticacao: JWT
-- Calendario: FullCalendar
+- Banco: PostgreSQL no Neon
+- Autenticacao: JWT + refresh token em cookie `httpOnly`
+- Email: Resend
+- Deploy atual: Vercel para frontend e backend
 
-## Estado atual
+## Estado atual resumido
+O sistema ja possui autenticacao, verificacao de email, refresh token, rotas privadas, CRUD de tarefas, dashboard, calendario, pagina por dia, validacoes principais, rate limit, CORS, `helmet`, middleware global de erro e deploy inicial em producao.
 
-### Ja implementado
-- cadastro e login de usuario
-- autenticacao com JWT
-- refresh token funcional no backend e no frontend
-- fluxo de verificacao por email funcional com Resend, dominio proprio e validacao por link
-- rotas privadas no frontend
-- criacao, edicao, conclusao e exclusao de tarefas
-- busca de tarefas por intervalo
-- dashboard com tarefas do dia
-- visao semanal clicavel
-- calendario mensal
-- pagina dedicada para um dia
-- criacao e edicao de tarefa via modal
-- confirmacao visual reutilizavel para exclusao de tarefa
-- feedbacks visuais de erro, sucesso, vazio e loading nas telas principais
-- loading reutilizavel em `components/ui`
-- padronizacao de token e navegacao no frontend
-- clique em eventos do calendario levando para a `DayPage`
-- barra de mes/ano do calendario mais enxuta
-- base visual compartilhada para login e cadastro
-- botao de mostrar/ocultar senha no login
-- ordenacao de tarefas por horario refinada
-- ordenacao com tarefas concluidas ao final da lista
-- experiencia de edicao revisada
-- base global inicial de tema criada com `tokens.css` e `base.css`
-- build e lint ja validados apos a primeira passada de refatoracao visual
-- `.gitignore` e arquivos `.env.example` ja existem para a estrutura atual
-- tratamento global de erro no backend
-- CORS revisado com origens permitidas por ambiente
-- `helmet` aplicado no backend
-- rate limit nas rotas de autenticacao
-- rate limit nas operacoes de escrita de tarefas
-- rota `GET /auth/me` para dados basicos do usuario logado
-- calendario limitado por data de criacao da conta e horizonte futuro
-- sombras visuais de "em breve" para checklists, financas, eventos sem data definida e integracoes futuras
-- checklist manual do fluxo principal concluido
+O projeto agora esta na fase de estabilizacao pos-deploy: separar ambiente de desenvolvimento da producao, proteger dados, revisar performance do backend e preparar uma base mais profissional para evoluir com seguranca.
 
-### Seguranca ja observada no codigo
-- uso de `bcryptjs` para hash de senha
-- uso de JWT para autenticacao
-- validacoes de entrada com `validator` e regex de hora/data
-- queries SQL usam parametros com `pool.query(..., [...])`, cobrindo protecao basica contra SQL injection
-- CORS restrito por lista de origens permitidas
-- headers de seguranca basicos aplicados com `helmet`
-- rate limit aplicado nas rotas sensiveis de autenticacao e escrita de tarefas
-- cookie de refresh token preparado para `httpOnly`, `secure` e `sameSite`
+## Ambientes
+### Producao
+- Vercel para frontend e backend
+- Neon para banco de producao
+- variaveis reais configuradas apenas nos paineis dos provedores
+- branch `main` deve representar o estado estavel publicado
 
-### Ambiente
-#### Backend
-- `DB_URL`
-- `JWT_SECRET`
-- `JWT_EXPIRES`
-- `PORT`
-- `NODE_ENV`
-- `FRONTEND_URL`
-- `COOKIE_SECURE`
-- `REFRESH_TOKEN_SECRET`
-- `REFRESH_TOKEN_EXPIRES_DAYS`
-- `RESEND_API_KEY`
-- `EMAIL_FROM`
 
-#### Frontend
-- `VITE_API_URL`
+## Proximo passo imediato
+Criar um ambiente seguro de desenvolvimento com banco separado e dump/schema do banco atual.
 
-## Foco atual
-- iniciar a Fase 6 com foco em testes automatizados minimos
-- consolidar em testes reproduziveis o que ja foi validado manualmente
-- manter a preparacao para deploy sem reabrir escopo desnecessario
+Ordem:
+1. criar banco ou branch dev no Neon
+2. gerar dump/schema do banco atual
+3. aplicar a estrutura no banco dev
+4. ajustar `backend/.env` local para usar o banco dev
+5. garantir que backups/dumps nao entrem no Git
+6. testar login, tarefas e calendario localmente usando o banco dev
 
-## Roadmap
+## Plano de execucao
 
-### Fase 5: Seguranca da aplicacao
-- revisar politica de segredos e configuracao para deploy publico
-- garantir ajuste de `NODE_ENV=production` no deploy
-- garantir `COOKIE_SECURE=true` em producao com HTTPS
-- revisar `FRONTEND_URL` e origem exata usada no CORS antes do deploy
-- configurar `trust proxy` no deploy antes de confiar no IP real para rate limit
-- rotacionar segredos expostos em desenvolvimento antes de publicar
-- usar cookie `httpOnly`, `secure` e `sameSite` para refresh token em ambiente de producao
+### Fase 1: Banco dev e backup
+- criar banco/branch dev no Neon
+- gerar `schema.sql` do banco atual
+- documentar comandos de backup e restore
+- adicionar regras no `.gitignore` para dumps/backups
+- validar que o ambiente local nao usa o banco de producao
 
-### Fase 6: Testes
-- checklist manual do fluxo principal concluido
-- `csurf` analisado e descartado por estar deprecated/arquivado, com preferencia por mitigacoes compativeis com a arquitetura atual
-- preparar testes automatizados minimos de autenticacao
-- preparar testes automatizados minimos de tarefas
-- validar rotas privadas e fluxo principal antes de deploy
+### Fase 2: Performance do backend
+- medir tempo das principais rotas
+- investigar requisicoes acima de 1s
+- revisar uso do pool PostgreSQL
+- revisar consultas nos controllers
+- identificar chamadas duplicadas no frontend
+- separar lentidao causada por cold start da Vercel/Neon de lentidao causada pelo codigo
 
-### Fase 7: Deploy com Docker
-- criar `Dockerfile` do backend
-- criar `Dockerfile` do frontend
-- criar `docker-compose` inicial
-- definir estrategia de deploy publico usando containers
+### Fase 3: Organizacao do backend
+- separar controllers, services e repositories quando fizer sentido
+- mover validacoes reutilizaveis para helpers ou validators
+- reduzir SQL direto dentro dos controllers
+- padronizar respostas de erro
+- preparar base para testes automatizados
 
-### Fase 8: Notas e organizacao pessoal
-- aprender hackear tentando hackear o proprio site
-- tarefas com datas continuas ou frequencia definida
-- pagina inicial antes de login
-- adicionar notas
-- decidir se serao gerais, por dia ou ambas
-- avaliar listas com checks
-- avaliar observacoes ligadas a tarefas
-- retomar social login com Google em momento posterior, fora do foco atual de seguranca
+### Fase 4: Testes automatizados
+- configurar ferramenta de testes do backend
+- testar autenticacao, login, refresh token e rotas privadas
+- testar CRUD de tarefas
+- testar validacoes de data, limite diario e periodo permitido
+- adicionar scripts de teste ao `package.json`
 
-### Fase 9: Base tecnica madura
-- separar melhor responsabilidades no backend
-- reduzir SQL direto em controllers
-- criar migrations ou scripts versionados
-- revisar encoding e padronizacao textual
+### Fase 5: Fluxo profissional de Git e deploy
+- usar `main` apenas para producao
+- desenvolver em `dev` ou `feature/*`
+- usar preview deployments da Vercel para branches/PRs
+- validar build, lint e testes antes de mergear na `main`
+- documentar o fluxo no README
 
-### Fase 10: Recursos avancados
-- responsividade
-- filtros por status e data
-- busca de tarefas
-- categorias e prioridade
-- recorrencia
-- exportacao
-- metricas simples
-- recuperacao de senha via email
-- confirmacao de senha no cadastrar
-- area de perfil para alterar dados (senha, email) e definir modo escuro ou claro
-- area de gestao de gastos
-- area para metas futuras
-- integracao com time de futebol
-- IA que da dicas e ajuda a fazer as tarefas cadastradas
+### Fase 6: CI/CD
+- criar workflow no GitHub Actions
+- rodar lint, build e testes automaticamente
+- impedir merge quebrado para a branch principal
+- avaliar deploy automatico apenas apos validacoes basicas
 
-## Fragilidades atuais
-- o backend ainda concentra SQL diretamente nos controllers
-- ainda nao ha testes automatizados minimos do fluxo principal
-- ainda nao ha estrutura de Docker no repositorio
-- ainda faltam revisoes de tratamento de erros, segredos e configuracao final de producao
-- ainda falta validar `FRONTEND_URL` com HTTPS no ambiente realmente publicado
-- variaveis sensiveis exigem revisao final antes do deploy, especialmente `NODE_ENV`, `COOKIE_SECURE`, `FRONTEND_URL` e segredos/autorizadores
+### Fase 7: Docker
+- corrigir Dockerfiles se necessario
+- validar `docker-compose.yml`
+- rodar frontend e backend localmente via containers
+- avaliar banco local em container para testes
+- manter Docker como opcao de deploy fora da Vercel
 
-## Diretrizes de deploy e repositorio publico
-- o deploy publico deve ser conectado ao GitHub apenas quando a revisao basica de seguranca estiver concluida
-- a branch `main` deve representar o estado estavel/de producao
-- uma branch `dev` pode ser usada para desenvolvimento antes de mergear na `main`
-- o deploy automatico deve apontar preferencialmente para a `main`
-- alteracoes devem ser testadas localmente antes de chegar na `main`
-- para trabalho solo, o fluxo recomendado e: desenvolver em `dev`, testar, mergear em `main`, deixar o provedor publicar
-- se o repositorio ficar publico, nenhum `.env` real deve estar versionado
-- segredos antigos que ja apareceram no historico, prints, README, chat ou commits devem ser rotacionados antes de publicar
-- backend e frontend podem ficar publicos se nao houver segredos hardcoded, endpoints desprotegidos ou configuracao insegura
-- o README deve conter link do site no ar, screenshots, stack, recursos implementados, roadmap e instrucoes de execucao local
-- o README deve usar `.env.example` como referencia e nunca expor valores reais
-- caso o projeto vire produto com logica proprietaria sensivel, reavaliar se o repositorio deve continuar publico
+### Fase 8: Produto
+- melhorar responsividade
+- adicionar filtros, busca, categorias e prioridades
+- adicionar tarefas recorrentes
+- adicionar recuperacao de senha
+- criar area de perfil
+- avaliar notas, checklists, financas e metas
+- melhorar experiencia visual e acessibilidade
 
-## Proximo passo atual
-- preparar os primeiros testes automatizados de autenticacao
+### Fase 9: Deploy avancado em AWS
+- estudar EC2, RDS, S3, CloudWatch, IAM e Route 53
+- avaliar deploy do backend em container
+- avaliar PostgreSQL em RDS ou permanencia no Neon
+- configurar logs, monitoramento e backups
+- comparar custo, complexidade e ganho real em relacao a Vercel/Neon
 
-## Proxima direcao recomendada
-- estruturar testes minimos de auth e tarefas
-- revisar tratamento de erros apenas no que impactar os testes
-- so entao preparar o deploy com Docker
-
-## Criterios para o proximo commit
-- a Fase 4 ja conta com envio real, reenvio e consumo de token de verificacao por email
-- a Fase 4 ja conta com refresh token funcional no backend e no frontend
-- a Fase 5 ja conta com CORS revisado, `helmet` e rate limit inicial
-- a Fase 6 deve comecar com uma base minima de testes automatizados cobrindo autenticacao e tarefas
-
-## Acordo de trabalho atual
-- mudancas de codigo dos arquivos da aplicacao podem ser aplicadas diretamente por esta sessao quando alinhadas com o usuario
-- o `PROJECT_CONTEXT.md` continua podendo ser atualizado diretamente por esta sessao
-- este contexto deve ser atualizado a cada etapa relevante concluida
-- alteracoes feitas por engano diretamente no codigo devem ser revertidas antes de seguir
+## Acordo de trabalho
+- quando o objetivo for aprendizado, explicar antes de alterar codigo
+- editar arquivos diretamente apenas quando solicitado
+- manter este documento como guia pratico de sequencia do projeto

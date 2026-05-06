@@ -2,7 +2,7 @@
 
 Organizador pessoal full-stack para gestão de tarefas, planejamento diário e visão mensal de compromissos.
 
-Em produção, o projeto será publicado em `mygmanager.com.br`.
+Em produção, o projeto será publicado em https://mygmanager.com.br/
 
 ## Visão geral
 

@@ -55,6 +55,26 @@ async function periodoPermitido(usuarioId, dataTarefa) {
     }
 }
 
+async function intervaloPermitido(usuarioId, inicio, fim) {
+    const result = await pool.query(
+        `SELECT
+            $2::date >= (created_at::date - INTERVAL '1 year')::date
+            AND $3::date <= ((CURRENT_TIMESTAMP AT TIME ZONE 'America/Sao_Paulo')::date + INTERVAL '3 years')::date
+            AS periodo_permitido
+        FROM usuarios
+        WHERE id = $1`,
+        [usuarioId, inicio, fim]
+    )
+
+    if (result.rows.length === 0) {
+        throw new AppError('Usuário não encontrado', 404, 'USER_NOT_FOUND')
+    }
+
+    if (!result.rows[0].periodo_permitido) {
+        throw new AppError('Período fora do limite permitido', 400, 'TASK_DATE_OUT_OF_RANGE')
+    }
+}
+
 // Criar tarefa
 exports.criarTarefa = async (req, res, next) => {
     try{
@@ -179,8 +199,7 @@ exports.listarTarefas = async (req,res, next) => {
         }
 
         // Validação da data seguindo a regra de negócio
-        await periodoPermitido(usuario_id, inicio)
-        await periodoPermitido(usuario_id, fim)
+        await intervaloPermitido(usuario_id, inicio, fim)
 
         // Busca no bando de dados pelas tarefas no tempo informado
         const result = await pool.query(

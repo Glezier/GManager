@@ -34,6 +34,8 @@ const errorMiddleware = require('./src/middleswares/errorMiddleware')
 
 const app = express()
 
+app.set('etag', false)
+
 app.use(cookieParser())
 app.use(cors(corsOptions))
 app.use(helmet())
@@ -45,6 +47,18 @@ if (process.env.NODE_ENV === 'production') {
 
 app.get('/', (req, res) => {
   res.json({ message: "API funcionando" })
+})
+
+app.use((req, res, next) => {
+  const inicio = Date.now()
+
+  res.on('finish', () => {
+    const duracao = Date.now() - inicio
+
+    console.log(`${req.method} ${req.originalUrl} - ${res.statusCode} - ${duracao}ms`)
+  })
+
+  next()
 })
 
 app.use('/tarefas', tarefasRoutes)
