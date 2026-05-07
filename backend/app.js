@@ -30,6 +30,7 @@ const cors = require('cors')
 
 const tarefasRoutes = require('./src/routes/tarefasRoutes')
 const authRoutes = require('./src/routes/authRoutes')
+const keepaliveRouter = require('./src/routes/keepalive')
 const errorMiddleware = require('./src/middleswares/errorMiddleware')
 
 const app = express()
@@ -61,6 +62,7 @@ app.use((req, res, next) => {
   next()
 })
 
+app.use('/keepalive', keepaliveRouter)
 app.use('/tarefas', tarefasRoutes)
 app.use('/auth', authRoutes)
 
