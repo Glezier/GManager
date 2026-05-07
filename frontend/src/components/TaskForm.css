@@ -108,3 +108,22 @@
   color: #fecaca;
   font-size: 14px;
 }
+
+.task-title-wrap {
+  position: relative;
+}
+
+.task-title-input {
+  width: 100%;
+  padding-right: 76px;
+}
+
+.task-title-counter {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  font-size: 12px;
+  pointer-events: none;
+}

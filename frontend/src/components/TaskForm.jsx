@@ -54,17 +54,21 @@ export default function TaskForm ({ criar, cancelar, hoje, erro='', tarefaInicia
             {(erro || erroForm) && <p className='error'>{erro || erroForm}</p>}
 
             <div className="task-form-fields">
-                <input 
-                    className="task-form-input"
-                    type="text"
-                    placeholder="Título da tarefa"
-                    value={titulo}
-                    onChange={(e)=>{setTitulo(e.target.value)}} 
-                    onInvalid={() => setErroForm('Título é obrigatório')}
-                    ref={tituloRef}
-                    maxLength={60}
-                    required
-                />
+                <div className="task-title-wrap">
+                    <input 
+                        className="task-form-input"
+                        type="text"
+                        placeholder="Título da tarefa"
+                        value={titulo}
+                        onChange={(e)=>{setTitulo(e.target.value)}} 
+                        onInvalid={() => setErroForm('Título é obrigatório')}
+                        ref={tituloRef}
+                        maxLength={60}
+                        required
+                    />
+                    <p className='task-title-counter'>{titulo.length} / 60</p>
+
+                </div>
 
                 <input 
                     className="task-form-input"
