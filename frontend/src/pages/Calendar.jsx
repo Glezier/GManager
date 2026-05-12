@@ -3,9 +3,10 @@ import dayGridPlugin from '@fullcalendar/daygrid'
 import interactionPlugin from '@fullcalendar/interaction'
 import { useState, useEffect, useMemo, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { listarTarefas, isAuthError, infosUser } from '../api/api'
 
-import { getToken, removeToken } from '../utils/auth'
+import { useMe } from '../hooks/useMe'
+import { useTarefas } from '../hooks/useTarefas'
+import { getToken } from '../utils/auth'
 import { getData, formatarData } from '../utils/date'
 
 import LoadingState from '../components/ui/LoadingState'
@@ -19,44 +20,44 @@ const meses = [
 ]
 
 export default function Calendar(){
-    const [tarefas, setTarefas] = useState([])
     const navigate = useNavigate()
     const token = getToken()
     const [periodo, setPeriodo] = useState({
         inicio: "",
         fim:""
     })
-    const [erro, setErro] = useState("")
-    const [loading, setLoading] = useState(false)
-
     const calendarRef = useRef(null)
 
-    const [usuario, setUsuario] = useState(null)
     const hoje = new Date()
     const [mesSelecionado, setMesSelecionado] = useState(hoje.getMonth())
     const [anoSelecionado, setAnoSelecionado] = useState(hoje.getFullYear())
 
-    useEffect(() => {
-        async function carregarUsuario(){
-            try{
-                const data = await infosUser()
-                setUsuario(data)
-            } catch(error){
-                setErro(error.message)
+    const { data: usuario, isLoading: carregandoUsuario, error: erroUsuario } = useMe()
 
-                if (isAuthError(error.message)) {
-                    removeToken()
-                    navigate("/")
-                }
-            }
-        }
+    const {
+        data: tarefas = [],
+        isLoading: carregandoTarefas,
+        isFetchung: atualizandoTarefas,
+        error: erroTarefas,
+    } = useTarefas({
+        token,
+        inicio: periodo.inicio,
+        fim: periodo.fim,
+    })
+
+    const loading = carregandoUsuario || carregandoTarefas || atualizandoTarefas
+    const erro = erroUsuario?.message || erroTarefas?.message || ''
+
+
+    useEffect(() => {
+
 
         if(!token){
             navigate('/')
             return
         }
 
-        carregarUsuario()
+
     }, [token, navigate])
 
     // Anos mostrados no calendário pelo select
@@ -99,35 +100,10 @@ export default function Calendar(){
     }, [usuario])
 
     useEffect(() => {
-        async function carregar() {
-            try{
-                setErro("")
-                setLoading(true)
-
-                const data = await listarTarefas(periodo.inicio, periodo.fim)
-                setTarefas(data)
-            } catch (error){
-                setErro(error.message)
-                if (isAuthError(error.message)) {
-                    removeToken()
-                    navigate("/")
-                }
-            } finally {
-                setLoading(false)
-            }
+        if (!token){
+            navigate('/')
         }
-
-        if(!token){
-            navigate("/")
-            return
-        }
-
-        if(!periodo.inicio || !periodo.fim){
-            return
-        }
-
-        carregar()
-    },[token, navigate, periodo])
+    }, [token, navigate])
 
      // Navega o calendário quando mês ou ano mudam
     useEffect(() => {

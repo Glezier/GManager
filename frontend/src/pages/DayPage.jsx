@@ -1,8 +1,7 @@
-import { useMemo, useEffect, useState } from 'react'
+import { useMemo, useEffect } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
 
-import { infosUser } from '../api/api'
-
+import { useMe } from '../hooks/useMe'
 import useTasks from '../hooks/useTasks'
 import useProgress from '../hooks/useProgress'
 
@@ -23,7 +22,31 @@ export default function DayPage(){
   const { data } = useParams() // pega parâmetros da requisição
   const navigate = useNavigate()
   const token = getToken()
+  const { data: usuario, error: erroUsuario } = useMe()
   
+  const dataPermitida = useMemo(() => {
+    if (!usuario) {
+      return false
+    }
+
+    const formatoValido = /^\d{4}-\d{2}-\d{2}$/.test(data)
+
+    if (!formatoValido) {
+      return false
+    }
+
+    const dataMinima = new Date(usuario.created_at)
+    dataMinima.setFullYear(dataMinima.getFullYear() - 1)
+
+    const dataMaxima = new Date()
+    dataMaxima.setFullYear(dataMaxima.getFullYear() + 3)
+
+    const limiteMinimo = getData(dataMinima)
+    const limiteMaximo = getData(dataMaxima)
+
+    return data >= limiteMinimo && data <= limiteMaximo
+  }, [data, usuario])
+
   const {
       tarefas,
       loading,
@@ -45,47 +68,32 @@ export default function DayPage(){
     token,
     inicio: data,
     fim: data,
-    navigate
+    navigate,
+    enabled: dataPermitida
   })
 
-  // Validação do dia a ser acessado
-  const [dataPermitida, setDataPermitida] = useState(false)
-
   useEffect(() => {
-    async function validarDataPagina(){
-      const formatoValido = /^\d{4}-\d{2}-\d{2}$/.test(data)
+    const formatoValido = /^\d{4}-\d{2}-\d{2}$/.test(data)
 
-      if (!formatoValido) {
-        navigate('/calendario', { replace: true })
-        return
-      }
+    if (!formatoValido) {
+      navigate('/calendario', { replace: true })
+      return
+    }
 
-      try{
-        const usuario = await infosUser()
+    if(erroUsuario){
+      navigate('/', {replace:true})
+      return
+    }
 
-        const dataPagina = data
-        const dataMinima = new Date(`${usuario.created_at}`)
-        dataMinima.setFullYear(dataMinima.getFullYear() - 1)
+    if (!usuario){
+      return
+    }
 
-        const dataMaxima = new Date()
-        dataMaxima.setFullYear(dataMaxima.getFullYear() + 3)
+    if (!dataPermitida) {
+      navigate('/calendario', { replace: true })
+    }
 
-        const limiteMaximo = getData(dataMaxima)
-        const limiteMinimo = getData(dataMinima)
-
-        if(dataPagina < limiteMinimo || dataPagina > limiteMaximo){
-          navigate('/calendario', {replace: true})
-          return
-        }
-
-        setDataPermitida(true)
-
-      } catch{
-        navigate('/', {replace: true})
-      }
-    } 
-    validarDataPagina()
-  },[data, navigate])
+  },[data, navigate, usuario, erroUsuario, dataPermitida])
 
   const {
     quantidadeConcluidas,

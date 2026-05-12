@@ -1,11 +1,11 @@
-import { useState, useEffect, useCallback } from 'react'
-import { listarTarefas, criarTarefa, deletarTarefa, concluirTarefa, atualizarTarefa} from '../api/api'
-import { removeToken } from '../utils/auth'
+import { useState, useEffect } from 'react'
+import { useQueryClient } from '@tanstack/react-query'
+import { criarTarefa, deletarTarefa, concluirTarefa, atualizarTarefa, isAuthError } from '../api/api'
 import { getDataLimiteAnos, getDataMinimaAnos } from '../utils/date'
+import { useTarefas } from './useTarefas'
+import { removeToken } from '../utils/auth'
 
-export default function useTasks({token, inicio, fim, navigate}){
-    const [tarefas, setTarefas] = useState([])
-    const [loading, setLoading] = useState(true)
+export default function useTasks({token, inicio, fim, navigate, enabled = true}){
     const [erroPagina, setErroPagina] = useState("")
     const [erroForm, setErroForm] = useState("")
     const [sucesso, setSucesso] = useState("")
@@ -22,23 +22,47 @@ export default function useTasks({token, inicio, fim, navigate}){
         loading: false
     })
 
-    const carregarTarefas = useCallback(async () => {
-         try {
-            setErroPagina("")
-            setLoading(true)
+    const queryClient = useQueryClient()
 
-            const data = await listarTarefas(inicio, fim);
-            setTarefas(data);
-        } catch (error) {
-            setErroPagina(error.message)
-            if(error.message === 'Sessão expirada. Faça login novamente.'){
-                removeToken()
-                navigate("/")
-            }            
-        } finally{
-            setLoading(false)
+    const {
+        data: tarefas = [],
+        isLoading,
+        isFetching,
+        error: erroBusca,
+        refetch
+    } = useTarefas({ token, inicio, fim, enabled})
+
+    const loading = isLoading || isFetching
+    const erroBuscaMensagem = erroBusca?.message || ''
+    const erroPaginaExibido = erroPagina || erroBuscaMensagem
+
+    async function carregarTarefas() {
+        setErroPagina('')
+        return refetch()
+    }
+
+    useEffect(() => {
+        if (!enabled){
+            return
         }
-    }, [ navigate, inicio, fim])
+
+        if (!token){
+            navigate('/')
+            return
+        }
+
+        if (!erroBuscaMensagem){
+            return
+        }
+
+        if(
+            erroBuscaMensagem === 'Sessão expirada. Faça login novamente.' ||
+            isAuthError(erroBuscaMensagem)
+        ){
+            removeToken()
+            navigate('/')
+        }
+    }, [token, erroBuscaMensagem, navigate])
 
     async function salvarTarefa(tarefa){
         try{
@@ -68,7 +92,7 @@ export default function useTasks({token, inicio, fim, navigate}){
 
             setAddTarefa(false)
             setEditando(null)
-            await carregarTarefas()
+            await queryClient.invalidateQueries({ queryKey: ['tarefas']})
             
         }catch(error){
             setErroForm(error.message)
@@ -113,7 +137,7 @@ export default function useTasks({token, inicio, fim, navigate}){
             }))
 
             await deletarTarefa(confirmacao.tarefa.id)
-            await carregarTarefas()
+            await queryClient.invalidateQueries({ queryKey: ['tarefas']})
 
             setSucesso('Tarefa excluída com sucesso')
             fecharConfirmacao()
@@ -132,7 +156,7 @@ export default function useTasks({token, inicio, fim, navigate}){
             setErroPagina('')
             setSucesso('')
             await concluirTarefa(id)
-            await carregarTarefas()
+            await queryClient.invalidateQueries({ queryKey: ['tarefas']})
             setSucesso("Tarefa concluída com sucesso")
         } catch(error){
             setErroPagina(error.message)
@@ -156,15 +180,6 @@ export default function useTasks({token, inicio, fim, navigate}){
         setEditando(null)
         setAddTarefa(false)
     }
-
-    useEffect(() => {
-        if (!token){
-            navigate('/')
-            return
-        }
-
-        carregarTarefas()
-    }, [token, navigate, carregarTarefas])
 
     useEffect(() => {
         if (sucesso){
@@ -192,7 +207,7 @@ export default function useTasks({token, inicio, fim, navigate}){
     return {
         tarefas,
         loading,
-        erroPagina,
+        erroPagina: erroPaginaExibido,
         erroForm,
         sucesso,
         addTarefa,
