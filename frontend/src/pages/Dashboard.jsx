@@ -20,6 +20,7 @@ import "./Dashboard.css"
 import FullLogo from '../assets/icons/full_logo.png'
 import CalendarIcon from '../assets/icons/calendar.png'
 import NotesIcon from '../assets/icons/notes.png'
+import ProfileIcon from './../assets/icons/profile.png'
 import LogoutIcon from '../assets/icons/logout.png'
 import AddIcon from '../assets/icons/add.png'
 
@@ -113,15 +114,21 @@ export default function Dashboard(){
                     {/*<button type="button">
                         <img src={NotesIcon} alt="Notas" className="bar-icons" title="Notas"/>
                     </button> */}
+                    
                 </nav>
 
-                <button
-                    type="button"
-                    className="dashboard-logout"
-                    onClick={handleLogout}
-                >
-                    <img src={LogoutIcon} className="bar-icons" alt="Sair" title="Sair" />
-                </button>
+                <div className="dashboard-brand-block"> 
+                    <button type="button" onClick={() => navigate("/perfil")} >
+                        <img src={ProfileIcon} alt="Profile" className="bar-icons" title="Profile"/>
+                    </button>
+                    <button
+                        type="button"
+                        className="dashboard-logout"
+                        onClick={handleLogout}
+                    >
+                        <img src={LogoutIcon} className="bar-icons" alt="Sair" title="Sair" />
+                    </button>
+                </div>
             </header>
 
             <section className="dashboard-top">

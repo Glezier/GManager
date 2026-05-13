@@ -7,6 +7,7 @@ import Dashboard from './pages/Dashboard'
 import Calendar from './pages/Calendar'
 import PrivateRoute from './routes/PrivateRoute'
 import DayPage from './pages/DayPage'
+import Profile from './pages/Profile'
 
 export default function App(){
   return(
@@ -16,6 +17,11 @@ export default function App(){
         <Route path="/verificar-email" element={<VerifyEmail />}/>
         <Route path="/validar-email" element={<ValidarEmail />}/>
         <Route path="/" element={<Login />}/>
+        <Route path="/perfil" element={
+          <PrivateRoute>
+            <Profile />
+          </PrivateRoute>
+        }/>
         <Route path="/dashboard" element={
           <PrivateRoute>
             <Dashboard />

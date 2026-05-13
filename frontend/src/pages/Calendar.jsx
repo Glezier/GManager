@@ -51,12 +51,10 @@ export default function Calendar(){
 
     useEffect(() => {
 
-
         if(!token){
             navigate('/')
             return
         }
-
 
     }, [token, navigate])
 
