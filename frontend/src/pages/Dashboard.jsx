@@ -92,7 +92,7 @@ export default function Dashboard(){
             console.log('Erro ao fazer login' + error)
         } finally{
             removeToken()
-            navigate('/')
+            navigate('/', {state: { skipSessionCheck: true }})
         }
     }
 

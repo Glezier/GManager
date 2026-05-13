@@ -62,7 +62,7 @@ export default function useTasks({token, inicio, fim, navigate, enabled = true})
             removeToken()
             navigate('/')
         }
-    }, [token, erroBuscaMensagem, navigate])
+    }, [token, erroBuscaMensagem, navigate, enabled])
 
     async function salvarTarefa(tarefa){
         try{

@@ -21,6 +21,8 @@ export default function Login(){
 
     const[emailNaoVerificado, setEmailNaoVerificado] = useState(false)
     const[mensagemSucesso, setMensagemSucesso] = useState(location.state?.mensagemSucesso || '')
+    const skipSessionCheck = location.state?.skipSessionCheck // Trata do refresh token
+    const [verificandoSessao, setVerificansoSessao] = useState(true)
 
     useEffect(()=>{
         if(userRef.current){
@@ -77,7 +79,15 @@ export default function Login(){
 
     // Manda direto pra dashboard se já estiver logado
     useEffect(() => {
+        let ativo = true
+        
         async function verificarSessao(){
+            // Impedir de solicitar refresh token após já ter sido realizado
+            if (skipSessionCheck) {
+                setVerificansoSessao(false)
+                return
+            }
+
             const token = getToken()
 
             if (token){
@@ -91,14 +101,23 @@ export default function Login(){
                 if (data.token){
                     setToken(data.token)
                     navigate('/dashboard', {replace: true})
+                    return
                 }
             } catch{
                 return
+            } finally{
+                if(ativo){
+                    setVerificansoSessao(false)
+                }
             }
         }
 
         verificarSessao()
-    }, [navigate])
+
+        return () =>{
+            ativo = false
+        }
+    }, [navigate, skipSessionCheck])
 
     // Bloqueio da tela por rate limit
     useEffect(() => {
@@ -119,6 +138,10 @@ export default function Login(){
             setErro('')
             setMensagemSucesso('')
         }
+    }
+
+    if (verificandoSessao) {
+        return null
     }
 
     return(   

@@ -57,32 +57,8 @@ Ordem:
 - identificar chamadas duplicadas no frontend
 - separar lentidao causada por cold start da Vercel/Neon de lentidao causada pelo codigo
 
-### Fase 3: Organizacao do backend
-- separar controllers, services e repositories quando fizer sentido
-- mover validacoes reutilizaveis para helpers ou validators
-- reduzir SQL direto dentro dos controllers
-- padronizar respostas de erro
-- preparar base para testes automatizados
-
 ### Fase 4: Testes automatizados
-- configurar ferramenta de testes do backend
-- testar autenticacao, login, refresh token e rotas privadas
-- testar CRUD de tarefas
-- testar validacoes de data, limite diario e periodo permitido
-- adicionar scripts de teste ao `package.json`
-
-### Fase 5: Fluxo profissional de Git e deploy
-- usar `main` apenas para producao
-- desenvolver em `dev` ou `feature/*`
-- usar preview deployments da Vercel para branches/PRs
-- validar build, lint e testes antes de mergear na `main`
-- documentar o fluxo no README
-
-### Fase 6: CI/CD
-- criar workflow no GitHub Actions
-- rodar lint, build e testes automaticamente
-- impedir merge quebrado para a branch principal
-- avaliar deploy automatico apenas apos validacoes basicas
+- teste de muitos usuários simultâneos acessando ao mesmo tempo
 
 ### Fase 7: Docker
 - corrigir Dockerfiles se necessario
@@ -106,6 +82,47 @@ Ordem:
 - avaliar PostgreSQL em RDS ou permanencia no Neon
 - configurar logs, monitoramento e backups
 - comparar custo, complexidade e ganho real em relacao a Vercel/Neon
+
+### Fase X: Arquitetura em camadas no backend
+- organizar backend no padrão Controller-Service-Repository
+- mover SQL dos controllers para repositories
+- mover regras de negócio para services
+- mover validações reutilizáveis para validators
+- reduzir controllers para entrada/saída HTTP
+- começar pelo módulo de tarefas
+- depois aplicar no módulo de autenticação
+- padronizar respostas de erro pra não depender de mensagens e sim de codes (ajustar rate limit pra mostrar o tempo que falta pra fazer algo ao invés de algo estático)
+- preparar base para testes automatizados
+- avaliar se usa git hub actions ou nao
+
+### Fase 8: Notas e organizacao pessoal
+- aprender hackear tentando hackear o proprio site
+- tarefas com datas continuas ou frequencia definida
+- pagina inicial antes de login
+- adicionar notas
+- decidir se serao gerais, por dia ou ambas
+- avaliar listas com checks
+- avaliar observacoes ligadas a tarefas
+- retomar social login com Google em momento posterior, fora do foco atual de seguranca
+
+
+### Fase 10: Recursos avancados
+- responsividade
+- filtros por status e data
+- busca de tarefas
+- categorias e prioridade
+- recorrencia
+- exportacao em PDF
+- importar tarefas de outros apps
+- metricas simples
+- recuperacao de senha via email
+- confirmacao de senha no cadastrar
+- area de perfil para alterar dados (senha, email) e definir modo escuro ou claro
+- area de gestao de gastos
+- area para metas futuras
+- integracao com time de futebol
+- IA que da dicas e ajuda a fazer as tarefas cadastradas
+
 
 ## Acordo de trabalho
 - quando o objetivo for aprendizado, explicar antes de alterar codigo

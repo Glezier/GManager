@@ -205,7 +205,7 @@ exports.verificarEmail = async(req, res, next) => {
 
         // Busca token não usado nem expirado
         const tokenResult = await pool.query(
-            `SELECT *
+            `SELECT id, usuario_id
             FROM email_verification_tokens
             WHERE token_hash = $1
             AND used_at IS NULL
@@ -366,7 +366,7 @@ exports.login = async (req, res, next) => {
 
         // Busca pelo email no banco de dados
         const result = await pool.query(
-            'SELECT * from usuarios WHERE email = $1',
+            'SELECT id, nome, email, senha, email_verificado from usuarios WHERE email = $1',
             [emailCorrigido]
         )
 
@@ -426,7 +426,7 @@ exports.refreshToken = async (req,res,next) => {
 
         // Confere no banco se é válido o refresh token informado
         const result = await pool.query(
-            `SELECT *
+            `SELECT id, usuario_id
             FROM refresh_tokens
             WHERE token_hash = $1
             AND revoked_at IS NULL

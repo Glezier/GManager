@@ -32,9 +32,22 @@ function getNetworkError(){
 // Garante que apenas uma requisição de refresh token aconteça por vez
 let refreshPromise = null
 
-async function renovarToken(){
+async function requestRefreshToken(){
+    const response = await fetchComTratamento(`${API_URL}/auth/refresh`, {
+        method: 'POST',
+        credentials: 'include'
+    })
+
+    if(!response.ok){
+        throw new Error(await getError(response))
+    }
+
+    return response.json()
+}
+
+export async function refreshToken(){
     if(!refreshPromise){
-        refreshPromise = refreshToken().finally(() => {
+        refreshPromise = requestRefreshToken().finally(() => {
             refreshPromise = null
         })
     }
@@ -78,7 +91,7 @@ async function fetchAutenticado(url, options = {}){
 
     try{
         // Pega um novo refresh token
-        const refreshData = await renovarToken()
+        const refreshData = await refreshToken()
 
         if (!refreshData.token){
             removeToken()
@@ -185,20 +198,6 @@ export async function login(email,senha){
         },
         credentials: 'include',
         body: JSON.stringify({ email,senha })
-    })
-
-    if(!response.ok){
-        throw new Error(await getError(response))
-    }
-
-    return response.json()
-}
-
-// Refresh token
-export async function refreshToken(){
-    const response = await fetchComTratamento(`${API_URL}/auth/refresh`,{
-        method: 'POST',
-        credentials: 'include'
     })
 
     if(!response.ok){

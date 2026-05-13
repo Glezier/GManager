@@ -2,7 +2,7 @@
 
 Organizador pessoal full-stack para gestão de tarefas, planejamento diário e visão mensal de compromissos.
 
-Em produção, o projeto será publicado em https://mygmanager.com.br/
+O projeto está disponível em https://mygmanager.com.br/
 
 ## Visão geral
 
@@ -93,3 +93,7 @@ npm run lint
 ## Autor
 
 Projeto desenvolvido por Glezier Montalvane como ferramenta real de organização pessoal e estudo prático de desenvolvimento full-stack.
+
+## Licença
+
+Este projeto está sob a licença MIT. Consulte o arquivo [LICENSE](LICENSE) para mais detalhes.

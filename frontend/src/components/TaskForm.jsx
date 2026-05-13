@@ -83,6 +83,7 @@ export default function TaskForm ({ criar, cancelar, hoje, erro='', tarefaInicia
                     <input 
                         className="task-form-input"
                         type="date"
+                        lang='pt-BR'
                         value={data}
                         onChange={(e)=>{setData(e.target.value)}}
                         onInvalid={(e) => {

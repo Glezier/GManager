@@ -364,7 +364,7 @@ exports.deletarTarefa = async (req,res, next) => {
         const result = await pool.query(
             `DELETE FROM tarefas
             WHERE id = $1 AND usuario_id = $2 
-            RETURNING *`,
+            RETURNING id`,
             [id, usuario_id]
         )
         

@@ -50,17 +50,19 @@ app.get('/', (req, res) => {
   res.json({ message: "API funcionando" })
 })
 
-app.use((req, res, next) => {
-  const inicio = Date.now()
-
-  res.on('finish', () => {
-    const duracao = Date.now() - inicio
-
-    console.log(`${req.method} ${req.originalUrl} - ${res.statusCode} - ${duracao}ms`)
+if (process.env.NODE_ENV !== 'production'){
+  app.use((req, res, next) => {
+    const inicio = Date.now()
+  
+    res.on('finish', () => {
+      const duracao = Date.now() - inicio
+  
+      console.log(`${req.method} ${req.originalUrl} - ${res.statusCode} - ${duracao}ms`)
+    })
+  
+    next()
   })
-
-  next()
-})
+}
 
 app.use('/keepalive', keepaliveRouter)
 app.use('/tarefas', tarefasRoutes)
