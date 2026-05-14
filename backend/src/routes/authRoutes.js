@@ -6,6 +6,8 @@ const { authLimiter, loginLimiter } = require('../middleswares/rateLimitMiddlewa
 const authMiddleware = require('../middleswares/authMiddleware')
 
 router.get('/me', authMiddleware, authController.me)
+router.patch('/me', authMiddleware, authController.atualizarPerfil)
+router.patch('/me/senha', authMiddleware, authController.atualizarSenha)
 router.post('/register', authLimiter, authController.registrar)
 router.post('/login', loginLimiter, authController.login)
 router.get('/verificar-email', authController.verificarEmail)

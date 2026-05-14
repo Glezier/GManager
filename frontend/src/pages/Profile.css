@@ -1,17 +1,33 @@
 .profile-page {
   max-width: var(--max-layout-width);
   min-height: 100vh;
-  margin: 0 auto;
+  margin: 50px auto;
   padding: 20px;
+}
+
+.profile-shell {
+  width: 100%;
   display: flex;
-  
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+
+.profile-feedback-area {
+  width: 100%;
+}
+
+.profile-feedback-area .dashboard-feedback {
+  margin: 0;
 }
 
 .profile-layout {
   display: grid;
-  grid-template-columns: 320px minmax(0, 1fr);
+  grid-template-columns: 400px minmax(0, 1fr);
   gap: 24px;
   align-items: start;
+  width: 100%;
 }
 
 .profile-sidebar,
@@ -190,6 +206,22 @@
   font-weight: 700;
   text-align: left;
   overflow-wrap: anywhere;
+}
+
+.profile-edit-form {
+  display: grid;
+  gap: 12px;
+}
+
+.profile-edit-form input {
+  min-height: 44px;
+  padding: 0 14px;
+}
+
+.profile-edit-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
 @media (max-width: 900px) {

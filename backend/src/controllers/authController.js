@@ -85,6 +85,149 @@ exports.me = async(req,res,next) => {
     }
 }
 
+// Atualizar perfil
+exports.atualizarPerfil = async(req,res,next) => {
+    try{
+        const usuarioId = req.userId
+        const { nome } = req.body
+
+        if(!nome){
+            return next(new AppError(
+                'Nome é obrigatório',
+                400,
+                'VALIDATION_ERROR'
+            ))
+        }
+
+        const nomeCorrigido = nome.trim()
+
+        if (nomeCorrigido.length > LIMITES_USUARIO.nome_maximo || nomeCorrigido.length < LIMITES_USUARIO.nome_minimo){
+            return next(new AppError(
+                `O nome deve possuir tamanho entre ${LIMITES_USUARIO.nome_minimo} e ${LIMITES_USUARIO.nome_maximo} caracteres`,
+                400,
+                'VALIDATION_ERROR'
+            ))
+        }
+
+        const result = await pool.query(
+            `UPDATE usuarios
+            SET nome = $1,
+            updated_at = CURRENT_TIMESTAMP AT TIME ZONE 'America/Sao_Paulo'
+            WHERE id = $2
+            RETURNING id, nome, email, created_at`,
+            [nomeCorrigido, usuarioId]
+        )
+
+        res.json(result.rows[0])
+
+    } catch(error){
+        next(error)
+    }
+} 
+
+// Funcao para verificação de senha
+function validarNovaSenha(novaSenha, confirmarSenha){
+    if (!novaSenha || !confirmarSenha){
+        throw new AppError(
+            `Nova senha e confirmação são obrigatórias`,
+            400,
+            'VALIDATION_ERROR'
+        )
+    }
+
+    if (novaSenha !== confirmarSenha){
+        throw new AppError(
+            'Senhas não conferem',
+            400,
+            'VALIDATION_ERROR'
+        )
+    }
+
+    if (
+        novaSenha.length < LIMITES_USUARIO.senha_minima ||
+        novaSenha.length > LIMITES_USUARIO.senha_maxima
+    ) {
+        throw new AppError(
+            `A senha deve possuir entre ${LIMITES_USUARIO.senha_minima} e ${LIMITES_USUARIO.senha_maxima} caracteres`,
+            400,
+            'VALIDATION_ERROR'
+        )
+    }
+}
+
+// Atualizar senha
+exports.atualizarSenha = async(req,res,next) => {
+    try{
+        const usuarioId = req.userId
+        const { senhaAtual, novaSenha, confirmarSenha } = req.body
+
+        if (!senhaAtual){
+            return next(new AppError(
+                'Senha atual é obrigatória',
+                400,
+                'VALIDATION_ERROR'
+            ))
+        }
+
+        validarNovaSenha(novaSenha, confirmarSenha)
+
+        const result = await pool.query(
+            `SELECT senha
+            FROM usuarios
+            WHERE id = $1`,
+            [usuarioId]
+        )
+
+        if (result.rows.length === 0){
+            return next(new AppError(
+                'Usuário não encontrado',
+                404,
+                'USER_NOT_FOUND'
+            ))
+        }
+
+        const senhaHashAtual = result.rows[0].senha
+
+        const senhaAtualValida = await bcrypt.compare(senhaAtual, senhaHashAtual)
+
+        if (!senhaAtualValida) {
+            return next(new AppError(
+                'Senha atual incorreta',
+                400,
+                'INVALID_CURRENT_PASSWORD'
+            ))
+        }
+
+        const senhaIgual = await bcrypt.compare(novaSenha, senhaHashAtual)
+
+        if (senhaIgual) {
+            return next(new AppError(
+                'A nova senha deve ser diferente da senha atual',
+                400,
+                'SAME_PASSWORD'
+            ))
+        }
+
+        const novaSenhaHash = await bcrypt.hash(novaSenha, 10)
+
+        await pool.query(
+            `UPDATE usuarios
+            SET senha = $1,
+                updated_at = CURRENT_TIMESTAMP AT TIME ZONE 'America/Sao_Paulo'
+            WHERE id = $2`,
+            [novaSenhaHash, usuarioId]
+        )
+
+        res.json({
+            message: 'Senha atualizada com sucesso'
+        })
+
+
+    } catch(error){
+        next(error)
+    }
+}
+
 // Registro
 exports.registrar = async (req, res, next) => {
     try{

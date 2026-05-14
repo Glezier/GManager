@@ -144,6 +144,32 @@ export async function infosUser(){
     return response.json()
 }
 
+// Atualizar perfil
+export async function atualizarPerfil(dados){
+    const response = await fetchAutenticado(`${API_URL}/auth/me`, {
+        method: "PATCH",
+        headers: {
+            "Content-Type" : "application/json"
+        },
+        body: JSON.stringify(dados)
+    })
+
+    return response.json()
+}
+
+// Atualizar senha
+export async function atualizarSenha(dados){
+    const response = await fetchAutenticado(`${API_URL}/auth/me/senha`,{
+        method: "PATCH",
+        headers:{
+            "Content-Type" : "application/json"
+        },
+        body: JSON.stringify(dados)
+    })
+
+    return response.json()
+}
+
 // Registrar
 export async function registrar(nome, email, senha){
     const response = await fetchComTratamento(`${API_URL}/auth/register`,{
