@@ -13,7 +13,7 @@
   background:
     radial-gradient(circle at top left, rgba(16, 185, 129, 0.14), transparent 28%),
     radial-gradient(circle at bottom right, rgba(56, 189, 248, 0.08), transparent 24%),
-    linear-gradient(180deg, var(--bg-surface) 0%, #11161d 100%);
+    linear-gradient(180deg, var(--bg-surface) 0%, var(--bg-panel-strong-end) 100%);
   box-shadow: var(--shadow-elevated);
 }
 
@@ -85,7 +85,7 @@
 
 .day-back:hover,
 .day-nav button:hover {
-  background: #26303d;
+  background: var(--bg-interactive-hover);
   border-color: var(--accent-primary);
   transform: translateY(-1px);
 }
@@ -106,7 +106,7 @@
   height: 18px;
   margin: 0;
   object-fit: contain;
-  filter: brightness(0) invert(1);
+  filter: var(--icon-filter);
 }
 
 .task-modal-overlay {

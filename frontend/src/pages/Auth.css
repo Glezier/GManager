@@ -24,7 +24,7 @@
   padding: 48px 40px;
   background:
     radial-gradient(circle at top left, rgba(16, 185, 129, 0.18), transparent 30%),
-    linear-gradient(160deg, #11161d, #171b22);
+    linear-gradient(160deg, var(--bg-surface) 0%, var(--bg-panel-strong-end) 100%);
   color: var(--text-primary);
   display: flex;
   flex-direction: column;
@@ -38,7 +38,7 @@
   justify-content: center;
   width: fit-content;
   padding: 8px 14px;
-  border: 1px solid rgba(255, 255, 255, 0.16);
+  border: 1px solid var(--border-strong);
   border-radius: 999px;
   font-size: 13px;
   letter-spacing: 0.08em;
@@ -73,7 +73,7 @@
 .auth-highlight {
   padding: 14px 16px;
   border-radius: 16px;
-  background: rgba(34, 41, 54, 0.7);
+  background: var(--bg-interactive-muted);
   border: 1px solid var(--border-subtle);
   color: var(--text-secondary);
 }
@@ -225,10 +225,10 @@
 }
 
 .auth-password-toggle:hover {
-  background: rgba(255, 255, 255, 0.06);
+  background: var(--bg-interactive-hover);
 }
 
 .eye-icon{
   width: 28px;
-  filter: brightness(0) invert(1);
+  filter: var(--icon-filter);
 }

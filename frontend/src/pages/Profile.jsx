@@ -1,11 +1,15 @@
 import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import { useMe } from "../hooks/useMe"
-import { atualizarPerfil, atualizarSenha } from "../api/api"
+import { atualizarPerfil, atualizarSenha, atualizarPreferencias } from "../api/api"
 import { useQueryClient, useMutation } from "@tanstack/react-query"
 import "./Profile.css"
 import LoadingState from "../components/ui/LoadingState"
 import EditIcon from "../assets/icons/edit.png"
+import EyeClosed from '../assets/icons/eye-closed.png'
+import EyeOpen from '../assets/icons/eye-open.png'
+import Sun from '../assets/icons/sun.png'
+import Moon from '../assets/icons/moon.png'
 
 export default function Profile(){
     const navigate = useNavigate()
@@ -22,6 +26,11 @@ export default function Profile(){
     const [senhaAtual, setSenhaAtual] = useState("")
     const [novaSenha, setNovaSenha] = useState("")
     const [confirmarSenha, setConfirmarSenha] = useState("")
+    const [mostrarSenhaPerfil1, setMostrarSenhaPerfil1] = useState(false)
+    const [mostrarSenhaPerfil2, setMostrarSenhaPerfil2] = useState(false)
+    const [mostrarSenhaPerfil3, setMostrarSenhaPerfil3] = useState(false)
+
+    const tema = usuario?.tema || "dark"
 
     function abrirEdicaoNome(){
         setNomeEditado(usuario.nome)
@@ -32,6 +41,9 @@ export default function Profile(){
         setSenhaAtual("")
         setNovaSenha("")
         setConfirmarSenha("")
+        setMostrarSenhaPerfil1(false)
+        setMostrarSenhaPerfil2(false)
+        setMostrarSenhaPerfil3(false)
     }
 
     function cancelarEdicao(){
@@ -66,10 +78,33 @@ export default function Profile(){
             return
         }
 
+        if (novaSenha.length < 8 || novaSenha.length > 50) {
+            setErroForm("A nova senha deve possuir entre 8 e 50 caracteres")
+            return
+        }
+
+        if (novaSenha !== confirmarSenha) {
+            setErroForm("A confirmação de senha não confere")
+            return
+        }
+
+        if (senhaAtual === novaSenha) {
+            setErroForm("A nova senha deve ser diferente da senha atual")
+            return
+        }
+
         atualizarSenhaMutation.mutate({
             senhaAtual,
             novaSenha,
             confirmarSenha
+        })
+    }
+
+    function alternarTema(){
+        const novoTema = tema === "dark" ? "light" : "dark"
+
+        atualizarPreferenciasMutation.mutate({
+            tema: novoTema
         })
     }
 
@@ -102,6 +137,17 @@ export default function Profile(){
         }
     })
 
+    const atualizarPreferenciasMutation = useMutation({
+        mutationFn: atualizarPreferencias,
+        onSuccess: (usuarioAtualizado) => {
+            queryClient.setQueryData(["me"], usuarioAtualizado)
+            setErroForm("")
+        },
+        onError: (error) => {
+            setErroForm(error.message)
+        }
+    })
+
     useEffect(() => {
         if (sucesso){
             const timer = setTimeout(() => {
@@ -118,10 +164,12 @@ export default function Profile(){
         }
         return
     }, [sucesso, erroForm])
-
+    
     if (isLoading){
         return(
-            <LoadingState message="Carregando perfil..."/>  
+            <main className="profile-page">
+                <LoadingState message="Carregando perfil..."/>  
+            </main>
         )
     }
 
@@ -138,6 +186,8 @@ export default function Profile(){
     if (!usuario) {
         return null
     }
+
+    
 
     return(
         <main className="profile-page">
@@ -161,6 +211,14 @@ export default function Profile(){
                     )}
                 </div>
             )}
+
+            <button
+                type="button"
+                className="profile-voltar"
+                onClick={() => navigate("/dashboard", {replace: true})}
+                >
+                Voltar para dashboard
+            </button>
 
 
             <section className="profile-layout">
@@ -199,17 +257,7 @@ export default function Profile(){
                         onClick={() => setSecaoAtiva("pagamentos")}
                         >
                         Pagamentos
-                    </button>
-
-                    <button
-                        type="button"
-                        className="profile-menu-item"
-                        onClick={() => navigate("/dashboard", {replace: true})}
-                        >
-                        Voltar
-                    </button>
-
-                    
+                    </button>                    
 
                 </aside>
 
@@ -287,31 +335,68 @@ export default function Profile(){
 
                                             {editando === "senha" ? (
                                                 <form className="profile-edit-form" onSubmit={salvarSenha}>
-                                                    <input
-                                                        type="password"
-                                                        placeholder="Senha atual"
-                                                        value={senhaAtual}
-                                                        onChange={(e) => setSenhaAtual(e.target.value)}
-                                                        autoFocus
-                                                    />
+                                                    <div className="profile-password-field">
+                                                        <input
+                                                            type={mostrarSenhaPerfil1 ? "text" : "password"}
+                                                            placeholder="Senha atual"
+                                                            value={senhaAtual}
+                                                            onChange={(e) => setSenhaAtual(e.target.value)}
+                                                            autoFocus
+                                                            minLength={8}
+                                                            required
+                                                        />
 
-                                                    <input
-                                                        type="password"
-                                                        placeholder="Nova senha"
-                                                        value={novaSenha}
-                                                        onChange={(e) => setNovaSenha(e.target.value)}
-                                                        minLength={8}
-                                                        maxLength={50}
-                                                    />
+                                                        <button
+                                                            type="button"
+                                                            className="profile-password-toggle"
+                                                            onClick={() => setMostrarSenhaPerfil1((valor) => !valor)}
+                                                            title={mostrarSenhaPerfil1 ? "Ocultar senhas" : "Mostrar senhas"}
+                                                        >
+                                                            <img src={mostrarSenhaPerfil1 ? EyeClosed : EyeOpen } alt="" />
+                                                        </button>
+                                                    </div>
 
-                                                    <input
-                                                        type="password"
-                                                        placeholder="Confirmar nova senha"
-                                                        value={confirmarSenha}
-                                                        onChange={(e) => setConfirmarSenha(e.target.value)}
-                                                        minLength={8}
-                                                        maxLength={50}
-                                                    />
+                                                    <div className="profile-password-field">
+                                                        <input
+                                                            type={mostrarSenhaPerfil2 ? "text" : "password"}
+                                                            placeholder="Nova senha"
+                                                            value={novaSenha}
+                                                            onChange={(e) => setNovaSenha(e.target.value)}
+                                                            minLength={8}
+                                                            maxLength={50}
+                                                            required
+                                                        />
+
+                                                        <button
+                                                            type="button"
+                                                            className="profile-password-toggle"
+                                                            onClick={() => setMostrarSenhaPerfil2((valor) => !valor)}
+                                                            title={mostrarSenhaPerfil2 ? "Ocultar senhas" : "Mostrar senhas"}
+                                                        >
+                                                            <img src={mostrarSenhaPerfil2 ? EyeClosed : EyeOpen } alt="" />
+                                                        </button>
+                                                    </div>
+
+                                                    <div className="profile-password-field">
+                                                        <input
+                                                            type={mostrarSenhaPerfil3 ? "text" : "password"}
+                                                            placeholder="Confirmar nova senha"
+                                                            value={confirmarSenha}
+                                                            onChange={(e) => setConfirmarSenha(e.target.value)}
+                                                            minLength={8}
+                                                            maxLength={50}
+                                                            required
+                                                        />
+
+                                                        <button
+                                                            type="button"
+                                                            className="profile-password-toggle"
+                                                            onClick={() => setMostrarSenhaPerfil3((valor) => !valor)}
+                                                            title={mostrarSenhaPerfil3 ? "Ocultar senhas" : "Mostrar senhas"}
+                                                        >
+                                                            <img src={mostrarSenhaPerfil3 ? EyeClosed : EyeOpen } alt="" />
+                                                        </button>
+                                                    </div>
 
                                                     <div className="profile-edit-actions">
                                                         <button
@@ -363,19 +448,35 @@ export default function Profile(){
                                 <header className="profile-card-header">
                                     <div>
                                         <h1>Configurações</h1>
-                                        <p>Gerencie segurança, senha e preferências da conta.</p>
+                                        <p>Gerencie preferências da conta.</p>
                                     </div>
                                 </header>
         
-                                <div className="profile-info-list">
+                                <div className="profile-info-list theme">
                                     
         
                                     <div className="profile-info-row">
                                         <div className="profile-info-content">
                                             <span>Tema</span>
-                                            <strong>Escuro</strong>
+                                            <strong>{tema === "dark" ? "Dark" : "Light"}</strong>
                                         </div>
                                     </div>
+
+                                    <button
+                                        type="button"
+                                        className={`theme-switch ${tema === "light" ? "theme-switch-light" : ""}`}
+                                        onClick={alternarTema}
+                                        aria-label={tema === "dark" ? "Ativar tema claro" : "Ativar tema escuro"}
+                                        disabled={atualizarPreferenciasMutation.isPending}
+                                    >
+                                        <span className="theme-switch-thumb">
+                                            {tema === "dark" ? (
+                                                <img src={Moon} alt="" />
+                                            ): (
+                                                <img src={Sun} alt="" />
+                                            )}
+                                        </span>
+                                    </button>
                                 </div>
                             </>
                         )}
@@ -385,7 +486,7 @@ export default function Profile(){
                                 <header className="profile-card-header">
                                     <div>
                                         <h1>Pagamentos</h1>
-                                        <p>Gerencie formas de pagamento e preferências financeiras.</p>
+                                        <p>Gerencie formas de pagamento da aba de finanças.</p>
                                     </div>
                                 </header>
         

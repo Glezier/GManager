@@ -170,6 +170,19 @@ export async function atualizarSenha(dados){
     return response.json()
 }
 
+// Atualizar preferencias
+export async function atualizarPreferencias(dados){
+    const response = await fetchAutenticado(`${API_URL}/auth/me/preferencias`, {
+        method: "PATCH",
+        headers: {
+            "Content-Type" : "application/json"
+        },
+        body: JSON.stringify(dados)
+    })
+
+    return response.json()
+}
+
 // Registrar
 export async function registrar(nome, email, senha){
     const response = await fetchComTratamento(`${API_URL}/auth/register`,{

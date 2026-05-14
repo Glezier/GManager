@@ -65,7 +65,7 @@ exports.me = async(req,res,next) => {
         const usuario_id = req.userId
 
         const result = await pool.query(
-            `SELECT id, nome, email, created_at
+            `SELECT id, nome, email, created_at, tema
             FROM usuarios
             WHERE id = $1`,
             [usuario_id]
@@ -222,6 +222,44 @@ exports.atualizarSenha = async(req,res,next) => {
             message: 'Senha atualizada com sucesso'
         })
 
+
+    } catch(error){
+        next(error)
+    }
+}
+
+// Atualizar Preferencias
+exports.atualizarPreferencias = async(req,res,next) => {
+    try{
+        const usuarioId = req.userId
+        const { tema } = req.body
+
+        if(!tema){
+            return(next(new AppError(
+                'Tema é obrigatório',
+                400,
+                'VALIDATION_ERROR'
+            )))
+        }
+
+        if (!['dark', 'light'].includes(tema)) {
+            return next(new AppError(
+                'Tema inválido',
+                400,
+                'VALIDATION_ERROR'
+            ))
+        }
+
+        const result = await pool.query(
+            `UPDATE usuarios
+            SET tema = $1,
+                updated_at = CURRENT_TIMESTAMP AT TIME ZONE 'America/Sao_Paulo'
+            WHERE id = $2
+            RETURNING id, nome, email, created_at, tema`,
+            [tema, usuarioId]
+        )
+
+        res.json(result.rows[0])
 
     } catch(error){
         next(error)

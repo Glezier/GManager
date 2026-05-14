@@ -2,6 +2,7 @@ import { Navigate } from "react-router-dom"
 import { useState, useEffect } from "react"
 import { hasToken, removeToken, setToken } from "../utils/auth"
 import { refreshToken } from "../api/api"
+import ThemeSync from "../components/ThemeSync"
 
 export default function PrivateRoute({ children }){
     const [status, setStatus] = useState(hasToken() ? 'authenticated' : 'checking')
@@ -46,5 +47,9 @@ export default function PrivateRoute({ children }){
     }
 
     // children é o elemento colocado dentro de um componente
-    return children 
+    return (
+        <ThemeSync>
+            {children}
+        </ThemeSync> 
+    )
 }
