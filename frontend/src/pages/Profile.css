@@ -24,7 +24,7 @@
 
 .profile-layout {
   display: grid;
-  grid-template-columns: 400px minmax(0, 1fr);
+  grid-template-columns: minmax(280px, 400px) minmax(0, 1fr);
   gap: 24px;
   align-items: start;
   width: 100%;
@@ -42,6 +42,12 @@
   padding: 20px;
   display: grid;
   gap: 12px;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.profile-card {
+  min-width: 0;
 }
 
 .profile-summary {
@@ -53,6 +59,8 @@
   border-radius: var(--radius-card);
   background: var(--bg-interactive-muted);
   border: 1px solid var(--border-subtle);
+  min-width: 0;
+  overflow: hidden;
 }
 
 .profile-avatar {
@@ -73,10 +81,17 @@
   display: block;
 }
 
+.profile-summary > div {
+  min-width: 0;
+}
+
 .profile-summary strong {
   color: var(--text-primary);
   font-size: 1rem;
   margin-bottom: 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .profile-summary span {
@@ -87,6 +102,7 @@
 
 .profile-menu-item {
   width: 100%;
+  min-width: 0;
   min-height: 48px;
   padding: 0 14px;
   border: 1px solid var(--border-subtle);
@@ -95,6 +111,9 @@
   color: var(--text-secondary);
   text-align: left;
   font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   transition:
     transform var(--transition-fast),
     border-color var(--transition-fast),
@@ -142,6 +161,8 @@
 .profile-info-list {
   display: grid;
   gap: 0;
+  width: 100%;
+  min-width: 0;
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-card);
   overflow: hidden;
@@ -155,6 +176,7 @@
   padding: 18px;
   background: var(--bg-interactive-muted);
   border-bottom: 1px solid var(--border-subtle);
+  min-width: 0;
 }
 
 .profile-info-content {
@@ -288,6 +310,7 @@
 
 .theme .profile-info-row {
   flex: 1;
+  min-width: 0;
   padding: 18px 0;
   background: transparent;
   border-bottom: 0;
@@ -296,6 +319,7 @@
 .theme-switch {
   width: 78px;
   height: 42px;
+  flex: 0 0 78px;
   padding: 4px;
   border: 1px solid var(--border-strong);
   border-radius: 999px;

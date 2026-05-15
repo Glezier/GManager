@@ -6,6 +6,10 @@ html {
   color-scheme: dark;
 }
 
+:root[data-theme="light"] {
+  color-scheme: light;
+}
+
 body {
   margin: 0;
   min-width: 320px;
@@ -180,16 +184,18 @@ textarea:focus {
 .feedback-error,
 .dashboard-feedback-error,
 .auth-feedback-error {
-  background: var(--accent-danger-soft);
-  border-color: rgba(239, 68, 68, 0.36);
-  color: #fecaca;
+  background: var(--event-danger-bg);
+  border-color: var(--event-danger-border);
+  color: var(--event-danger-text);
+  font-weight: 700;
 }
 
 .feedback-success,
 .dashboard-feedback-success {
-  background: var(--accent-success-soft);
-  border-color: rgba(16, 185, 129, 0.34);
-  color: #bbf7d0;
+  background: var(--event-success-bg);
+  border-color: var(--event-success-border);
+  color: var(--event-success-text);
+  font-weight: 700;
 }
 
 .empty-state,

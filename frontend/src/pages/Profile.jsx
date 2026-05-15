@@ -5,6 +5,7 @@ import { atualizarPerfil, atualizarSenha, atualizarPreferencias } from "../api/a
 import { useQueryClient, useMutation } from "@tanstack/react-query"
 import "./Profile.css"
 import LoadingState from "../components/ui/LoadingState"
+import ConfirmBox from "../components/ConfirmBox"
 import EditIcon from "../assets/icons/edit.png"
 import EyeClosed from '../assets/icons/eye-closed.png'
 import EyeOpen from '../assets/icons/eye-open.png'
@@ -29,6 +30,11 @@ export default function Profile(){
     const [mostrarSenhaPerfil1, setMostrarSenhaPerfil1] = useState(false)
     const [mostrarSenhaPerfil2, setMostrarSenhaPerfil2] = useState(false)
     const [mostrarSenhaPerfil3, setMostrarSenhaPerfil3] = useState(false)
+
+    const [confirmacaoSenha, setConfirmacaoSenha] = useState({
+        open: false,
+        loading: false,
+    })
 
     const tema = usuario?.tema || "dark"
 
@@ -93,6 +99,29 @@ export default function Profile(){
             return
         }
 
+        setConfirmacaoSenha({
+            open: true,
+            loading: false,
+        })
+    }
+
+    // Funções para o confirm box
+    function cancelarConfirmacaoSenha(){
+        setConfirmacaoSenha({
+            open: false,
+            loading: false,
+        })
+
+        setEditando(null)
+        limparCampoSenha()
+    }
+
+    function confirmarTrocaSenha(){
+        setConfirmacaoSenha({
+            open: true,
+            loading: true,
+        })
+
         atualizarSenhaMutation.mutate({
             senhaAtual,
             novaSenha,
@@ -125,13 +154,15 @@ export default function Profile(){
 
     const atualizarSenhaMutation = useMutation({
         mutationFn: atualizarSenha,
-        onSuccess: (resposta) => {
+        onSuccess: () => {
+            setConfirmacaoSenha({ open: false, loading:false})
             setEditando(null)
             limparCampoSenha()
             setErroForm("")
-            setSucesso(resposta.message || "Senha atualizada com sucesso")
+            setSucesso("Senha alterada com sucesso")
         },
         onError: (error) => {
+            setConfirmacaoSenha({ open: false, loading:false})
             setSucesso("")
             setErroForm(error.message)
         }
@@ -186,8 +217,6 @@ export default function Profile(){
     if (!usuario) {
         return null
     }
-
-    
 
     return(
         <main className="profile-page">
@@ -334,88 +363,103 @@ export default function Profile(){
                                             <span>Senha</span>
 
                                             {editando === "senha" ? (
-                                                <form className="profile-edit-form" onSubmit={salvarSenha}>
-                                                    <div className="profile-password-field">
-                                                        <input
-                                                            type={mostrarSenhaPerfil1 ? "text" : "password"}
-                                                            placeholder="Senha atual"
-                                                            value={senhaAtual}
-                                                            onChange={(e) => setSenhaAtual(e.target.value)}
-                                                            autoFocus
-                                                            minLength={8}
-                                                            required
-                                                        />
+                                                <>
+                                                    <form className="profile-edit-form" onSubmit={salvarSenha}>
+                                                        <div className="profile-password-field">
+                                                            <input
+                                                                type={mostrarSenhaPerfil1 ? "text" : "password"}
+                                                                placeholder="Senha atual"
+                                                                value={senhaAtual}
+                                                                onChange={(e) => setSenhaAtual(e.target.value)}
+                                                                autoFocus
+                                                                minLength={8}
+                                                                required
+                                                            />
 
-                                                        <button
-                                                            type="button"
-                                                            className="profile-password-toggle"
-                                                            onClick={() => setMostrarSenhaPerfil1((valor) => !valor)}
-                                                            title={mostrarSenhaPerfil1 ? "Ocultar senhas" : "Mostrar senhas"}
-                                                        >
-                                                            <img src={mostrarSenhaPerfil1 ? EyeClosed : EyeOpen } alt="" />
-                                                        </button>
-                                                    </div>
+                                                            <button
+                                                                type="button"
+                                                                className="profile-password-toggle"
+                                                                onClick={() => setMostrarSenhaPerfil1((valor) => !valor)}
+                                                                title={mostrarSenhaPerfil1 ? "Ocultar senhas" : "Mostrar senhas"}
+                                                            >
+                                                                <img src={mostrarSenhaPerfil1 ? EyeClosed : EyeOpen } alt="" />
+                                                            </button>
+                                                        </div>
 
-                                                    <div className="profile-password-field">
-                                                        <input
-                                                            type={mostrarSenhaPerfil2 ? "text" : "password"}
-                                                            placeholder="Nova senha"
-                                                            value={novaSenha}
-                                                            onChange={(e) => setNovaSenha(e.target.value)}
-                                                            minLength={8}
-                                                            maxLength={50}
-                                                            required
-                                                        />
+                                                        <div className="profile-password-field">
+                                                            <input
+                                                                type={mostrarSenhaPerfil2 ? "text" : "password"}
+                                                                placeholder="Nova senha"
+                                                                value={novaSenha}
+                                                                onChange={(e) => setNovaSenha(e.target.value)}
+                                                                minLength={8}
+                                                                maxLength={50}
+                                                                required
+                                                            />
 
-                                                        <button
-                                                            type="button"
-                                                            className="profile-password-toggle"
-                                                            onClick={() => setMostrarSenhaPerfil2((valor) => !valor)}
-                                                            title={mostrarSenhaPerfil2 ? "Ocultar senhas" : "Mostrar senhas"}
-                                                        >
-                                                            <img src={mostrarSenhaPerfil2 ? EyeClosed : EyeOpen } alt="" />
-                                                        </button>
-                                                    </div>
+                                                            <button
+                                                                type="button"
+                                                                className="profile-password-toggle"
+                                                                onClick={() => setMostrarSenhaPerfil2((valor) => !valor)}
+                                                                title={mostrarSenhaPerfil2 ? "Ocultar senhas" : "Mostrar senhas"}
+                                                            >
+                                                                <img src={mostrarSenhaPerfil2 ? EyeClosed : EyeOpen } alt="" />
+                                                            </button>
+                                                        </div>
 
-                                                    <div className="profile-password-field">
-                                                        <input
-                                                            type={mostrarSenhaPerfil3 ? "text" : "password"}
-                                                            placeholder="Confirmar nova senha"
-                                                            value={confirmarSenha}
-                                                            onChange={(e) => setConfirmarSenha(e.target.value)}
-                                                            minLength={8}
-                                                            maxLength={50}
-                                                            required
-                                                        />
+                                                        <div className="profile-password-field">
+                                                            <input
+                                                                type={mostrarSenhaPerfil3 ? "text" : "password"}
+                                                                placeholder="Confirmar nova senha"
+                                                                value={confirmarSenha}
+                                                                onChange={(e) => setConfirmarSenha(e.target.value)}
+                                                                minLength={8}
+                                                                maxLength={50}
+                                                                required
+                                                            />
 
-                                                        <button
-                                                            type="button"
-                                                            className="profile-password-toggle"
-                                                            onClick={() => setMostrarSenhaPerfil3((valor) => !valor)}
-                                                            title={mostrarSenhaPerfil3 ? "Ocultar senhas" : "Mostrar senhas"}
-                                                        >
-                                                            <img src={mostrarSenhaPerfil3 ? EyeClosed : EyeOpen } alt="" />
-                                                        </button>
-                                                    </div>
+                                                            <button
+                                                                type="button"
+                                                                className="profile-password-toggle"
+                                                                onClick={() => setMostrarSenhaPerfil3((valor) => !valor)}
+                                                                title={mostrarSenhaPerfil3 ? "Ocultar senhas" : "Mostrar senhas"}
+                                                            >
+                                                                <img src={mostrarSenhaPerfil3 ? EyeClosed : EyeOpen } alt="" />
+                                                            </button>
+                                                        </div>
 
-                                                    <div className="profile-edit-actions">
-                                                        <button
-                                                            type="submit"
-                                                            className="btn-primary"
-                                                            disabled={atualizarSenhaMutation.isPending}
-                                                        >
-                                                            {atualizarSenhaMutation.isPending ? "Salvando..." : "Salvar"}
-                                                        </button>
+                                                        <div className="profile-edit-actions">
+                                                            <button
+                                                                type="submit"
+                                                                className="btn-primary"
+                                                                disabled={atualizarSenhaMutation.isPending}
+                                                            >
+                                                                {atualizarSenhaMutation.isPending ? "Salvando..." : "Salvar"}
+                                                            </button>
 
-                                                        <button
-                                                            type="button"
-                                                            className="btn-secondary"
-                                                            onClick={cancelarEdicao}
-                                                        >
-                                                            Cancelar
-                                                        </button>
-                                                    </div>
-                                                </form>
+                                                            <button
+                                                                type="button"
+                                                                className="btn-secondary"
+                                                                onClick={cancelarEdicao}
+                                                            >
+                                                                Cancelar
+                                                            </button>
+                                                        </div>
+                                                    </form>
+
+                                                    <ConfirmBox
+                                                        open={confirmacaoSenha.open}
+                                                        title="Alterar senha?"
+                                                        message="Tem certeza que deseja alterar senha?"
+                                                        confirmLabel="Alterar senha"
+                                                        cancelLabel="Cancelar"
+                                                        variant="warning"
+                                                        loading={confirmacaoSenha.loading}
+                                                        onConfirm={confirmarTrocaSenha}
+                                                        onCancel={cancelarConfirmacaoSenha}
+                                                        
+                                                    />
+                                                </>
                                             ) : (
                                                 <strong>Alterar senha da conta</strong>
                                             )}
@@ -426,7 +470,16 @@ export default function Profile(){
                                                 type="button"
                                                 className="profile-edit-button"
                                                 title="Alterar senha"
-                                                onClick={() => setEditando("senha")}
+                                                onClick={() => {
+                                                    setEditando("senha")
+                                                    setErroForm("")
+                                                    setSucesso("")
+
+                                                    setConfirmacaoSenha({
+                                                        open:false,
+                                                        loading:false
+                                                    })
+                                                }}
                                             >
                                                 <img src={EditIcon} alt="" />
                                             </button>
