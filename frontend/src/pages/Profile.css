@@ -202,23 +202,31 @@
 }
 
 .profile-voltar {
-  padding: 14px;
+  min-height: 46px;
   border: 1px solid var(--border-strong);
-  border-radius: 12px;
-  background: var(--bg-interactive);
+  border-radius: var(--radius-button);
+  background: var(--bg-surface-soft);
+  padding: 0 16px;
+  font-weight: 600;
   color: var(--text-primary);
-  display: flex;
-  transition:
-    transform var(--transition-fast),
-    background var(--transition-fast),
-    border-color var(--transition-fast);
+  transition: background var(--transition-fast), transform var(--transition-fast), border-color var(--transition-fast);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-size: 0.95rem;
   margin-bottom: 8px;
 }
 
 .profile-voltar:hover {
-  transform: translateY(-1px);
   background: var(--bg-interactive-hover);
   border-color: var(--accent-primary);
+  transform: translateY(-1px);
+}
+
+.profile-voltar:focus {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
 }
 
 .profile-edit-button:hover {

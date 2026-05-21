@@ -4,6 +4,21 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/png" sizes="32x32" href="./public/icon_logo.png">
+    <script>
+      (function () {
+        try {
+          var tema = localStorage.getItem("tema") || "dark";
+
+          if (tema !== "dark" && tema !== "light") {
+            tema = "dark";
+          }
+
+          document.documentElement.dataset.theme = tema;
+        } catch (error) {
+          document.documentElement.dataset.theme = "dark";
+        }
+      })();
+  </script>
     <title>My GManager</title>
   </head>
   <body>

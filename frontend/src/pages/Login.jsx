@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { useNavigate, Link, useLocation } from 'react-router-dom'
 import { login, reenviarVerificacao, refreshToken } from '../api/api'
 import { getToken, setToken } from '../utils/auth'
+import { salvarTemaLocal } from '../utils/theme'
 import './Auth.css'
 import FullLogo from '../assets/icons/full_logo.png'
 import EyeClosed from '../assets/icons/eye-closed.png'
@@ -39,6 +40,10 @@ export default function Login(){
 
         try{
             const data = await login(email, senha)
+
+            if (data.usuario?.tema) {
+                salvarTemaLocal(data.usuario.tema)
+            }
             
             if (data.token){
                 setToken(data.token)

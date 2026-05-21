@@ -1,19 +1,19 @@
-import { useLayoutEffect } from "react"
+import { useEffect } from "react"
 import { useMe } from "../hooks/useMe"
-import LoadingState from "./ui/LoadingState"
+import { getTemaSalvo, salvarTemaLocal, temaValido } from "../utils/theme"
 
 export default function ThemeSync({ children }){
-    const { data: usuario, isLoading } = useMe()
+    const { data: usuario } = useMe()
 
-    useLayoutEffect(() => {
-        if (usuario?.tema) {
-            document.documentElement.dataset.theme = usuario.tema
+    useEffect(() => {
+        if (!temaValido(usuario?.tema)) {
+            return
+        }
+
+        if(usuario.tema !== getTemaSalvo()){
+            salvarTemaLocal(usuario.tema)
         }
     }, [usuario?.tema])
-
-    if (isLoading) {
-        return <LoadingState message="Carregando preferências..." />
-    }
 
     return children
 }

@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import { useMe } from "../hooks/useMe"
-import { atualizarPerfil, atualizarSenha, atualizarPreferencias } from "../api/api"
+import { atualizarPerfil, atualizarEmail, atualizarSenha, atualizarPreferencias } from "../api/api"
 import { useQueryClient, useMutation } from "@tanstack/react-query"
+import { getTemaSalvo, salvarTemaLocal } from "../utils/theme"
+import { removeToken } from "../utils/auth"
 import "./Profile.css"
 import LoadingState from "../components/ui/LoadingState"
 import ConfirmBox from "../components/ConfirmBox"
@@ -20,6 +22,7 @@ export default function Profile(){
     const queryClient = useQueryClient()
     const [erroForm, setErroForm] = useState("")
     const [sucesso, setSucesso] = useState("")
+    const [feedbackFixo, setFeedbackFixo] = useState(false)
 
     const [editando, setEditando] = useState(null)
     const [nomeEditado, setNomeEditado] = useState("")
@@ -31,16 +34,33 @@ export default function Profile(){
     const [mostrarSenhaPerfil2, setMostrarSenhaPerfil2] = useState(false)
     const [mostrarSenhaPerfil3, setMostrarSenhaPerfil3] = useState(false)
 
+    const [emailEditado, setEmailEditado] = useState("")
+    const [senhaEmail, setSenhaEmail] = useState("")
+    const [mostrarSenhaEmail, setMostrarSenhaEmail] = useState(false)
+
     const [confirmacaoSenha, setConfirmacaoSenha] = useState({
         open: false,
         loading: false,
     })
 
-    const tema = usuario?.tema || "dark"
+    const [confirmacaoEmail, setConfirmacaoEmail] = useState({
+        open: false,
+        loading: false,
+    })
+
+    const tema = usuario?.tema || getTemaSalvo()
 
     function abrirEdicaoNome(){
         setNomeEditado(usuario.nome)
         setEditando("nome")
+    }
+
+    function abrirEdicaoEmail(){
+        setSenhaEmail("")
+        setMostrarSenhaEmail(false)
+        setErroForm("")
+        setSucesso("")
+        setEditando("email")
     }
 
     function limparCampoSenha(){
@@ -55,6 +75,13 @@ export default function Profile(){
     function cancelarEdicao(){
         setEditando(null)
         setNomeEditado("")
+        setEmailEditado("")
+        setSenhaEmail("")
+        setMostrarSenhaEmail(false)
+        setConfirmacaoEmail({
+            open: false,
+            loading: false,
+        })
         limparCampoSenha()
     }
 
@@ -76,6 +103,29 @@ export default function Profile(){
         atualizarPerfilMutation.mutate({ nome: nomeCorrigido})
     }
 
+    function salvarEmail(event){
+        event.preventDefault()
+
+        const emailCorrigido = emailEditado.trim().toLowerCase()
+
+        if (!emailCorrigido || !senhaEmail){
+            setErroForm("Novo email e senha atual são obrigatórios")
+            return
+        }
+
+        if (emailCorrigido === usuario.email){
+            cancelarEdicao()
+            return
+        }
+
+        setEmailEditado(emailCorrigido)
+
+        setConfirmacaoEmail({
+            open: true,
+            loading: false,
+        })
+    }
+
     function salvarSenha(event){
         event.preventDefault()
 
@@ -90,7 +140,7 @@ export default function Profile(){
         }
 
         if (novaSenha !== confirmarSenha) {
-            setErroForm("A confirmação de senha não confere")
+            setErroForm("Nova senha e confirmação devem ser iguais")
             return
         }
 
@@ -129,8 +179,36 @@ export default function Profile(){
         })
     }
 
+    function cancelarConfirmacaoEmail(){
+        setConfirmacaoEmail({
+            open: false,
+            loading: false,
+        })
+    }
+
+    function confirmarTrocaEmail(){
+        setConfirmacaoEmail({
+            open: true,
+            loading: true,
+        })
+
+        atualizarEmailMutation.mutate({
+            email: emailEditado,
+            senhaAtual: senhaEmail
+        })
+    }
+
     function alternarTema(){
         const novoTema = tema === "dark" ? "light" : "dark"
+
+        salvarTemaLocal(novoTema)
+
+        queryClient.setQueryData(["me"], (usuarioAtual) => {
+            if (!usuarioAtual) {
+                return usuarioAtual
+            }
+            return { ...usuarioAtual, tema: novoTema }
+        })
 
         atualizarPreferenciasMutation.mutate({
             tema: novoTema
@@ -144,6 +222,7 @@ export default function Profile(){
             setEditando(null)
             setNomeEditado("")
             setErroForm("")
+            setFeedbackFixo(false)
             setSucesso("Perfil atualizado com sucesso")
         },
         onError: (error) => {
@@ -152,13 +231,34 @@ export default function Profile(){
         }
     })
 
+    const atualizarEmailMutation = useMutation({
+        mutationFn: atualizarEmail,
+        onSuccess: (data) => {
+            setConfirmacaoEmail({ open: false, loading: false })
+            setEditando(null)
+            setEmailEditado("")
+            setSenhaEmail("")
+            setMostrarSenhaEmail(false)
+            setErroForm("")
+            setFeedbackFixo(true)
+            setSucesso(data.message || "Verifique o novo email para concluir a troca.")
+        },
+        onError: (error) => {
+            setConfirmacaoEmail({ open: false, loading: false })
+            setSucesso("")
+            setErroForm(error.message)
+        }
+    })
+
     const atualizarSenhaMutation = useMutation({
         mutationFn: atualizarSenha,
         onSuccess: () => {
+            removeToken()
             setConfirmacaoSenha({ open: false, loading:false})
             setEditando(null)
             limparCampoSenha()
             setErroForm("")
+            setFeedbackFixo(false)
             setSucesso("Senha alterada com sucesso")
         },
         onError: (error) => {
@@ -171,15 +271,21 @@ export default function Profile(){
     const atualizarPreferenciasMutation = useMutation({
         mutationFn: atualizarPreferencias,
         onSuccess: (usuarioAtualizado) => {
+            salvarTemaLocal(usuarioAtualizado.tema)
             queryClient.setQueryData(["me"], usuarioAtualizado)
             setErroForm("")
         },
-        onError: (error) => {
-            setErroForm(error.message)
+        onError: () => {
+            setSucesso("")
+            setErroForm("Tema alterado neste dispositivo, mas não foi salvo para outros acessos.")
         }
     })
 
     useEffect(() => {
+        if (feedbackFixo){
+            return
+        }
+
         if (sucesso){
             const timer = setTimeout(() => {
                 setSucesso('')
@@ -191,10 +297,17 @@ export default function Profile(){
                 setErroForm('')
             }, 2500)
             return () => clearTimeout(timer)
-
         }
+        
         return
-    }, [sucesso, erroForm])
+    }, [feedbackFixo, sucesso, erroForm])
+
+    function limparFeedbackFixo(){
+        if (feedbackFixo && sucesso){
+        setSucesso("")
+        setFeedbackFixo(false)
+        }
+    }
     
     if (isLoading){
         return(
@@ -219,7 +332,7 @@ export default function Profile(){
     }
 
     return(
-        <main className="profile-page">
+        <main className="profile-page" onClick={limparFeedbackFixo}>
 
             {(erroForm || sucesso) && (
                 <div className="profile-shell">
@@ -345,17 +458,86 @@ export default function Profile(){
                                     <div className="profile-info-row">
                                         <div className="profile-info-content">
                                             <span>Email</span>
-                                            <strong>{usuario.email}</strong>
+
+                                            {editando === "email" ? (
+                                                <>
+                                                    <form className="profile-edit-form" onSubmit={salvarEmail}>
+                                                        <input
+                                                            type="email"
+                                                            value={emailEditado}
+                                                            onChange={(e) => setEmailEditado(e.target.value)}
+                                                            maxLength={120}
+                                                            placeholder="Digite seu novo email"
+                                                            autoFocus
+                                                            required
+                                                        />
+
+                                                        <div className="profile-password-field">
+                                                            <input
+                                                                type={mostrarSenhaEmail ? "text" : "password"}
+                                                                placeholder="Senha atual"
+                                                                value={senhaEmail}
+                                                                onChange={(e) => setSenhaEmail(e.target.value)}
+                                                                minLength={8}
+                                                                required
+                                                            />
+
+                                                            <button
+                                                                type="button"
+                                                                className="profile-password-toggle"
+                                                                onClick={() => setMostrarSenhaEmail((valor) => !valor)}
+                                                                title={mostrarSenhaEmail ? "Ocultar senha" : "Mostrar senha"}
+                                                            >
+                                                                <img src={mostrarSenhaEmail ? EyeClosed : EyeOpen} alt="" />
+                                                            </button>
+                                                        </div>
+
+                                                        <div className="profile-edit-actions">
+                                                            <button
+                                                                type="submit"
+                                                                className="btn-primary"
+                                                                disabled={atualizarEmailMutation.isPending}
+                                                            >
+                                                                {atualizarEmailMutation.isPending ? "Enviando..." : "Enviar verificação"}
+                                                            </button>
+
+                                                            <button
+                                                                type="button"
+                                                                className="btn-secondary"
+                                                                onClick={cancelarEdicao}
+                                                            >
+                                                                Cancelar
+                                                            </button>
+                                                        </div>
+                                                    </form>
+
+                                                    <ConfirmBox
+                                                        open={confirmacaoEmail.open}
+                                                        title="Alterar email?"
+                                                        message={`Vamos enviar um link de verificação para ${emailEditado}. O email da conta só será alterado depois da confirmação.`}
+                                                        confirmLabel="Enviar verificação"
+                                                        cancelLabel="Cancelar"
+                                                        variant="warning"
+                                                        loading={confirmacaoEmail.loading}
+                                                        onConfirm={confirmarTrocaEmail}
+                                                        onCancel={cancelarConfirmacaoEmail}
+                                                    />
+                                                </>
+                                            ) : (
+                                                <strong>{usuario.email}</strong>
+                                            )}
                                         </div>
 
-                                        <button
-                                            type="button"
-                                            className="profile-edit-button"
-                                            title="Editar email"
-                                            onClick={() => {setEditando("email")}}
-                                        >
-                                            <img src={EditIcon} alt="" />
-                                        </button>
+                                        {editando !== "email" && (
+                                            <button
+                                                type="button"
+                                                className="profile-edit-button"
+                                                title="Editar email"
+                                                onClick={abrirEdicaoEmail}
+                                            >
+                                                <img src={EditIcon} alt="" />
+                                            </button>
+                                        )}
                                     </div>
 
                                     <div className="profile-info-row">

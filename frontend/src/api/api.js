@@ -157,6 +157,19 @@ export async function atualizarPerfil(dados){
     return response.json()
 }
 
+// Atualizar email
+export async function atualizarEmail(dados){
+    const response = await fetchAutenticado(`${API_URL}/auth/me/email`, {
+        method: "PATCH",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(dados)
+    })
+
+    return response.json()
+}
+
 // Atualizar senha
 export async function atualizarSenha(dados){
     const response = await fetchAutenticado(`${API_URL}/auth/me/senha`,{

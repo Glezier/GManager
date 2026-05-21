@@ -50,12 +50,7 @@ Ordem:
 - validar que o ambiente local nao usa o banco de producao
 
 ### Fase 2: Performance do backend
-- medir tempo das principais rotas
-- investigar requisicoes acima de 1s
-- revisar uso do pool PostgreSQL
 - revisar consultas nos controllers
-- identificar chamadas duplicadas no frontend
-- separar lentidao causada por cold start da Vercel/Neon de lentidao causada pelo codigo
 
 ### Fase 4: Testes automatizados
 - teste de muitos usuários simultâneos acessando ao mesmo tempo

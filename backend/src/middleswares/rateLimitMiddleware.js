@@ -28,7 +28,7 @@ const loginLimiter = rateLimit({
 
 const tasksWriterLimiter = rateLimit({
     windowMs: 60 * 1000,
-    limit: 40,
+    limit: 30,
     standardHeaders: true,
     legacyHeaders: false,
     keyGenerator: (req) => { // Limita por IP ou por id do usuário
@@ -42,4 +42,60 @@ const tasksWriterLimiter = rateLimit({
     }
 })
 
-module.exports = { authLimiter, loginLimiter, tasksWriterLimiter}
+const profileNameLimiter = rateLimit({
+    windowMs: 60 * 60 * 1000,
+    limit: 10,
+    standardHeaders: true,
+    legacyHeaders: false,
+    keyGenerator: (req) => `user:${req.userId}`,
+    message: {
+        error: {
+            code: 'PROFILE_NAME_RATE_LIMIT_EXCEEDED',
+            message: 'Muitas alterações de nome. Tente novamente mais tarde.'
+        }
+    }
+})
+
+const emailLimiter = rateLimit({
+    windowMs: 60 * 60 * 1000,
+    limit: 3,
+    standardHeaders: true,
+    legacyHeaders: false,
+    keyGenerator: (req) => `user:${req.userId}`,
+    message: {
+        error: {
+            code: 'EMAIL_CHANGE_RATE_LIMIT_EXCEEDED',
+            message: 'Muitas tentativas de troca de email. Tente novamente mais tarde.'
+        }
+    }
+})
+
+const passwordLimiter = rateLimit({
+    windowMs: 60 * 60 * 1000,
+    limit: 2,
+    standardHeaders: true,
+    legacyHeaders: false,
+    keyGenerator: (req) => `user:${req.userId}`,
+    message: {
+        error: {
+            code: 'PASSWORD_CHANGE_RATE_LIMIT_EXCEEDED',
+            message: 'Muitas tentativas de alteração de senha. Tente novamente mais tarde.'
+        }
+    }
+})
+
+const themeLimiter = rateLimit({
+    windowMs: 60 * 1000,
+    limit: 5,
+    standardHeaders: true,
+    legacyHeaders: false,
+    keyGenerator: (req) => `user:${req.userId}`,
+    message: {
+        error:{
+            code: 'THEME_CHANGE_RATE_LIMIT_EXCEEDED',
+            message: 'Aguarde 1 minuto para mudar de tema novamente.'
+        }
+    }
+})
+
+module.exports = { authLimiter, loginLimiter, tasksWriterLimiter, profileNameLimiter, emailLimiter, passwordLimiter, themeLimiter}

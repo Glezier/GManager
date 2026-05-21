@@ -9,9 +9,12 @@ function getVerificationUrl(token){
     return `${frontendUrl}/verificar-email?token=${token}`
 }
 
-// Envia email ao usuário
-async function enviarEmailVerificacao({ email, nome, token}){
+// Envia email de verificação ao usuário
+async function enviarEmailVerificacao({ email, nome, token, motivo = "cadastro"}){
     const verificationUrl = getVerificationUrl(token)
+    const mensagemPrincipal = motivo === "troca-email" 
+        ? "Você solicitou a troca de email de acesso ao My GManager." 
+        : "Sua conta foi criada com sucesso no My GManager."
 
     return resend.emails.send({
         from: process.env.EMAIL_FROM,
@@ -29,11 +32,11 @@ async function enviarEmailVerificacao({ email, nome, token}){
                     </h1>
 
                     <p style="margin: 0 0 12px; font-size: 16px; line-height: 1.7; color: #c8d3df;">
-                        Sua conta foi criada com sucesso no My GManager.
+                        ${mensagemPrincipal}
                     </p>
-
+                    
                     <p style="margin: 0 0 28px; font-size: 16px; line-height: 1.7; color: #c8d3df;">
-                        Clique no botão abaixo para verificar seu email e ativar sua conta.
+                        Clique no botão abaixo para verificar seu email.
                     </p>
 
                     <a
@@ -61,5 +64,7 @@ async function enviarEmailVerificacao({ email, nome, token}){
         `,
     })
 }
+
+// Enviar email para mudança de email
 
 module.exports={enviarEmailVerificacao}

@@ -114,7 +114,7 @@ exports.atualizarPerfil = async(req,res,next) => {
             SET nome = $1,
             updated_at = CURRENT_TIMESTAMP AT TIME ZONE 'America/Sao_Paulo'
             WHERE id = $2
-            RETURNING id, nome, email, created_at`,
+            RETURNING id, nome, email, created_at, tema`,
             [nomeCorrigido, usuarioId]
         )
 
@@ -210,12 +210,22 @@ exports.atualizarSenha = async(req,res,next) => {
 
         const novaSenhaHash = await bcrypt.hash(novaSenha, 10)
 
+        // Atualiza na tabela usuários
         await pool.query(
             `UPDATE usuarios
             SET senha = $1,
                 updated_at = CURRENT_TIMESTAMP AT TIME ZONE 'America/Sao_Paulo'
             WHERE id = $2`,
             [novaSenhaHash, usuarioId]
+        )
+
+        // Atualiza na tabela de refresh_tokens
+        await pool.query(
+            `UPDATE refresh_tokens
+            SET revoked_at = CURRENT_TIMESTAMP AT TIME ZONE 'America/Sao_Paulo'
+            WHERE usuario_id = $1
+            AND revoked_at IS NULL`,
+            [usuarioId]
         )
 
         res.json({
@@ -351,6 +361,7 @@ exports.registrar = async (req, res, next) => {
             email: usuario.email,
             nome: usuario.nome,
             token: tokenEmail,
+            motivo: "cadastro"
         })
         
         const response = {
@@ -386,7 +397,7 @@ exports.verificarEmail = async(req, res, next) => {
 
         // Busca token não usado nem expirado
         const tokenResult = await pool.query(
-            `SELECT id, usuario_id
+            `SELECT id, usuario_id, tipo, novo_email
             FROM email_verification_tokens
             WHERE token_hash = $1
             AND used_at IS NULL
@@ -405,15 +416,44 @@ exports.verificarEmail = async(req, res, next) => {
 
         const tokenData = tokenResult.rows[0]
 
-        // Atualiza o usuário para email verificado
-        await pool.query(
-            `UPDATE usuarios
-            SET email_verificado = true,
-            email_verificado_em = CURRENT_TIMESTAMP AT TIME ZONE 'America/Sao_Paulo',
-            updated_at = CURRENT_TIMESTAMP AT TIME ZONE 'America/Sao_Paulo'
-            WHERE id = $1`,
-            [tokenData.usuario_id]
-        )
+        // Verifica o tipo de email (inicial ou mudança)
+        // Mudança de email
+        if (tokenData.tipo === 'troca-email') {
+            const emailExist = await pool.query(
+                `SELECT id
+                FROM usuarios
+                WHERE email = $1
+                AND id <> $2`,
+                [tokenData.novo_email, tokenData.usuario_id]
+            )
+
+            if (emailExist.rows.length > 0) {
+                return next(new AppError(
+                    'Este email já está em uso',
+                    400,
+                    'EMAIL_ALREADY_EXISTS'
+                ))
+            }
+
+            await pool.query(
+                `UPDATE usuarios
+                SET email = $1,
+                    email_verificado = true,
+                    email_verificado_em = CURRENT_TIMESTAMP AT TIME ZONE 'America/Sao_Paulo',
+                    updated_at = CURRENT_TIMESTAMP AT TIME ZONE 'America/Sao_Paulo'
+                WHERE id = $2`,
+                [tokenData.novo_email, tokenData.usuario_id]
+            )
+        } else { // Verificação email inicial
+            await pool.query(
+                `UPDATE usuarios
+                SET email_verificado = true,
+                    email_verificado_em = CURRENT_TIMESTAMP AT TIME ZONE 'America/Sao_Paulo',
+                    updated_at = CURRENT_TIMESTAMP AT TIME ZONE 'America/Sao_Paulo'
+                WHERE id = $1`,
+                [tokenData.usuario_id]
+            )
+        }
 
         // Atualiza token para usado
         await pool.query(
@@ -500,11 +540,125 @@ exports.reenviarVerificacao = async(req,res,next) => {
         await enviarEmailVerificacao({
             email: usuario.email,
             nome: usuario.nome,
-            token: tokenEmail
+            token: tokenEmail,
+            motivo: "cadastro"
         })
 
         res.json({message: 'Um novo email de verificação foi enviado'})
     } catch(error){
+        next(error)
+    }
+}
+
+// Troca de email
+exports.alterarEmail = async (req, res, next) => {
+    try {
+        const usuarioId = req.userId
+        const { email, senhaAtual } = req.body
+
+        if (!email || !senhaAtual) {
+            return next(new AppError(
+                'Novo email e senha atual são obrigatórios',
+                400,
+                'VALIDATION_ERROR'
+            ))
+        }
+
+        if (!isValidEmail(email)) {
+            return next(new AppError('Email inválido', 400, 'VALIDATION_ERROR'))
+        }
+
+        const novoEmail = email.trim().toLowerCase()
+
+        if (novoEmail.length > LIMITES_USUARIO.email) {
+            return next(new AppError(
+                `O email deve possuir no máximo ${LIMITES_USUARIO.email} caracteres`,
+                400,
+                'VALIDATION_ERROR'
+            ))
+        }
+
+        const usuarioResult = await pool.query(
+            `SELECT id, nome, email, senha
+            FROM usuarios
+            WHERE id = $1`,
+            [usuarioId]
+        )
+
+        if (usuarioResult.rows.length === 0) {
+            return next(new AppError(
+                'Usuário não encontrado',
+                404,
+                'USER_NOT_FOUND'
+            ))
+        }
+
+        const usuario = usuarioResult.rows[0]
+
+        if (novoEmail === usuario.email) {
+            return next(new AppError(
+                'O novo email deve ser diferente do email atual',
+                400,
+                'SAME_EMAIL'
+            ))
+        }
+
+        const senhaValida = await bcrypt.compare(senhaAtual, usuario.senha)
+
+        if (!senhaValida) {
+            return next(new AppError(
+                'Senha atual incorreta',
+                400,
+                'INVALID_CURRENT_PASSWORD'
+            ))
+        }
+
+        const emailExist = await pool.query(
+            `SELECT id
+            FROM usuarios
+            WHERE email = $1
+            AND id <> $2`,
+            [novoEmail, usuarioId]
+        )
+
+        if (emailExist.rows.length > 0) {
+            return next(new AppError(
+                'Email já cadastrado',
+                400,
+                'EMAIL_ALREADY_EXISTS'
+            ))
+        }
+
+        const tokenEmail = gerarTokenEmail()
+        const tokenHash = gerarHashToken(tokenEmail)
+
+        await pool.query(
+            `UPDATE email_verification_tokens
+            SET used_at = CURRENT_TIMESTAMP AT TIME ZONE 'America/Sao_Paulo'
+            WHERE usuario_id = $1
+            AND used_at IS NULL
+            AND tipo = 'troca-email'`,
+            [usuarioId]
+        )
+
+        await pool.query(
+            `INSERT INTO email_verification_tokens
+            (usuario_id, token_hash, expires_at, tipo, novo_email)
+            VALUES ($1, $2, CURRENT_TIMESTAMP AT TIME ZONE 'America/Sao_Paulo' + INTERVAL '10 minutes', $3, $4)`,
+            [usuarioId, tokenHash, 'troca-email', novoEmail]
+        )
+
+        await enviarEmailVerificacao({
+            email: novoEmail,
+            nome: usuario.nome,
+            token: tokenEmail,
+            motivo: 'troca-email'
+        })
+
+        res.json({
+            message: 'Enviamos um link de verificação para o novo email.'
+        })
+    } catch (error) {
         next(error)
     }
 }
@@ -547,7 +701,7 @@ exports.login = async (req, res, next) => {
 
         // Busca pelo email no banco de dados
         const result = await pool.query(
-            'SELECT id, nome, email, senha, email_verificado from usuarios WHERE email = $1',
+            'SELECT id, nome, email, senha, email_verificado, tema from usuarios WHERE email = $1',
             [emailCorrigido]
         )
 
@@ -581,7 +735,15 @@ exports.login = async (req, res, next) => {
 
         // Adicionar cookie na resposta
         res.cookie('refreshToken', refreshToken, getRefreshTokenOptions())
-        res.json({token: accessToken})
+        res.json({
+            token: accessToken,
+            usuario: {
+                id: usuario.id,
+                nome: usuario.nome,
+                email: usuario.email,
+                tema: usuario.tema
+            }
+        })
 
     }catch(error){
         next(error)
