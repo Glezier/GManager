@@ -1,0 +1,262 @@
+BACKUP AUTOMATICO DO BANCO - GOOGLE DRIVE + WINDOWS
+
+Objetivo
+--------
+Configurar no notebook pessoal um backup automatico do banco de producao do My GManager.
+
+Fluxo desejado:
+- A cada 3 dias, as 00:00, o Windows roda um script.
+- O script faz um pg_dump do banco de producao do Neon.
+- O arquivo .dump e salvo em uma pasta sincronizada do Google Drive.
+- O Google Drive envia o backup para a nuvem.
+- Backups com mais de 10 dias sao apagados automaticamente.
+
+Importante:
+- Esse modelo depende do notebook estar ligado.
+- Se o notebook estiver desligado no horario, a tarefa pode nao rodar.
+- Depois, no Agendador de Tarefas do Windows, marcar a opcao para executar assim que possivel caso o agendamento seja perdido.
+- Nao enviar backups por email. E melhor salvar direto no Drive.
+- Nao versionar backups no Git.
+
+
+1. Criar ou usar uma conta Google separada
+------------------------------------------
+Criar uma conta Google apenas para o projeto, por exemplo:
+
+mygmanager@gmail.com
+
+Essa conta sera usada para guardar backups no Google Drive.
+
+Recomendado:
+- Ativar verificacao em duas etapas.
+- Guardar senha e recovery codes com seguranca.
+- Nao usar essa conta para coisas pessoais.
+
+
+2. Instalar Google Drive para computador
+----------------------------------------
+No notebook pessoal:
+
+1. Instalar Google Drive para computador.
+2. Fazer login com a conta Google do projeto.
+3. Criar no Drive a pasta:
+
+GManager/Backups/production
+
+4. Descobrir o caminho local dessa pasta no Windows.
+
+Exemplos possiveis:
+
+G:\Meu Drive\GManager\Backups\production
+
+ou:
+
+C:\Users\monta\Google Drive\Meu Drive\GManager\Backups\production
+
+Esse caminho sera usado na variavel GMANAGER_BACKUP_DIR.
+
+
+3. Confirmar se pg_dump esta instalado
+--------------------------------------
+Abrir PowerShell e rodar:
+
+pg_dump --version
+
+Se funcionar, perfeito.
+
+Se der erro dizendo que pg_dump nao foi encontrado, instalar PostgreSQL no notebook pessoal
+ou adicionar o caminho do pg_dump ao PATH.
+
+Exemplo comum de caminho:
+
+C:\Program Files\PostgreSQL\18\bin\pg_dump.exe
+
+
+4. Criar variaveis de ambiente do Windows
+-----------------------------------------
+No PowerShell do notebook pessoal, configurar:
+
+setx GMANAGER_PROD_DB_URL "postgresql://URL_DA_BRANCH_PRODUCTION"
+setx GMANAGER_BACKUP_DIR "CAMINHO_DA_PASTA_DO_DRIVE"
+
+Exemplo:
+
+setx GMANAGER_BACKUP_DIR "G:\Meu Drive\GManager\Backups\production"
+
+Depois de rodar os comandos:
+- Fechar o PowerShell.
+- Abrir novamente.
+- Conferir:
+
+echo $env:GMANAGER_PROD_DB_URL
+echo $env:GMANAGER_BACKUP_DIR
+
+Observacao:
+- Usar a URL da branch production do Neon.
+- Nao colocar essa URL em arquivo versionado no Git.
+- Nao colocar a URL real dentro deste arquivo de documentacao.
+
+
+5. Criar o script de backup
+---------------------------
+Criar o arquivo:
+
+scripts/backup-production.ps1
+
+Conteudo:
+
+$ErrorActionPreference = "Stop"
+
+if (-not $env:GMANAGER_PROD_DB_URL) {
+    throw "GMANAGER_PROD_DB_URL nao configurada."
+}
+
+if (-not $env:GMANAGER_BACKUP_DIR) {
+    throw "GMANAGER_BACKUP_DIR nao configurada."
+}
+
+$timestamp = Get-Date -Format "yyyy-MM-dd_HH-mm"
+$backupDir = $env:GMANAGER_BACKUP_DIR
+$backupFile = Join-Path $backupDir "gmanager_prod_$timestamp.dump"
+
+New-Item -ItemType Directory -Force -Path $backupDir | Out-Null
+
+pg_dump "$env:GMANAGER_PROD_DB_URL" `
+    --format=custom `
+    --no-owner `
+    --no-privileges `
+    --file "$backupFile"
+
+if (-not (Test-Path $backupFile)) {
+    throw "Backup nao foi criado."
+}
+
+Get-ChildItem $backupDir -Filter "gmanager_prod_*.dump" |
+    Where-Object { $_.LastWriteTime -lt (Get-Date).AddDays(-10) } |
+    Remove-Item -Force
+
+
+6. Testar manualmente
+---------------------
+No PowerShell, rodar:
+
+powershell.exe -ExecutionPolicy Bypass -File C:\Users\monta\Documents\GManager\scripts\backup-production.ps1
+
+Conferir:
+- Se apareceu um arquivo .dump na pasta do Google Drive.
+- Se o Google Drive esta sincronizando o arquivo.
+- Se nao apareceu erro no terminal.
+
+Nome esperado do arquivo:
+
+gmanager_prod_YYYY-MM-DD_HH-mm.dump
+
+Exemplo:
+
+gmanager_prod_2026-05-26_00-00.dump
+
+
+7. Agendar execucao a cada 3 dias as 00:00
+------------------------------------------
+No PowerShell, rodar:
+
+schtasks /Create /TN "GManager Backup Production" /SC DAILY /MO 3 /ST 00:00 /TR "powershell.exe -ExecutionPolicy Bypass -File C:\Users\monta\Documents\GManager\scripts\backup-production.ps1"
+
+Significado:
+- /TN: nome da tarefa.
+- /SC DAILY: agenda diaria.
+- /MO 3: roda a cada 3 dias.
+- /ST 00:00: horario meia-noite.
+- /TR: comando executado.
+
+
+8. Ajustar pela interface do Agendador de Tarefas
+------------------------------------------------
+Abrir:
+
+Task Scheduler / Agendador de Tarefas
+
+Localizar:
+
+GManager Backup Production
+
+Configurar se possivel:
+- Run task as soon as possible after a scheduled start is missed.
+- Rodar mesmo se o usuario nao estiver logado, se fizer sentido.
+- Garantir que a tarefa tenha permissao para acessar o caminho do Google Drive.
+
+
+9. Testar a tarefa agendada
+---------------------------
+No Agendador de Tarefas:
+
+1. Clicar com o botao direito na tarefa.
+2. Clicar em Run / Executar.
+3. Conferir se o backup foi criado na pasta do Drive.
+
+
+10. Restaurar backup em ambiente dev
+------------------------------------
+Backup so e confiavel se o restore ja foi testado.
+
+Nunca restaurar direto em producao.
+Usar a branch dev do Neon.
+
+Configurar variavel no Windows:
+
+setx GMANAGER_DEV_DB_URL "postgresql://URL_DA_BRANCH_DEV"
+
+Fechar e abrir PowerShell.
+
+Rodar restore:
+
+pg_restore `
+    --clean `
+    --if-exists `
+    --no-owner `
+    --no-privileges `
+    --dbname "$env:GMANAGER_DEV_DB_URL" `
+    "CAMINHO_DO_BACKUP.dump"
+
+Depois conferir no Neon se as tabelas/dados foram restaurados na branch dev.
+
+
+11. Gitignore
+-------------
+Garantir que backups nao sejam versionados.
+
+Adicionar no .gitignore, se ainda nao existir:
+
+backups/
+*.dump
+*.backup
+*.sql.gz
+
+
+12. Frequencia e retencao
+-------------------------
+Configuracao atual desejada:
+- Backup a cada 3 dias.
+- Apagar backups com mais de 10 dias.
+
+Isso deve manter aproximadamente 3 ou 4 backups recentes.
+
+Quando houver mais usuarios reais, avaliar:
+- Backup diario.
+- Manter ultimos 7 dias.
+- Manter backups semanais por 1 mes.
+- Migrar para solucao em nuvem sem depender do notebook.
+
+
+13. Futuro com AWS
+------------------
+Quando migrar parte da infraestrutura para AWS, avaliar:
+- Salvar backups no S3.
+- Usar EventBridge Scheduler ou GitHub Actions.
+- Criptografar backups.
+- Politica de lifecycle para apagar backups antigos.
+- Restore testado periodicamente.
+
+depois disso
+- documentar comandos de backup e restore
+- adicionar regras no `.gitignore` para dumps/backups

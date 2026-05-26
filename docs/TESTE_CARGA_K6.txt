@@ -1,0 +1,477 @@
+TESTE DE MUITOS USUARIOS SIMULTANEOS - K6
+
+Objetivo
+--------
+Testar como o backend do My GManager se comporta quando varios usuarios acessam ao mesmo tempo.
+
+Esse tipo de teste ajuda a descobrir:
+- tempo medio de resposta;
+- p95 e p99 de latencia;
+- taxa de erro;
+- gargalos no banco;
+- limites de Vercel/Neon;
+- problemas com autenticacao;
+- problemas com rate limit;
+- quantidade aproximada de usuarios simultaneos suportada.
+
+
+1. Ferramenta escolhida
+-----------------------
+Usar k6.
+
+Motivos:
+- scripts em JavaScript;
+- bom para testar APIs;
+- suporta usuarios virtuais;
+- mostra metricas importantes;
+- permite thresholds;
+- facil de versionar no projeto.
+
+Alternativa:
+- Artillery tambem e boa, mas k6 e mais claro para fluxos autenticados.
+
+Documentacao:
+- https://grafana.com/docs/k6/latest/
+- https://grafana.com/docs/k6/latest/using-k6/metrics/reference/
+- https://grafana.com/docs/k6/latest/using-k6/thresholds/
+
+
+2. Onde testar
+--------------
+Primeiro testar em ambiente local/dev:
+
+Frontend local:
+http://localhost:5173
+
+Backend local:
+http://localhost:3000
+
+Banco:
+Branch dev do Neon
+
+Evitar teste pesado em producao no inicio.
+
+Nao comecar testando:
+- 500 usuarios;
+- rotas de escrita;
+- banco de producao;
+- dominio publico em horario de uso real.
+
+Fazer testes pequenos e progressivos:
+- 5 usuarios;
+- 20 usuarios;
+- 50 usuarios;
+- 100 usuarios.
+
+
+3. Instalar k6 no Windows
+-------------------------
+No notebook pessoal:
+
+winget install k6
+
+Depois testar:
+
+k6 version
+
+Se winget nao funcionar, baixar pelo site oficial do k6.
+
+
+4. Estrutura de arquivos
+------------------------
+Criar no projeto:
+
+tests/
+  load/
+    public-smoke.js
+    dashboard-read.js
+    users.example.json
+    users.json
+
+O arquivo users.json nao deve subir para o Git, porque tera emails e senhas de teste.
+
+Adicionar no .gitignore:
+
+tests/load/users.json
+
+
+5. Criar usuarios de teste
+--------------------------
+No ambiente dev, criar varios usuarios de teste.
+
+Exemplo:
+
+teste1@gmanager.dev
+teste2@gmanager.dev
+teste3@gmanager.dev
+teste4@gmanager.dev
+teste5@gmanager.dev
+
+Todos com uma senha conhecida apenas no ambiente dev.
+
+Exemplo de arquivo:
+
+tests/load/users.example.json
+
+[
+  { "email": "teste1@gmanager.dev", "senha": "12345678" },
+  { "email": "teste2@gmanager.dev", "senha": "12345678" }
+]
+
+Copiar para:
+
+tests/load/users.json
+
+E colocar usuarios reais de teste do banco dev.
+
+
+6. Teste simples de rota publica
+--------------------------------
+Criar:
+
+tests/load/public-smoke.js
+
+Conteudo:
+
+import http from "k6/http"
+import { check, sleep } from "k6"
+
+export const options = {
+    stages: [
+        { duration: "30s", target: 10 },
+        { duration: "1m", target: 30 },
+        { duration: "30s", target: 0 },
+    ],
+    thresholds: {
+        http_req_failed: ["rate<0.01"],
+        http_req_duration: ["p(95)<800"],
+    },
+}
+
+export default function () {
+    const apiUrl = __ENV.API_URL || "http://localhost:3000"
+
+    const res = http.get(`${apiUrl}/`)
+
+    check(res, {
+        "status 200": (r) => r.status === 200,
+    })
+
+    sleep(1)
+}
+
+Rodar:
+
+$env:API_URL="http://localhost:3000"
+k6 run tests/load/public-smoke.js
+
+
+7. Teste com login + leitura de dashboard
+-----------------------------------------
+Criar:
+
+tests/load/dashboard-read.js
+
+Conteudo:
+
+import http from "k6/http"
+import { check, sleep } from "k6"
+import { SharedArray } from "k6/data"
+
+const users = new SharedArray("users", function () {
+    return JSON.parse(open("./users.json"))
+})
+
+export const options = {
+    stages: [
+        { duration: "30s", target: 5 },
+        { duration: "1m", target: 20 },
+        { duration: "1m", target: 50 },
+        { duration: "30s", target: 0 },
+    ],
+    thresholds: {
+        http_req_failed: ["rate<0.02"],
+        http_req_duration: ["p(95)<1000", "p(99)<2000"],
+    },
+}
+
+export default function () {
+    const apiUrl = __ENV.API_URL || "http://localhost:3000"
+    const user = users[__VU % users.length]
+
+    const loginRes = http.post(
+        `${apiUrl}/auth/login`,
+        JSON.stringify({
+            email: user.email,
+            senha: user.senha,
+        }),
+        {
+            headers: {
+                "Content-Type": "application/json",
+            },
+        }
+    )
+
+    check(loginRes, {
+        "login 200": (r) => r.status === 200,
+        "recebe token": (r) => Boolean(r.json("token")),
+    })
+
+    const token = loginRes.json("token")
+
+    if (!token) {
+        sleep(1)
+        return
+    }
+
+    const params = {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    }
+
+    const meRes = http.get(`${apiUrl}/auth/me`, params)
+
+    check(meRes, {
+        "me 200": (r) => r.status === 200,
+    })
+
+    const tarefasRes = http.get(
+        `${apiUrl}/tarefas?inicio=2026-05-01&fim=2026-05-31`,
+        params
+    )
+
+    check(tarefasRes, {
+        "tarefas 200": (r) => r.status === 200,
+    })
+
+    sleep(1)
+}
+
+Rodar:
+
+$env:API_URL="http://localhost:3000"
+k6 run tests/load/dashboard-read.js
+
+
+8. Cuidado com rate limit
+-------------------------
+O teste dashboard-read faz login varias vezes.
+
+Isso pode bater no loginLimiter.
+
+Se acontecer muito 429:
+- reduzir numero de VUs;
+- reduzir duracao;
+- criar mais usuarios de teste;
+- fazer teste separado para login;
+- testar mais rotas autenticadas sem ficar logando toda hora.
+
+Nao desativar rate limit em producao.
+
+Se for necessario facilitar testes em ambiente dev, fazer isso com cuidado e somente com NODE_ENV=development.
+
+
+9. Metricas importantes
+-----------------------
+Observar no resultado do k6:
+
+http_req_failed:
+- taxa de falha.
+- ideal inicial: menor que 1% ou 2%.
+
+http_req_duration:
+- tempo de resposta.
+- olhar principalmente p95 e p99.
+
+checks:
+- se as validacoes passaram.
+
+vus:
+- usuarios virtuais ativos.
+
+http_reqs:
+- total de requisicoes feitas.
+
+Erros comuns:
+- 401: problema com token/auth.
+- 429: rate limit.
+- 500: erro interno.
+- timeout: backend, banco ou rede lentos.
+
+
+10. Metas iniciais
+------------------
+Para ambiente local/dev:
+
+p95 abaixo de 800ms: bom
+p95 entre 800ms e 1500ms: aceitavel para investigar
+p95 acima de 1500ms: precisa olhar gargalo
+http_req_failed abaixo de 1%: bom
+
+Para producao em plano free:
+
+p95 abaixo de 1500ms: aceitavel no inicio
+p95 acima de 2000ms: investigar
+muitos 500: problema serio
+muitos 429: rate limit ou teste agressivo demais
+
+
+11. Teste progressivo recomendado
+---------------------------------
+Rodar nesta ordem:
+
+1. public-smoke com 10 VUs.
+2. public-smoke com 30 VUs.
+3. dashboard-read com 5 VUs.
+4. dashboard-read com 20 VUs.
+5. dashboard-read com 50 VUs.
+6. Se tudo estiver bem, testar 100 VUs.
+
+Parar se:
+- o banco ficar muito lento;
+- aparecer muito 500;
+- aparecer muito timeout;
+- a Vercel/Neon bater limite;
+- o teste prejudicar producao.
+
+
+12. Testar producao
+-------------------
+Somente depois de testar local/dev.
+
+Usar carga pequena:
+
+$env:API_URL="https://api.mygmanager.com.br"
+k6 run tests/load/public-smoke.js
+
+Nao testar producao com muitos usuarios sem necessidade.
+
+Se testar producao:
+- fazer em horario tranquilo;
+- avisar se houver usuarios reais;
+- monitorar logs da Vercel;
+- monitorar Neon;
+- comecar com 5 ou 10 usuarios virtuais.
+
+
+13. API unica: isso e problema?
+-------------------------------
+Nao.
+
+Ter uma unica API e normal no inicio.
+
+Hoje o My GManager tem:
+- um frontend;
+- uma API backend;
+- um banco.
+
+Isso e suficiente para um projeto pequeno/medio no inicio.
+
+Nao precisa criar varias APIs agora.
+
+Criar mais APIs so faz sentido quando:
+- o sistema fica muito grande;
+- equipes diferentes cuidam de partes diferentes;
+- algum modulo precisa escalar separado;
+- ha dominios muito independentes, como pagamentos, notificacoes, IA, etc.
+
+Separar cedo demais aumenta complexidade.
+
+Melhor agora:
+- organizar bem controllers/services/repositories;
+- melhorar queries;
+- usar banco dev;
+- testar carga;
+- monitorar gargalos.
+
+
+14. O que e load balancer?
+--------------------------
+Load balancer e um componente que fica na frente de varias instancias da API.
+
+Ele recebe requisicoes e distribui entre servidores.
+
+Exemplo:
+
+Usuario 1 -> Load Balancer -> API instancia 1
+Usuario 2 -> Load Balancer -> API instancia 2
+Usuario 3 -> Load Balancer -> API instancia 1
+
+Objetivos:
+- dividir carga;
+- aumentar disponibilidade;
+- permitir escalar horizontalmente;
+- tirar uma instancia do ar sem derrubar todo o sistema;
+- fazer health checks.
+
+
+15. Quando usar load balancer?
+------------------------------
+Usar quando uma unica instancia da API nao for suficiente.
+
+Sinais:
+- CPU/memoria do backend sempre alta;
+- muitos timeouts;
+- muitas requisicoes simultaneas;
+- uma instancia cai e derruba tudo;
+- usuarios reais crescendo;
+- necessidade de alta disponibilidade.
+
+No estado atual do projeto, provavelmente ainda nao precisa.
+
+
+16. Como fazer load balancer no futuro?
+---------------------------------------
+Opcoes:
+
+1. Plataforma gerenciada
+- Railway, Render, Fly.io ou similares podem escalar instancias.
+- A plataforma geralmente faz o balanceamento.
+
+2. AWS
+- Rodar backend em ECS/Fargate, EC2 ou Elastic Beanstalk.
+- Usar Application Load Balancer.
+- Banco separado, por exemplo Neon ou RDS.
+
+3. Kubernetes
+- Mais avancado.
+- Usar Service/Ingress.
+- Nao recomendado agora para este projeto.
+
+4. Nginx
+- Pode ficar na frente de varias instancias Node.
+- Bom para aprender, mas aumenta manutencao.
+
+
+17. Cuidado com sessoes
+-----------------------
+Para escalar a API com load balancer, a API deve ser stateless.
+
+No My GManager isso ja esta bem encaminhado:
+- access token JWT no frontend;
+- refresh token em cookie;
+- refresh tokens no banco.
+
+Evitar guardar estado de sessao em memoria local do servidor.
+
+Se uma instancia depende de memoria local, o load balancer pode mandar a proxima requisicao para outra instancia e quebrar o fluxo.
+
+
+18. Proximo passo recomendado
+-----------------------------
+Agora:
+
+1. Criar scripts k6.
+2. Criar usuarios de teste no banco dev.
+3. Rodar teste local.
+4. Anotar resultados.
+5. Identificar gargalos.
+6. So depois pensar em load balancer.
+
+Conclusao:
+- API unica esta ok.
+- Load balancer e assunto de escala horizontal.
+- Primeiro medir.
+- Depois decidir se precisa escalar.
+

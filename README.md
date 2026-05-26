@@ -27,13 +27,13 @@ O My GManager nasceu como uma ferramenta pessoal de organização e evoluiu para
 ## Imagens
 
 ## Dashboard
-![Dashboard](docs/images/Dashboard.png)
+![Dashboard](public/images/Dashboard.png)
 
 ## Área da semana
-![Semana](docs/images/Semana.png)
+![Semana](public/images/Semana.png)
 
 ## Área do calendário
-![Calendário](docs/images/Calendario.png)
+![Calendário](public/images/Calendario.png)
 
 ## Rodando localmente
 

@@ -28,57 +28,14 @@ O projeto agora esta na fase de estabilizacao pos-deploy: separar ambiente de de
 - variaveis reais configuradas apenas nos paineis dos provedores
 - branch `main` deve representar o estado estavel publicado
 
-
-## Proximo passo imediato
-Criar um ambiente seguro de desenvolvimento com banco separado e dump/schema do banco atual.
-
-Ordem:
-1. criar banco ou branch dev no Neon
-2. gerar dump/schema do banco atual
-3. aplicar a estrutura no banco dev
-4. ajustar `backend/.env` local para usar o banco dev
-5. garantir que backups/dumps nao entrem no Git
-6. testar login, tarefas e calendario localmente usando o banco dev
-
 ## Plano de execucao
 
 ### Fase 1: Banco dev e backup
-- criar banco/branch dev no Neon
-- gerar `schema.sql` do banco atual
-- documentar comandos de backup e restore
-- adicionar regras no `.gitignore` para dumps/backups
-- validar que o ambiente local nao usa o banco de producao
+- fazer docs
+- desenhar esquema do banco com draw.io
 
-### Fase 2: Performance do backend
-- revisar consultas nos controllers
-
-### Fase 4: Testes automatizados
-- teste de muitos usuários simultâneos acessando ao mesmo tempo
-
-### Fase 7: Docker
-- corrigir Dockerfiles se necessario
-- validar `docker-compose.yml`
-- rodar frontend e backend localmente via containers
-- avaliar banco local em container para testes
-- manter Docker como opcao de deploy fora da Vercel
-
-### Fase 8: Produto
-- melhorar responsividade
-- adicionar filtros, busca, categorias e prioridades
-- adicionar tarefas recorrentes
-- adicionar recuperacao de senha
-- criar area de perfil
-- avaliar notas, checklists, financas e metas
-- melhorar experiencia visual e acessibilidade
-
-### Fase 9: Deploy avancado em AWS
-- estudar EC2, RDS, S3, CloudWatch, IAM e Route 53
-- avaliar deploy do backend em container
-- avaliar PostgreSQL em RDS ou permanencia no Neon
-- configurar logs, monitoramento e backups
-- comparar custo, complexidade e ganho real em relacao a Vercel/Neon
-
-### Fase X: Arquitetura em camadas no backend
+### Fase 2: Arquitetura em camadas no backend
+- conversar sobre padrão SOLID
 - organizar backend no padrão Controller-Service-Repository
 - mover SQL dos controllers para repositories
 - mover regras de negócio para services
@@ -89,35 +46,49 @@ Ordem:
 - padronizar respostas de erro pra não depender de mensagens e sim de codes (ajustar rate limit pra mostrar o tempo que falta pra fazer algo ao invés de algo estático)
 - preparar base para testes automatizados
 - avaliar se usa git hub actions ou nao
+- avaliar se há algo mais pra ser modularizado ou reorganizado
 
-### Fase 8: Notas e organizacao pessoal
-- aprender hackear tentando hackear o proprio site
-- tarefas com datas continuas ou frequencia definida
+### Fase 3: Detalhes importantes
+- botão voltar para calendario do daypage não guarda o mês que a pessoa tava
+- adicionar recuperacao de senha
 - pagina inicial antes de login
-- adicionar notas
-- decidir se serao gerais, por dia ou ambas
-- avaliar listas com checks
-- avaliar observacoes ligadas a tarefas
-- retomar social login com Google em momento posterior, fora do foco atual de seguranca
+- social login com Google
+- upload de foto pra aba perfil
+- aprender hackear tentando hackear o proprio site
 
-
-### Fase 10: Recursos avancados
+### Fase 4: Produto
 - responsividade
 - filtros por status e data
 - busca de tarefas
+- tarefas com datas continuas ou frequencia definida
 - categorias e prioridade
 - recorrencia
 - exportacao em PDF
 - importar tarefas de outros apps
 - metricas simples
-- recuperacao de senha via email
-- confirmacao de senha no cadastrar
-- area de perfil para alterar dados (senha, email) e definir modo escuro ou claro
-- area de gestao de gastos
-- area para metas futuras
+
+### Fase 5: Recursos em breve
+- avaliar notas (por dia e uma aba só pra ela com várias)
+- avaliar checklists
+- avaliar financas
+- avaliar metas
+- avaliar gerenciamento de senhas
 - integracao com time de futebol
 - IA que da dicas e ajuda a fazer as tarefas cadastradas
 
+### Fase 6: Docker
+- corrigir Dockerfiles se necessario
+- validar `docker-compose.yml`
+- rodar frontend e backend localmente via containers
+- avaliar banco local em container para testes
+- manter Docker como opcao de deploy fora da Vercel
+
+### Fase 7: Deploy avancado em AWS
+- estudar EC2, RDS, S3, CloudWatch, IAM e Route 53
+- avaliar deploy do backend em container
+- avaliar PostgreSQL em RDS ou permanencia no Neon
+- configurar logs, monitoramento e backups
+- comparar custo, complexidade e ganho real em relacao a Vercel/Neon
 
 ## Acordo de trabalho
 - quando o objetivo for aprendizado, explicar antes de alterar codigo
