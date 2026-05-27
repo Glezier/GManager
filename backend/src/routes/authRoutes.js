@@ -5,11 +5,9 @@ const authController = require('../controllers/authController')
 const { authLimiter, loginLimiter, profileNameLimiter, emailLimiter, themeLimiter, passwordLimiter } = require('../middleswares/rateLimitMiddleware')
 const authMiddleware = require('../middleswares/authMiddleware')
 
-router.get('/me', authMiddleware, authController.me)
-router.patch('/me', authMiddleware, profileNameLimiter, authController.atualizarPerfil)
-router.patch('/me/email', authMiddleware, emailLimiter, authController.alterarEmail)
-router.patch('/me/senha', authMiddleware, passwordLimiter, authController.atualizarSenha)
-router.patch('/me/preferencias', authMiddleware, themeLimiter, authController.atualizarPreferencias)
+
+
+
 router.post('/register', authLimiter, authController.registrar)
 router.post('/login', loginLimiter, authController.login)
 router.get('/verificar-email', authController.verificarEmail)

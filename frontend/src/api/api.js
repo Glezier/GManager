@@ -139,14 +139,14 @@ async function fetchComTratamento(url, options = {}){
 
 // Infosmações do usuário
 export async function infosUser(){
-    const response = await fetchAutenticado(`${API_URL}/auth/me`)
+    const response = await fetchAutenticado(`${API_URL}/profile/me`)
 
     return response.json()
 }
 
 // Atualizar perfil
-export async function atualizarPerfil(dados){
-    const response = await fetchAutenticado(`${API_URL}/auth/me`, {
+export async function atualizarNome(dados){
+    const response = await fetchAutenticado(`${API_URL}/profile/nome`, {
         method: "PATCH",
         headers: {
             "Content-Type" : "application/json"
@@ -159,7 +159,7 @@ export async function atualizarPerfil(dados){
 
 // Atualizar email
 export async function atualizarEmail(dados){
-    const response = await fetchAutenticado(`${API_URL}/auth/me/email`, {
+    const response = await fetchAutenticado(`${API_URL}/profile/email`, {
         method: "PATCH",
         headers: {
             "Content-Type": "application/json"
@@ -172,7 +172,7 @@ export async function atualizarEmail(dados){
 
 // Atualizar senha
 export async function atualizarSenha(dados){
-    const response = await fetchAutenticado(`${API_URL}/auth/me/senha`,{
+    const response = await fetchAutenticado(`${API_URL}/profile/senha`,{
         method: "PATCH",
         headers:{
             "Content-Type" : "application/json"
@@ -184,8 +184,8 @@ export async function atualizarSenha(dados){
 }
 
 // Atualizar preferencias
-export async function atualizarPreferencias(dados){
-    const response = await fetchAutenticado(`${API_URL}/auth/me/preferencias`, {
+export async function atualizarTema(dados){
+    const response = await fetchAutenticado(`${API_URL}/profile/tema`, {
         method: "PATCH",
         headers: {
             "Content-Type" : "application/json"

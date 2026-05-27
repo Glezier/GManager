@@ -1,4 +1,8 @@
 const pool = require('../database/db')
+
+const userRepository = require('../repositories/userRepository')
+const emailVerificationRepository = require('../repositories/emailVerificationRepository')
+const refreshTokenRepository = require('../repositories/refreshTokensRepository')
 const validator = require('validator')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
@@ -10,6 +14,7 @@ const {
     gerarHashRefreshToken,
     gerarExpiracaoRefreshToken
 } = require('../utils/RefreshToken')
+
 
 // Função para validação do email
 function isValidEmail(email){
@@ -50,230 +55,9 @@ async function criarSessaoRefreshToken(usuarioId){
     const tokenHash = gerarHashRefreshToken(refreshToken)
     const expiresAt = gerarExpiracaoRefreshToken()
 
-    await pool.query(
-        `INSERT INTO refresh_tokens (usuario_id, token_hash, expires_at)
-        VALUES ($1, $2, $3)`,
-        [usuarioId, tokenHash, expiresAt]
-    )
+    await refreshTokenRepository.registrarRefreshToken(usuarioId, tokenHash, expiresAt)
 
     return refreshToken
-}
-
-// Dados do usuário
-exports.me = async(req,res,next) => {
-    try{
-        const usuario_id = req.userId
-
-        const result = await pool.query(
-            `SELECT id, nome, email, created_at, tema
-            FROM usuarios
-            WHERE id = $1`,
-            [usuario_id]
-        )
-
-        if (result.rows.length === 0){
-            return next(new AppError(
-                'Usuário não encontrado',
-                404,
-                'USER_NOT_FOUND'
-            ))
-        }
-
-        res.json(result.rows[0])
-    } catch(error){
-        next(error)
-    }
-}
-
-// Atualizar perfil
-exports.atualizarPerfil = async(req,res,next) => {
-    try{
-        const usuarioId = req.userId
-        const { nome } = req.body
-
-        if(!nome){
-            return next(new AppError(
-                'Nome é obrigatório',
-                400,
-                'VALIDATION_ERROR'
-            ))
-        }
-
-        const nomeCorrigido = nome.trim()
-
-        if (nomeCorrigido.length > LIMITES_USUARIO.nome_maximo || nomeCorrigido.length < LIMITES_USUARIO.nome_minimo){
-            return next(new AppError(
-                `O nome deve possuir tamanho entre ${LIMITES_USUARIO.nome_minimo} e ${LIMITES_USUARIO.nome_maximo} caracteres`,
-                400,
-                'VALIDATION_ERROR'
-            ))
-        }
-
-        const result = await pool.query(
-            `UPDATE usuarios
-            SET nome = $1,
-            updated_at = CURRENT_TIMESTAMP AT TIME ZONE 'America/Sao_Paulo'
-            WHERE id = $2
-            RETURNING id, nome, email, created_at, tema`,
-            [nomeCorrigido, usuarioId]
-        )
-
-        res.json(result.rows[0])
-
-    } catch(error){
-        next(error)
-    }
-} 
-
-// Funcao para verificação de senha
-function validarNovaSenha(novaSenha, confirmarSenha){
-    if (!novaSenha || !confirmarSenha){
-        throw new AppError(
-            `Nova senha e confirmação são obrigatórias`,
-            400,
-            'VALIDATION_ERROR'
-        )
-    }
-
-    if (novaSenha !== confirmarSenha){
-        throw new AppError(
-            'Senhas não conferem',
-            400,
-            'VALIDATION_ERROR'
-        )
-    }
-
-    if (
-        novaSenha.length < LIMITES_USUARIO.senha_minima ||
-        novaSenha.length > LIMITES_USUARIO.senha_maxima
-    ) {
-        throw new AppError(
-            `A senha deve possuir entre ${LIMITES_USUARIO.senha_minima} e ${LIMITES_USUARIO.senha_maxima} caracteres`,
-            400,
-            'VALIDATION_ERROR'
-        )
-    }
-}
-
-// Atualizar senha
-exports.atualizarSenha = async(req,res,next) => {
-    try{
-        const usuarioId = req.userId
-        const { senhaAtual, novaSenha, confirmarSenha } = req.body
-
-        if (!senhaAtual){
-            return next(new AppError(
-                'Senha atual é obrigatória',
-                400,
-                'VALIDATION_ERROR'
-            ))
-        }
-
-        validarNovaSenha(novaSenha, confirmarSenha)
-
-        const result = await pool.query(
-            `SELECT senha
-            FROM usuarios
-            WHERE id = $1`,
-            [usuarioId]
-        )
-
-        if (result.rows.length === 0){
-            return next(new AppError(
-                'Usuário não encontrado',
-                404,
-                'USER_NOT_FOUND'
-            ))
-        }
-
-        const senhaHashAtual = result.rows[0].senha
-
-        const senhaAtualValida = await bcrypt.compare(senhaAtual, senhaHashAtual)
-
-        if (!senhaAtualValida) {
-            return next(new AppError(
-                'Senha atual incorreta',
-                400,
-                'INVALID_CURRENT_PASSWORD'
-            ))
-        }
-
-        const senhaIgual = await bcrypt.compare(novaSenha, senhaHashAtual)
-
-        if (senhaIgual) {
-            return next(new AppError(
-                'A nova senha deve ser diferente da senha atual',
-                400,
-                'SAME_PASSWORD'
-            ))
-        }
-
-        const novaSenhaHash = await bcrypt.hash(novaSenha, 10)
-
-        // Atualiza na tabela usuários
-        await pool.query(
-            `UPDATE usuarios
-            SET senha = $1,
-                updated_at = CURRENT_TIMESTAMP AT TIME ZONE 'America/Sao_Paulo'
-            WHERE id = $2`,
-            [novaSenhaHash, usuarioId]
-        )
-
-        // Atualiza na tabela de refresh_tokens
-        await pool.query(
-            `UPDATE refresh_tokens
-            SET revoked_at = CURRENT_TIMESTAMP AT TIME ZONE 'America/Sao_Paulo'
-            WHERE usuario_id = $1
-            AND revoked_at IS NULL`,
-            [usuarioId]
-        )
-
-        res.json({
-            message: 'Senha atualizada com sucesso'
-        })
-
-
-    } catch(error){
-        next(error)
-    }
-}
-
-// Atualizar Preferencias
-exports.atualizarPreferencias = async(req,res,next) => {
-    try{
-        const usuarioId = req.userId
-        const { tema } = req.body
-
-        if(!tema){
-            return(next(new AppError(
-                'Tema é obrigatório',
-                400,
-                'VALIDATION_ERROR'
-            )))
-        }
-
-        if (!['dark', 'light'].includes(tema)) {
-            return next(new AppError(
-                'Tema inválido',
-                400,
-                'VALIDATION_ERROR'
-            ))
-        }
-
-        const result = await pool.query(
-            `UPDATE usuarios
-            SET tema = $1,
-                updated_at = CURRENT_TIMESTAMP AT TIME ZONE 'America/Sao_Paulo'
-            WHERE id = $2
-            RETURNING id, nome, email, created_at, tema`,
-            [tema, usuarioId]
-        )
-
-        res.json(result.rows[0])
-
-    } catch(error){
-        next(error)
-    }
 }
 
 // Registro
@@ -322,39 +106,26 @@ exports.registrar = async (req, res, next) => {
         }
         
         // Busca pelo email no banco de dados
-        const emailExist = await pool.query(
-            `SELECT id from usuarios WHERE email = $1`,
-            [emailCorrigido]
-        )
+        const emailExist = await userRepository.emailExists(emailCorrigido)
         
         // Verificaçãp do email já cadastrado
-        if (emailExist.rows.length > 0){
+        if (emailExist){
             return next(new AppError('Email já cadastrado', 400, 'EMAIL_ALREADY_EXISTS'))
         }
         // Senha criptografada
         const senhaHash = await bcrypt.hash(senha, 10)
         
         // Inserção do usuário no banco de dados
-        const result = await pool.query(
-            `INSERT INTO usuarios (nome, email, senha, email_verificado, provider)
-            VALUES ($1, $2, $3, $4, $5)
-            RETURNING id, nome, email, email_verificado`,
-            [nome.trim(), emailCorrigido, senhaHash, false, 'local',]
-        )
-        
-        const usuario = result.rows[0]
+        const usuario = await userRepository.registrarUsuario(nome.trim(), emailCorrigido, senhaHash)
         
         // Gerar token para ser enviado por email
         const tokenEmail = gerarTokenEmail()
         
-        // Produz hash do token
+        // Produzir hash do token
         const tokenHash = gerarHashToken(tokenEmail)
-        
-        await pool.query(
-            `INSERT INTO email_verification_tokens (usuario_id, token_hash, expires_at)
-            VALUES ($1, $2, CURRENT_TIMESTAMP AT TIME ZONE 'America/Sao_Paulo' + INTERVAL '10 minutes')`,
-            [usuario.id, tokenHash]
-        )
+
+        // Adicionar token de verificação de email no banco
+        await emailVerificationRepository.registrarTokenEmail(usuario.id, tokenHash)
         
         // Enviar email de varificação
         await enviarEmailVerificacao({
@@ -396,17 +167,9 @@ exports.verificarEmail = async(req, res, next) => {
         const tokenHash = gerarHashToken(token)
 
         // Busca token não usado nem expirado
-        const tokenResult = await pool.query(
-            `SELECT id, usuario_id, tipo, novo_email
-            FROM email_verification_tokens
-            WHERE token_hash = $1
-            AND used_at IS NULL
-            AND expires_at > CURRENT_TIMESTAMP AT TIME ZONE 'America/Sao_Paulo'
-            LIMIT 1`,
-            [tokenHash]
-        )
+        const tokenData = await emailVerificationRepository.getToken(tokenHash)
 
-        if (tokenResult.rows.length === 0){
+        if (tokenData == null){
             return next(new AppError(
                 'Token inválido ou expirado',
                 400,
@@ -414,20 +177,12 @@ exports.verificarEmail = async(req, res, next) => {
             ))
         }
 
-        const tokenData = tokenResult.rows[0]
-
-        // Verifica o tipo de email (inicial ou mudança)
+        // Verifica o tipo de email (cadastro ou mudança)
         // Mudança de email
         if (tokenData.tipo === 'troca-email') {
-            const emailExist = await pool.query(
-                `SELECT id
-                FROM usuarios
-                WHERE email = $1
-                AND id <> $2`,
-                [tokenData.novo_email, tokenData.usuario_id]
-            )
+            const emailExist = await userRepository.findByEmailExceptUser(tokenData.novo_email, tokenData.usuario_id)
 
-            if (emailExist.rows.length > 0) {
+            if (emailExist) {
                 return next(new AppError(
                     'Este email já está em uso',
                     400,
@@ -435,33 +190,15 @@ exports.verificarEmail = async(req, res, next) => {
                 ))
             }
 
-            await pool.query(
-                `UPDATE usuarios
-                SET email = $1,
-                    email_verificado = true,
-                    email_verificado_em = CURRENT_TIMESTAMP AT TIME ZONE 'America/Sao_Paulo',
-                    updated_at = CURRENT_TIMESTAMP AT TIME ZONE 'America/Sao_Paulo'
-                WHERE id = $2`,
-                [tokenData.novo_email, tokenData.usuario_id]
-            )
-        } else { // Verificação email inicial
-            await pool.query(
-                `UPDATE usuarios
-                SET email_verificado = true,
-                    email_verificado_em = CURRENT_TIMESTAMP AT TIME ZONE 'America/Sao_Paulo',
-                    updated_at = CURRENT_TIMESTAMP AT TIME ZONE 'America/Sao_Paulo'
-                WHERE id = $1`,
-                [tokenData.usuario_id]
-            )
+            // Registra o novo email no banco
+            await userRepository.setNovoEmailVerificado(tokenData.usuario_id, tokenData.novo_email)
+
+        } else { // Cadastro inicial de email 
+            await userRepository.setEmailVerificado(tokenData.usuario_id)
         }
 
         // Atualiza token para usado
-        await pool.query(
-            `UPDATE email_verification_tokens
-            SET used_at = CURRENT_TIMESTAMP AT TIME ZONE 'America/Sao_Paulo'
-            WHERE id = $1`,
-            [tokenData.id]
-        )
+        await emailVerificationRepository.setTokenEmailUsado(tokenData.id)
 
         res.json({
             message: 'Email verificado com sucesso'
@@ -546,119 +283,6 @@ exports.reenviarVerificacao = async(req,res,next) => {
 
         res.json({message: 'Um novo email de verificação foi enviado'})
     } catch(error){
-        next(error)
-    }
-}
-
-// Troca de email
-exports.alterarEmail = async (req, res, next) => {
-    try {
-        const usuarioId = req.userId
-        const { email, senhaAtual } = req.body
-
-        if (!email || !senhaAtual) {
-            return next(new AppError(
-                'Novo email e senha atual são obrigatórios',
-                400,
-                'VALIDATION_ERROR'
-            ))
-        }
-
-        if (!isValidEmail(email)) {
-            return next(new AppError('Email inválido', 400, 'VALIDATION_ERROR'))
-        }
-
-        const novoEmail = email.trim().toLowerCase()
-
-        if (novoEmail.length > LIMITES_USUARIO.email) {
-            return next(new AppError(
-                `O email deve possuir no máximo ${LIMITES_USUARIO.email} caracteres`,
-                400,
-                'VALIDATION_ERROR'
-            ))
-        }
-
-        const usuarioResult = await pool.query(
-            `SELECT id, nome, email, senha
-            FROM usuarios
-            WHERE id = $1`,
-            [usuarioId]
-        )
-
-        if (usuarioResult.rows.length === 0) {
-            return next(new AppError(
-                'Usuário não encontrado',
-                404,
-                'USER_NOT_FOUND'
-            ))
-        }
-
-        const usuario = usuarioResult.rows[0]
-
-        if (novoEmail === usuario.email) {
-            return next(new AppError(
-                'O novo email deve ser diferente do email atual',
-                400,
-                'SAME_EMAIL'
-            ))
-        }
-
-        const senhaValida = await bcrypt.compare(senhaAtual, usuario.senha)
-
-        if (!senhaValida) {
-            return next(new AppError(
-                'Senha atual incorreta',
-                400,
-                'INVALID_CURRENT_PASSWORD'
-            ))
-        }
-
-        const emailExist = await pool.query(
-            `SELECT id
-            FROM usuarios
-            WHERE email = $1
-            AND id <> $2`,
-            [novoEmail, usuarioId]
-        )
-
-        if (emailExist.rows.length > 0) {
-            return next(new AppError(
-                'Email já cadastrado',
-                400,
-                'EMAIL_ALREADY_EXISTS'
-            ))
-        }
-
-        const tokenEmail = gerarTokenEmail()
-        const tokenHash = gerarHashToken(tokenEmail)
-
-        await pool.query(
-            `UPDATE email_verification_tokens
-            SET used_at = CURRENT_TIMESTAMP AT TIME ZONE 'America/Sao_Paulo'
-            WHERE usuario_id = $1
-            AND used_at IS NULL
-            AND tipo = 'troca-email'`,
-            [usuarioId]
-        )
-
-        await pool.query(
-            `INSERT INTO email_verification_tokens
-            (usuario_id, token_hash, expires_at, tipo, novo_email)
-            VALUES ($1, $2, CURRENT_TIMESTAMP AT TIME ZONE 'America/Sao_Paulo' + INTERVAL '10 minutes', $3, $4)`,
-            [usuarioId, tokenHash, 'troca-email', novoEmail]
-        )
-
-        await enviarEmailVerificacao({
-            email: novoEmail,
-            nome: usuario.nome,
-            token: tokenEmail,
-            motivo: 'troca-email'
-        })
-
-        res.json({
-            message: 'Enviamos um link de verificação para o novo email.'
-        })
-    } catch (error) {
         next(error)
     }
 }

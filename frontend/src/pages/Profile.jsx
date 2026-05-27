@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import { useMe } from "../hooks/useMe"
-import { atualizarPerfil, atualizarEmail, atualizarSenha, atualizarPreferencias } from "../api/api"
+import { atualizarNome, atualizarEmail, atualizarSenha, atualizarTema } from "../api/api"
 import { useQueryClient, useMutation } from "@tanstack/react-query"
 import { getTemaSalvo, salvarTemaLocal } from "../utils/theme"
 import { removeToken } from "../utils/auth"
@@ -210,13 +210,13 @@ export default function Profile(){
             return { ...usuarioAtual, tema: novoTema }
         })
 
-        atualizarPreferenciasMutation.mutate({
+        atualizarTemaMutation.mutate({
             tema: novoTema
         })
     }
 
     const atualizarPerfilMutation = useMutation({
-        mutationFn: atualizarPerfil,
+        mutationFn: atualizarNome,
         onSuccess:(usuarioAtualizado) => {
             queryClient.setQueryData(["me"], usuarioAtualizado)
             setEditando(null)
@@ -268,8 +268,8 @@ export default function Profile(){
         }
     })
 
-    const atualizarPreferenciasMutation = useMutation({
-        mutationFn: atualizarPreferencias,
+    const atualizarTemaMutation = useMutation({
+        mutationFn: atualizarTema,
         onSuccess: (usuarioAtualizado) => {
             salvarTemaLocal(usuarioAtualizado.tema)
             queryClient.setQueryData(["me"], usuarioAtualizado)
@@ -702,7 +702,7 @@ export default function Profile(){
                                         className={`theme-switch ${tema === "light" ? "theme-switch-light" : ""}`}
                                         onClick={alternarTema}
                                         aria-label={tema === "dark" ? "Ativar tema claro" : "Ativar tema escuro"}
-                                        disabled={atualizarPreferenciasMutation.isPending}
+                                        disabled={atualizarTemaMutation.isPending}
                                     >
                                         <span className="theme-switch-thumb">
                                             {tema === "dark" ? (

@@ -30,6 +30,7 @@ const cors = require('cors')
 
 const tarefasRoutes = require('./src/routes/tarefasRoutes')
 const authRoutes = require('./src/routes/authRoutes')
+const profileRoutes = require('./src/routes/profileRoutes')
 const keepaliveRouter = require('./src/routes/keepalive')
 const errorMiddleware = require('./src/middleswares/errorMiddleware')
 
@@ -67,6 +68,7 @@ if (process.env.NODE_ENV !== 'production'){
 app.use('/keepalive', keepaliveRouter)
 app.use('/tarefas', tarefasRoutes)
 app.use('/auth', authRoutes)
+app.use('/profile', profileRoutes)
 
 app.use(errorMiddleware)
 
