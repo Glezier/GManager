@@ -43,6 +43,7 @@ O projeto agora esta na fase de estabilizacao pos-deploy: separar ambiente de de
 - reduzir controllers para entrada/saída HTTP
 - começar pelo módulo de tarefas
 - depois aplicar no módulo de autenticação
+- validator no frontend tambem
 - padronizar respostas de erro pra não depender de mensagens e sim de codes (ajustar rate limit pra mostrar o tempo que falta pra fazer algo ao invés de algo estático)
 - preparar base para testes automatizados
 - avaliar se usa git hub actions ou nao

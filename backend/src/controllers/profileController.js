@@ -1,25 +1,11 @@
 const userRepository = require('../repositories/userRepository')
 const AppError = require('../utils/AppError')
-const validator = require('validator')
+const authValidators = require("../validators/authValidators")
 const {gerarTokenEmail, gerarHashToken} =  require('../utils/EmailVerification')
 const bcrypt = require('bcryptjs')
 const { enviarEmailVerificacao } = require('../utils/EmailService')
 const emailVerificationRepository = require('../repositories/emailVerificationRepository')
 const refreshTokensRepository = require('../repositories/refreshTokensRepository')
-
-// Limites para campos do usuário
-const LIMITES_USUARIO = {
-    nome_minimo: 2,
-    nome_maximo: 100,
-    email: 120,
-    senha_minima: 8,
-    senha_maxima: 50
-}
-
-// Função para validação do email
-function isValidEmail(email){
-    return validator.isEmail(email)
-}
 
 // Dados do usuário
 exports.me = async(req,res,next) => {
@@ -81,27 +67,7 @@ exports.atualizarEmail = async (req, res, next) => {
         const usuarioId = req.userId
         const { email, senhaAtual } = req.body
 
-        if (!email || !senhaAtual) {
-            return next(new AppError(
-                'Novo email e senha atual são obrigatórios',
-                400,
-                'VALIDATION_ERROR'
-            ))
-        }
-
-        if (!isValidEmail(email)) {
-            return next(new AppError('Email inválido', 400, 'VALIDATION_ERROR'))
-        }
-
-        const novoEmail = email.trim().toLowerCase()
-
-        if (novoEmail.length > LIMITES_USUARIO.email) {
-            return next(new AppError(
-                `O email deve possuir no máximo ${LIMITES_USUARIO.email} caracteres`,
-                400,
-                'VALIDATION_ERROR'
-            ))
-        }
+        const { emailCorrigido } = authValidators.validarTrocaEmail({ email, senhaAtual })
 
         const usuario = await userRepository.findByEmail(usuarioId)
 
@@ -113,7 +79,7 @@ exports.atualizarEmail = async (req, res, next) => {
             ))
         }
 
-        if (novoEmail === usuario.email) {
+        if (emailCorrigido === usuario.email) {
             return next(new AppError(
                 'O novo email deve ser diferente do email atual',
                 400,
@@ -131,7 +97,7 @@ exports.atualizarEmail = async (req, res, next) => {
             ))
         }
 
-        const emailExist = await userRepository.findByEmailExceptUser(novoEmail, usuarioId)
+        const emailExist = await userRepository.findByEmailExceptUser(emailCorrigido, usuarioId)
 
         if (emailExist) {
             return next(new AppError(
@@ -146,10 +112,10 @@ exports.atualizarEmail = async (req, res, next) => {
 
         await emailVerificationRepository.invalidateOldersEmailTokens(usuarioId)
         
-        await emailVerificationRepository.createEmailChangeToken(usuarioId, tokenHash, novoEmail)
+        await emailVerificationRepository.createEmailChangeToken(usuarioId, tokenHash, emailCorrigido)
 
         await enviarEmailVerificacao({
-            email: novoEmail,
+            email: emailCorrigido,
             nome: usuario.nome,
             token: tokenEmail,
             motivo: 'troca-email'
@@ -163,51 +129,13 @@ exports.atualizarEmail = async (req, res, next) => {
     }
 }
 
-// Funcao para verificação de senha
-function validarNovaSenha(novaSenha, confirmarSenha){
-    if (!novaSenha || !confirmarSenha){
-        throw new AppError(
-            `Nova senha e confirmação são obrigatórias`,
-            400,
-            'VALIDATION_ERROR'
-        )
-    }
-
-    if (novaSenha !== confirmarSenha){
-        throw new AppError(
-            'Senhas não conferem',
-            400,
-            'VALIDATION_ERROR'
-        )
-    }
-
-    if (
-        novaSenha.length < LIMITES_USUARIO.senha_minima ||
-        novaSenha.length > LIMITES_USUARIO.senha_maxima
-    ) {
-        throw new AppError(
-            `A senha deve possuir entre ${LIMITES_USUARIO.senha_minima} e ${LIMITES_USUARIO.senha_maxima} caracteres`,
-            400,
-            'VALIDATION_ERROR'
-        )
-    }
-}
-
 // Atualizar senha
 exports.atualizarSenha = async(req,res,next) => {
     try{
         const usuarioId = req.userId
         const { senhaAtual, novaSenha, confirmarSenha } = req.body
 
-        if (!senhaAtual){
-            return next(new AppError(
-                'Senha atual é obrigatória',
-                400,
-                'VALIDATION_ERROR'
-            ))
-        }
-
-        validarNovaSenha(novaSenha, confirmarSenha)
+        authValidators.validarTrocaSenha({ senhaAtual, novaSenha, confirmarSenha})
 
         const senha = await userRepository.getSenha(usuarioId)
 

@@ -220,8 +220,9 @@ export default function Login(){
                                 <input 
                                     id='login-password'
                                     type={mostrarSenha ? "text" : "password"}
-                                    placeholder='Digite sua senha (mínimo 8 caracteres)'
+                                    placeholder='Digite sua senha'
                                     minLength={8}
+                                    maxLength={50}
                                     value={senha}
                                     disabled={bloqueado} 
                                     onChange={(e) => setSenha(e.target.value)}

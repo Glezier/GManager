@@ -7,6 +7,7 @@ const validator = require('validator')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const AppError = require('../utils/AppError')
+const authValidators = require("../validators/authValidators")
 const {gerarTokenEmail, gerarHashToken} =  require('../utils/EmailVerification')
 const { enviarEmailVerificacao } = require('../utils/EmailService')
 const { 
@@ -64,46 +65,8 @@ async function criarSessaoRefreshToken(usuarioId){
 exports.registrar = async (req, res, next) => {
     try{
         const { nome, email, senha } = req.body // Recebe nome, email e senha da requisição
-        
-        // Retorna erro se algum dado estiver faltando
-        if (!nome || !email || !senha){
-            return next(new AppError("Todos os campos são obrigatórios", 400, 'VALIDATION_ERROR'))
-        }
-        
-        // Verificação do tamanho do nome informado
-        if (nome.trim().length < LIMITES_USUARIO.nome_minimo || nome.trim().length > LIMITES_USUARIO.nome_maximo){
-            return next(new AppError(
-                `O nome deve possuir tamanho entre ${LIMITES_USUARIO.nome_minimo} e ${LIMITES_USUARIO.nome_maximo} caracteres`, 
-                400, 
-                'VALIDATION_ERROR'
-            ))
-        }
-        
-        // Verificação se o email informado é válido
-        if (!isValidEmail(email)){
-            return next(new AppError('Email inválido', 400, 'VALIDATION_ERROR'))
-        }
 
-        // Verificação do tamanho  da senha
-        if (senha.length < LIMITES_USUARIO.senha_minima || senha.length > LIMITES_USUARIO.senha_maxima){
-            return next(new AppError(
-                `A senha deve possuir entre ${LIMITES_USUARIO.senha_minima} e ${LIMITES_USUARIO.senha_maxima} caracteres`, 
-                400, 
-                'VALIDATION_ERROR'
-            ))
-        }
-        
-        // Eliminação de espaços e transformação para caracteres minúsculos
-        const emailCorrigido = email.trim().toLowerCase()
-
-        // Validação do tamanho máximo no email
-        if (emailCorrigido.length > LIMITES_USUARIO.email){
-            return next(new AppError(
-                `O email deve possuir no máximo ${LIMITES_USUARIO.email} caracteres`,
-                400,
-                'VALIDATION_ERROR'
-            ))
-        }
+        const { nomeCorrigido, emailCorrigido } = authValidators.validarRegistro({ nome, email, senha })
         
         // Busca pelo email no banco de dados
         const emailExist = await userRepository.emailExists(emailCorrigido)
@@ -116,7 +79,7 @@ exports.registrar = async (req, res, next) => {
         const senhaHash = await bcrypt.hash(senha, 10)
         
         // Inserção do usuário no banco de dados
-        const usuario = await userRepository.registrarUsuario(nome.trim(), emailCorrigido, senhaHash)
+        const usuario = await userRepository.registrarUsuario(nomeCorrigido, emailCorrigido, senhaHash)
         
         // Gerar token para ser enviado por email
         const tokenEmail = gerarTokenEmail()
@@ -292,36 +255,7 @@ exports.login = async (req, res, next) => {
     try{
         const { email, senha } = req.body // Recebe email e senha da requisição
 
-        // Retorna erro se algum dado estiver faltando
-        if (!email || !senha){
-            return next(new AppError('Email e senha são obrigatórios', 400, 'VALIDATION_ERROR'))
-        }
-
-        // Validação do tamanho da senha
-        if (senha.length > LIMITES_USUARIO.senha_maxima){
-            return next(new AppError(
-                `A senha deve possuir no máximo ${LIMITES_USUARIO.senha_maxima} caracteres`,
-                400,
-                'VALIDATION_ERROR'
-            ))
-        }
-
-        // Verificação de validade do email
-        if (!isValidEmail(email)){
-            return next(new AppError('Email inválido', 400, 'VALIDATION_ERROR'))
-        }
-
-        // Eliminação de espaços e transformação para caracteres minúsculos
-        const emailCorrigido = email.trim().toLowerCase()
-
-        // Validação do tamanho máximo do email
-        if (emailCorrigido.trim().length > LIMITES_USUARIO.email){
-            return next(new AppError(
-                `O email deve possuir no máximo ${LIMITES_USUARIO.email} caracteres`,
-                400,
-                'VALIDATION_ERROR'
-            ))
-        }
+        const { emailCorrigido } = authValidators.validarLogin({ email, senha })
 
         // Busca pelo email no banco de dados
         const result = await pool.query(

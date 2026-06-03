@@ -48,7 +48,7 @@ exports.findByEmailExceptUser = async (email, id) => {
 exports.setNovoEmailVerificado = async (usuario_id, novo_email) => {
     await pool.query(
         `UPDATE usuarios
-        SET email = $1
+        SET email = $1,
             email_verificado = true,
             email_verificado em = CURRENT_TIMESTAMP AT TIME ZONE 'America/Sao_Paulo',
             updated_at = CURRENT_TIMESTAMP AT TIME ZONE 'America/Sao_Paulo'
@@ -64,7 +64,7 @@ exports.setEmailVerificado = async (usuario_id) => {
         SET email_verificado = true,
             email_verificado em = CURRENT_TIMESTAMP AT TIME ZONE 'America/Sao_Paulo',
             updated_at = CURRENT_TIMESTAMP AT TIME ZONE 'America/Sao_Paulo'
-        WHERE id = $2`,
+        WHERE id = $1`,
         [usuario_id]
     )
 }
@@ -127,4 +127,3 @@ exports.updateTheme = async (id, tema) => {
     )
     return result.rows[0] || null
 }
-

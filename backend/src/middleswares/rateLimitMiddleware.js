@@ -1,6 +1,6 @@
 const { rateLimit, ipKeyGenerator } =  require('express-rate-limit')
 
-const authLimiter = rateLimit({
+exports.authLimiter = rateLimit({
     windowMs: 15 * 60 * 1000, // Intervalo de tempo de 15 minutos
     limit: 20, // Máximo de 20 requisições
     standardHeaders: true, // Headers de retorno de quantidade de tentativas
@@ -13,7 +13,7 @@ const authLimiter = rateLimit({
     }
 })
 
-const loginLimiter = rateLimit({
+exports.loginLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
     limit: 10,
     standardHeaders: true,
@@ -26,7 +26,7 @@ const loginLimiter = rateLimit({
     }
 })
 
-const tasksWriterLimiter = rateLimit({
+exports.tasksWriterLimiter = rateLimit({
     windowMs: 60 * 1000,
     limit: 30,
     standardHeaders: true,
@@ -42,7 +42,7 @@ const tasksWriterLimiter = rateLimit({
     }
 })
 
-const profileNameLimiter = rateLimit({
+exports.profileNameLimiter = rateLimit({
     windowMs: 60 * 60 * 1000,
     limit: 10,
     standardHeaders: true,
@@ -56,7 +56,7 @@ const profileNameLimiter = rateLimit({
     }
 })
 
-const emailLimiter = rateLimit({
+exports.emailLimiter = rateLimit({
     windowMs: 60 * 60 * 1000,
     limit: 3,
     standardHeaders: true,
@@ -70,7 +70,7 @@ const emailLimiter = rateLimit({
     }
 })
 
-const passwordLimiter = rateLimit({
+exports.passwordLimiter = rateLimit({
     windowMs: 60 * 60 * 1000,
     limit: 2,
     standardHeaders: true,
@@ -84,7 +84,7 @@ const passwordLimiter = rateLimit({
     }
 })
 
-const themeLimiter = rateLimit({
+exports.themeLimiter = rateLimit({
     windowMs: 60 * 1000,
     limit: 5,
     standardHeaders: true,
@@ -93,9 +93,7 @@ const themeLimiter = rateLimit({
     message: {
         error:{
             code: 'THEME_CHANGE_RATE_LIMIT_EXCEEDED',
-            message: 'Aguarde 1 minuto para mudar de tema novamente.'
+            message: 'Aguarde 5 minutos para mudar de tema novamente.'
         }
     }
 })
-
-module.exports = { authLimiter, loginLimiter, tasksWriterLimiter, profileNameLimiter, emailLimiter, passwordLimiter, themeLimiter}
