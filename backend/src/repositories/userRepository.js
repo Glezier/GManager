@@ -50,19 +50,43 @@ exports.setNovoEmailVerificado = async (usuario_id, novo_email) => {
         `UPDATE usuarios
         SET email = $1,
             email_verificado = true,
-            email_verificado em = CURRENT_TIMESTAMP AT TIME ZONE 'America/Sao_Paulo',
+            email_verificado_em = CURRENT_TIMESTAMP AT TIME ZONE 'America/Sao_Paulo',
             updated_at = CURRENT_TIMESTAMP AT TIME ZONE 'America/Sao_Paulo'
         WHERE id = $2`,
         [novo_email, usuario_id]
     )
 }
 
+// Busca do usuário via email
+// Usada em verificação de email
+exports.getUserByEmail = async (email) => {
+    const result = await pool.query(
+        `SELECT id, nome, email, email_verificado
+        FROM usuarios
+        WHERE email = $1`,
+        [email]
+    )
+    return result.rows[0] || null
+}
+
+// Busa usuário via email
+// Usada no login
+exports.getUserByEmailLogin = async(email) => {
+    const result = await pool.query(
+        'SELECT id, nome, email, senha, email_verificado, tema from usuarios WHERE email = $1',
+        [email]
+    )
+    return result.rows[0] || null
+}
+
+
+
 // Em cadastro
 exports.setEmailVerificado = async (usuario_id) => {
     await pool.query(
         `UPDATE usuarios
         SET email_verificado = true,
-            email_verificado em = CURRENT_TIMESTAMP AT TIME ZONE 'America/Sao_Paulo',
+            email_verificado_em = CURRENT_TIMESTAMP AT TIME ZONE 'America/Sao_Paulo',
             updated_at = CURRENT_TIMESTAMP AT TIME ZONE 'America/Sao_Paulo'
         WHERE id = $1`,
         [usuario_id]

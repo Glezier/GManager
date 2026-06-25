@@ -1,9 +1,8 @@
 const pool = require('../database/db')
 
 const userRepository = require('../repositories/userRepository')
-const emailVerificationRepository = require('../repositories/emailVerificationRepository')
 const refreshTokenRepository = require('../repositories/refreshTokensRepository')
-const validator = require('validator')
+const emailVerificationRepository = require('../repositories/emailVerificationRepository')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const AppError = require('../utils/AppError')
@@ -15,21 +14,6 @@ const {
     gerarHashRefreshToken,
     gerarExpiracaoRefreshToken
 } = require('../utils/RefreshToken')
-
-
-// Função para validação do email
-function isValidEmail(email){
-    return validator.isEmail(email)
-}
-
-// Limites para campos do usuário
-const LIMITES_USUARIO = {
-    nome_minimo: 2,
-    nome_maximo: 100,
-    email: 120,
-    senha_minima: 8,
-    senha_maxima: 50
-}
 
 // Gerar token de acesso
 function gerarAccessToken(usuarioId){
@@ -114,142 +98,6 @@ exports.registrar = async (req, res, next) => {
     }
 }
 
-// Verificação de email
-exports.verificarEmail = async(req, res, next) => {
-    try{
-        const {token} = req.query
-
-        if (!token){
-            return next(new AppError(
-                'Token de verificação não informado',
-                400,
-                'VALIDATION_ERROR'
-            ))
-        }
-
-        const tokenHash = gerarHashToken(token)
-
-        // Busca token não usado nem expirado
-        const tokenData = await emailVerificationRepository.getToken(tokenHash)
-
-        if (tokenData == null){
-            return next(new AppError(
-                'Token inválido ou expirado',
-                400,
-                'INVALID_TOKEN'
-            ))
-        }
-
-        // Verifica o tipo de email (cadastro ou mudança)
-        // Mudança de email
-        if (tokenData.tipo === 'troca-email') {
-            const emailExist = await userRepository.findByEmailExceptUser(tokenData.novo_email, tokenData.usuario_id)
-
-            if (emailExist) {
-                return next(new AppError(
-                    'Este email já está em uso',
-                    400,
-                    'EMAIL_ALREADY_EXISTS'
-                ))
-            }
-
-            // Registra o novo email no banco
-            await userRepository.setNovoEmailVerificado(tokenData.usuario_id, tokenData.novo_email)
-
-        } else { // Cadastro inicial de email 
-            await userRepository.setEmailVerificado(tokenData.usuario_id)
-        }
-
-        // Atualiza token para usado
-        await emailVerificationRepository.setTokenEmailUsado(tokenData.id)
-
-        res.json({
-            message: 'Email verificado com sucesso'
-        })
-
-    } catch(error){
-        next(error)
-    }
-}
-
-// Reenviar email de verificação
-exports.reenviarVerificacao = async(req,res,next) => {
-    try{
-        const { email } = req.body
-
-        if(!email){
-            return next(new AppError(
-                'Email é obrigatório',
-                400,
-                'VALIDATION_ERROR'
-            ))
-        }
-
-        if(!isValidEmail(email)){
-            return next(new AppError(
-                'Email inválido',
-                400,
-                'VALIDATION_ERROR'
-            ))
-        }
-
-        const emailCorrigido = email.trim().toLowerCase()
-
-        if (emailCorrigido.length > LIMITES_USUARIO.email){
-            return next(new AppError(
-                `O email deve possuir no máximo ${LIMITES_USUARIO.email} caracteres`,
-                400,
-                'VALIDATION_ERROR'
-            ))
-        }
-
-        const result = await pool.query(
-            `SELECT id, nome, email, email_verificado
-            FROM usuarios
-            WHERE email = $1`,
-            [emailCorrigido]
-        )
-
-        if (result.rows.length === 0){
-            return next(new AppError(
-                'Usuário não encontrado',
-                404,
-                'USER_NOT_FOUND'
-            ))
-        }
-
-        const usuario = result.rows[0]
-
-        if (usuario.email_verificado){
-            return next(new AppError(
-                'Este email já foi verificado',
-                400,
-                'EMAIL_ALREADY_VERIFIED'
-            ))
-        }
-
-        const tokenEmail = gerarTokenEmail()
-        const tokenHash = gerarHashToken(tokenEmail)
-
-        await pool.query(
-            `INSERT INTO email_verification_tokens (usuario_id, token_hash, expires_at)
-            VALUES ($1, $2, CURRENT_TIMESTAMP AT TIME ZONE 'America/Sao_Paulo' + INTERVAL '10 minutes')`,
-            [usuario.id, tokenHash]
-        )
-
-        await enviarEmailVerificacao({
-            email: usuario.email,
-            nome: usuario.nome,
-            token: tokenEmail,
-            motivo: "cadastro"
-        })
-
-        res.json({message: 'Um novo email de verificação foi enviado'})
-    } catch(error){
-        next(error)
-    }
-}
-
 // Login
 exports.login = async (req, res, next) => {
     try{
@@ -258,18 +106,11 @@ exports.login = async (req, res, next) => {
         const { emailCorrigido } = authValidators.validarLogin({ email, senha })
 
         // Busca pelo email no banco de dados
-        const result = await pool.query(
-            'SELECT id, nome, email, senha, email_verificado, tema from usuarios WHERE email = $1',
-            [emailCorrigido]
-        )
-
-        // Erro por invalidade de algum elemento
-        if (result.rows.length === 0){
+        const usuario = await userRepository.getUserByEmailLogin(emailCorrigido)
+        
+        if (usuario === null){
             return next(new AppError('Email ou senha inválidos', 400, 'INVALID_CREDENTIALS'))
         }
-
-        // Retorno do usuário
-        const usuario = result.rows[0]
 
         // Veificação da senha
         const senhaValida = await bcrypt.compare(senha, usuario.senha)
@@ -326,17 +167,9 @@ exports.refreshToken = async (req,res,next) => {
         const tokenHash = gerarHashRefreshToken(refreshToken)
 
         // Confere no banco se é válido o refresh token informado
-        const result = await pool.query(
-            `SELECT id, usuario_id
-            FROM refresh_tokens
-            WHERE token_hash = $1
-            AND revoked_at IS NULL
-            AND expires_at > (CURRENT_TIMESTAMP AT TIME ZONE 'America/Sao_Paulo')
-            LIMIT 1`,
-            [tokenHash]
-        )
+        const tokenData = await refreshTokenRepository.getRefreshToken(tokenHash)
 
-        if (result.rows.length === 0){
+        if (tokenData === null){
             return next(new AppError(
                 'Refresh token inválido ou expirado',
                 401,
@@ -344,15 +177,8 @@ exports.refreshToken = async (req,res,next) => {
             ))
         }
 
-        const tokenData = result.rows[0]
-
         // Ajusta no banco a data de revogação do refresh token
-        await pool.query(
-            `UPDATE refresh_tokens
-            SET revoked_at = CURRENT_TIMESTAMP AT TIME ZONE 'America/Sao_Paulo'
-            WHERE id = $1`,
-            [tokenData.id]
-        )
+        await refreshTokenRepository.revokeRefreshToken(tokenData.id)
 
         // Gera novos tokens
         const novoRefreshToken = await criarSessaoRefreshToken(tokenData.usuario_id)
@@ -377,13 +203,7 @@ exports.logout = async(req,res,next) => {
             const tokenHash = gerarHashRefreshToken(refreshToken)
 
             // Revoga o token no banco
-            await pool.query(
-                `UPDATE refresh_tokens
-                SET revoked_at = CURRENT_TIMESTAMP AT TIME ZONE 'America/Sao_Paulo'
-                WHERE token_hash = $1 
-                AND revoked_at IS NULL`,
-                [tokenHash]
-            )
+            await refreshTokenRepository.revokeAllRefreshTokensLogout(tokenHash)
         }
 
         // Retira cookie

@@ -44,7 +44,7 @@ exports.validarEmail = (email) => {
 
     if (emailCorrigido.length > exports.LIMITES_USUARIO.email){
         throw new AppError(
-            `O email deve possuir no máximo ${LIMITES_USUARIO.email} caracteres`,
+            `O email deve possuir no máximo ${exports.LIMITES_USUARIO.email} caracteres`,
             400,
             'VALIDATION_ERROR'
         )
@@ -60,7 +60,7 @@ exports.validarSenha = (senha) => {
 
     if (senha.length < exports.LIMITES_USUARIO.senha_minima || senha.length > exports.LIMITES_USUARIO.senha_maxima){
         throw new AppError(
-            `A senha deve possuir entre ${LIMITES_USUARIO.senha_minima} e ${LIMITES_USUARIO.senha_maxima} caracteres`, 
+            `A senha deve possuir entre ${exports.LIMITES_USUARIO.senha_minima} e ${exports.LIMITES_USUARIO.senha_maxima} caracteres`, 
             400, 
             'VALIDATION_ERROR'
         )
@@ -78,4 +78,16 @@ exports.confirmarSenha = (senha, confirmarSenha) => {
     if (senha !== confirmarSenha){
         throw new AppError("As senhas devem conferir", 400, "VALIDATION_ERROR")
     }
+}
+
+exports.validarTema = (tema) => {
+    if(!tema){
+        throw new AppError('Tema é obrigatório', 400, 'VALIDATION_ERROR')
+    }
+
+    if (!['dark', 'light'].includes(tema)) {
+        throw new AppError('Tema inválido', 400, 'VALIDATION_ERROR')
+    }
+
+    return tema
 }

@@ -1,6 +1,10 @@
 const userRepository = require("../repositories/userRepository")
 const emailVerificationRepository = require("../repositories/emailVerificationRepository")
 const emailVerificationService = require("../services/emailVerificationService")
+const userValidators = require("../validators/userValidators")
+const AppError = require("../utils/AppError")
+const {gerarTokenEmail, gerarHashToken} =  require('../utils/EmailVerification')
+const { enviarEmailVerificacao } = require('../utils/EmailService')
 
 // Verificação de email
 exports.verificarEmail = async(req, res, next) => {
@@ -65,48 +69,17 @@ exports.reenviarVerificacao = async(req,res,next) => {
     try{
         const { email } = req.body
 
-        if(!email){
-            return next(new AppError(
-                'Email é obrigatório',
-                400,
-                'VALIDATION_ERROR'
-            ))
-        }
+        const emailCorrigido = userValidators.validarEmail(email)
 
-        if(!isValidEmail(email)){
-            return next(new AppError(
-                'Email inválido',
-                400,
-                'VALIDATION_ERROR'
-            ))
-        }
+        const usuario = await userRepository.getUserByEmail(emailCorrigido)
 
-        const emailCorrigido = email.trim().toLowerCase()
-
-        if (emailCorrigido.length > LIMITES_USUARIO.email){
-            return next(new AppError(
-                `O email deve possuir no máximo ${LIMITES_USUARIO.email} caracteres`,
-                400,
-                'VALIDATION_ERROR'
-            ))
-        }
-
-        const result = await pool.query(
-            `SELECT id, nome, email, email_verificado
-            FROM usuarios
-            WHERE email = $1`,
-            [emailCorrigido]
-        )
-
-        if (result.rows.length === 0){
+        if (usuario === null){
             return next(new AppError(
                 'Usuário não encontrado',
                 404,
                 'USER_NOT_FOUND'
             ))
         }
-
-        const usuario = result.rows[0]
 
         if (usuario.email_verificado){
             return next(new AppError(
@@ -119,11 +92,7 @@ exports.reenviarVerificacao = async(req,res,next) => {
         const tokenEmail = gerarTokenEmail()
         const tokenHash = gerarHashToken(tokenEmail)
 
-        await pool.query(
-            `INSERT INTO email_verification_tokens (usuario_id, token_hash, expires_at)
-            VALUES ($1, $2, CURRENT_TIMESTAMP AT TIME ZONE 'America/Sao_Paulo' + INTERVAL '10 minutes')`,
-            [usuario.id, tokenHash]
-        )
+        await emailVerificationRepository.registrarTokenEmail(usuario.id, tokenHash)
 
         await enviarEmailVerificacao({
             email: usuario.email,

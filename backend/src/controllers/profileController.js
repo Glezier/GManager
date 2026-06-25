@@ -1,6 +1,7 @@
 const userRepository = require('../repositories/userRepository')
 const AppError = require('../utils/AppError')
 const authValidators = require("../validators/authValidators")
+const userValidators = require("../validators/userValidators")
 const {gerarTokenEmail, gerarHashToken} =  require('../utils/EmailVerification')
 const bcrypt = require('bcryptjs')
 const { enviarEmailVerificacao } = require('../utils/EmailService')
@@ -34,23 +35,7 @@ exports.atualizarNome = async(req,res,next) => {
         const usuarioId = req.userId
         const { nome } = req.body
 
-        if(!nome){
-            return next(new AppError(
-                'Nome é obrigatório',
-                400,
-                'VALIDATION_ERROR'
-            ))
-        }
-
-        const nomeCorrigido = nome.trim()
-
-        if (nomeCorrigido.length > LIMITES_USUARIO.nome_maximo || nomeCorrigido.length < LIMITES_USUARIO.nome_minimo){
-            return next(new AppError(
-                `O nome deve possuir tamanho entre ${LIMITES_USUARIO.nome_minimo} e ${LIMITES_USUARIO.nome_maximo} caracteres`,
-                400,
-                'VALIDATION_ERROR'
-            ))
-        }
+        const nomeCorrigido = userValidators.validarNome(nome)
 
         const usuario = await userRepository.updateName(usuarioId, nomeCorrigido)
 
@@ -173,7 +158,7 @@ exports.atualizarSenha = async(req,res,next) => {
         await userRepository.updateSenha(usuarioId, novaSenhaHash)
 
         // Revoga os refresh tokens
-        await refreshTokensRepository.revokeRefreshTokens(usuarioId)
+        await refreshTokensRepository.revokeAllRefreshTokens(usuarioId)
 
         res.json({
             message: 'Senha atualizada com sucesso'
@@ -191,23 +176,9 @@ exports.atualizarTema = async(req,res,next) => {
         const usuarioId = req.userId
         const { tema } = req.body
 
-        if(!tema){
-            return(next(new AppError(
-                'Tema é obrigatório',
-                400,
-                'VALIDATION_ERROR'
-            )))
-        }
+        const temaCorrigido = userValidators.validarTema(tema)
 
-        if (!['dark', 'light'].includes(tema)) {
-            return next(new AppError(
-                'Tema inválido',
-                400,
-                'VALIDATION_ERROR'
-            ))
-        }
-
-        const result = await userRepository.updateTheme(usuarioId, tema)
+        const result = await userRepository.updateTheme(usuarioId, temaCorrigido)
 
         res.json(result)
 
