@@ -1,56 +1,7 @@
 const pool = require('../database/db');
 const AppError = require('../utils/AppError')
 const taskValidators = require("../validators/taskValidators")
-
-// Validação do periodo permitido para data de tarefa
-async function periodoPermitido(usuarioId, dataTarefa) {
-    const result = await pool.query(
-        `SELECT
-            $2::date BETWEEN
-                (created_at::date - INTERVAL '1 year')::date
-                AND ((CURRENT_TIMESTAMP AT TIME ZONE 'America/Sao_Paulo')::date + INTERVAL '3 years')::date
-            AS periodo_permitido
-        FROM usuarios
-        WHERE id = $1`,
-        [usuarioId, dataTarefa]
-    )
-
-    if (result.rows.length === 0) {
-        throw new AppError(
-            'Usuário não encontrado',
-            404,
-            'USER_NOT_FOUND'
-        )
-    }
-
-    if (!result.rows[0].periodo_permitido) {
-        throw new AppError(
-            'Data fora do período permitido',
-            400,
-            'TASK_DATE_OUT_OF_RANGE'
-        )
-    }
-}
-
-async function intervaloPermitido(usuarioId, inicio, fim) {
-    const result = await pool.query(
-        `SELECT
-            $2::date >= (created_at::date - INTERVAL '1 year')::date
-            AND $3::date <= ((CURRENT_TIMESTAMP AT TIME ZONE 'America/Sao_Paulo')::date + INTERVAL '3 years')::date
-            AS periodo_permitido
-        FROM usuarios
-        WHERE id = $1`,
-        [usuarioId, inicio, fim]
-    )
-
-    if (result.rows.length === 0) {
-        throw new AppError('Usuário não encontrado', 404, 'USER_NOT_FOUND')
-    }
-
-    if (!result.rows[0].periodo_permitido) {
-        throw new AppError('Período fora do limite permitido', 400, 'TASK_DATE_OUT_OF_RANGE')
-    }
-}
+const taskService = require("../services/taskService")
 
 // Criar tarefa
 exports.criarTarefa = async (req, res, next) => {
@@ -59,55 +10,11 @@ exports.criarTarefa = async (req, res, next) => {
         const {titulo, descricao, data, hora } = req.body
         const usuario_id = req.userId
 
-        // Validação de título e data ausentes
-        if(!titulo || !data){
-            return next(new AppError(
-                'Título e data obrigatórios',
-                400,
-                'VALIDATION_ERROR'
-            ))
-        }
-        // Validação de título
-        if (!titulo.trim()) {
-            return next(new AppError(
-                'O título não pode estar vazio',
-                400,
-                'VALIDATION_ERROR'
-            ))
-        }
-
-        if (titulo.trim().length > LIMITES_TAREFA.titulo) {
-            return next(new AppError(
-                `O título deve possuir no máximo ${LIMITES_TAREFA.titulo} caracteres`,
-                400,
-                'VALIDATION_ERROR'
-            ))
-        }
-
-        taskValidators.validateTitle(titulo)
-
-        // Validaçao da descrição
-        if (descricao !== undefined && descricao !== null && descricao.trim().length > LIMITES_TAREFA.descricao) {
-            return next(new AppError(
-                `A descrição deve possuir no máximo ${LIMITES_TAREFA.descricao} caracteres`,
-                400,
-                'VALIDATION_ERROR'
-            ))
-        }
-
-        taskValidators.validateDesc(descricao)
-
-        // Validação da data informada
-        if (!isValidDate(data)) {
-            return next(new AppError(
-                'A data deve estar no formato YYYY-MM-DD',
-                400,
-                'VALIDATION_ERROR'
-            ))
-        }
-
-        taskValidators.validateDate(data)
-
+        //Validações dos campos recebidos
+        const tituloCorrigido = taskValidators.validateTitle(titulo)
+        const dataCorrigida = taskValidators.validateDate(data)
+        const descricaoCorrigida = taskValidators.validateDesc(descricao)
+        
 
         // Validação do período
         await periodoPermitido(usuario_id, data)
@@ -145,12 +52,12 @@ exports.criarTarefa = async (req, res, next) => {
             VALUES ($1, $2, $3, $4, $5, $6)
             RETURNING *`,
             [
-                titulo.trim(), 
-                descricao?.trim() || null, // Proteção caso descricao seja null
+                tituloCorrigido, 
+                descricaoCorrigida, // Proteção caso descricao seja null
                 'pendente', 
                 usuario_id, 
-                data, 
-                hora || null
+                dataCorrigida, 
+                horaCorrigida
             ]
         )
 
@@ -176,14 +83,9 @@ exports.listarTarefas = async (req,res, next) => {
             ))
         }
 
-        // Verificação da validade do início e fim informados
-        if (!isValidDate(inicio) || !isValidDate(fim)){
-            return next(new AppError(
-                'As datas devem estar no formato YYYY-MM-DD',
-                400,
-                'VALIDATION_ERROR'
-            ))
-        }
+        const inicioCorrigido = taskValidators.validateDate(inicio)
+        const fimCorrigido = taskValidators.validateDate(fim)
+
 
         // Validação da data seguindo a regra de negócio
         await intervaloPermitido(usuario_id, inicio, fim)
@@ -213,73 +115,17 @@ exports.atualizarTarefa = async (req, res, next) => {
         const { titulo, descricao, status, data, hora } = req.body
         const usuario_id = req.userId
         
-        // Verificação do título
-        if (titulo !== undefined && !titulo.trim()) {
-            return next(new AppError(
-                'O título não pode estar vazio',
-                400,
-                'VALIDATION_ERROR'
-            ))
-        }
-
-        if (titulo !== undefined && titulo.trim().length > LIMITES_TAREFA.titulo) {
-            return next(new AppError(
-                `O título deve possuir no máximo ${LIMITES_TAREFA.titulo} caracteres`,
-                400,
-                'VALIDATION_ERROR'
-            ))
-        }
-
-        taskValidators.validateTitle(titulo)
-
-        // Validação da descrição
-        if (descricao !== undefined && descricao !== null && descricao.trim().length > LIMITES_TAREFA.descricao) {
-            return next(new AppError(
-                `A descrição deve possuir no máximo ${LIMITES_TAREFA.descricao} caracteres`,
-                400,
-                'VALIDATION_ERROR'
-            ))
-        }
-
-        taskValidators.validateDesc(descricao)
-
-        // Verificação do status informado
-        if (status !== undefined && !isValidStatus(status)) {
-            return next(new AppError(
-                'Status inválido',
-                400,
-                'VALIDATION_ERROR'
-            ))
-        }
-
-        taskValidators.validateStatus(status)
-        
-        // Verificação da data informada
-        if (data !== undefined && !isValidDate(data)) {
-            return next(new AppError(
-                'A data deve estar no formato YYYY-MM-DD',
-                400,
-                'VALIDATION_ERROR'
-            ))
-        }
-
-        taskValidators.validateDate(data)
+        // Verificação dos campos informados
+        const tituloCorrigido = taskValidators.validateTitle(titulo)
+        const descricaoCorrigida = taskValidators.validateDesc(descricao)
+        const statusCorrigido = taskValidators.validateStatus(status)
+        const dataCorrigida = taskValidators.validateDate(data)
+        const horaCorrigida = taskValidators.validateTime(hora)
 
         // Validação do período
         if (data!== undefined){
             await periodoPermitido(usuario_id, data)
         }
-
-        // Verificação da hora informada
-        if (hora !== undefined && hora !== null && hora !== '' && !isValidTime(hora)) {
-            return next(new AppError(
-                'A hora deve estar no formato HH:MM',
-                400,
-                'VALIDATION_ERROR'
-            ))
-        }
-
-        taskValidators.validateTime(hora)
 
         // Update no banco de dados
         const result = await pool.query(
@@ -292,9 +138,9 @@ exports.atualizarTarefa = async (req, res, next) => {
             WHERE id = $6 AND usuario_id = $7
             RETURNING *`,
             [
-                titulo !== undefined ? titulo.trim() : null,
-                descricao !== undefined ? descricao.trim() || null : null,
-                status,
+                tituloCorrigido,
+                descricaoCorrigida,
+                statusCorrigido,
                 data,
                 hora === '' ? null : hora,
                 id,

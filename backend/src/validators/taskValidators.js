@@ -7,15 +7,17 @@ exports.LIMITES_TAREFA = {
 }
 
 exports.validateTitle = (title) => {
-    if (title !== null && title !== undefined && title.trim()){
-        if (title.trim().length > exports.LIMITES_TAREFA.titulo){
-            throw new AppError(
-                `O título deve possuir no máximo ${exports.LIMITES_TAREFA.titulo} caracteres`,
-                400,
-                'VALIDATION_ERROR'
-            )
-        }
+    if (title !== undefined){
+        if(title !== null && title.trim()){
+            if (title.trim().length > exports.LIMITES_TAREFA.titulo){
+                throw new AppError(
+                    `O título deve possuir no máximo ${exports.LIMITES_TAREFA.titulo} caracteres`,
+                    400,
+                    'VALIDATION_ERROR'
+                )
+            }
         return title.trim()
+        }
     } 
     throw new AppError(
         'Título é obrigatório',
@@ -25,15 +27,17 @@ exports.validateTitle = (title) => {
 }
 
 exports.validateDesc = (desc) => {
-    if (desc !== undefined && desc !== null && desc.trim()){
-        if (desc.trim().length > exports.LIMITES_TAREFA.descricao){
-            throw new AppError(
-                `A descrição deve possuir no máximo ${exports.LIMITES_TAREFA.descricao} caracteres`,
-                400,
-                'VALIDATION_ERROR'
-            )
+    if (desc !== undefined){
+        if (desc !== null && desc.trim()){
+            if (desc.trim().length > exports.LIMITES_TAREFA.descricao){
+                throw new AppError(
+                    `A descrição deve possuir no máximo ${exports.LIMITES_TAREFA.descricao} caracteres`,
+                    400,
+                    'VALIDATION_ERROR'
+                )
+            }
+            return desc.trim()
         }
-        return desc.trim()
     }
     return null // Descrição é opcional
 }
@@ -41,12 +45,17 @@ exports.validateDesc = (desc) => {
 exports.validateStatus = (status) => {
     if (status !== null && status !== undefined){
         const validate = validator.isIn(status, ['pendente', 'concluida'])
-        if (validate){
-            return
+        if (!validate){
+            throw new AppError(
+                'Status inválido',
+                400,
+                'VALIDATION_ERROR'
+            )
         }
+        return status
     }
     throw new AppError(
-        'Status inválido',
+        'Status é obrigatório',
         400,
         'VALIDATION_ERROR'
     )
@@ -68,26 +77,28 @@ exports.validateDate = (date) => {
                     'VALIDATION_ERROR'
                 )
             }
+            return date
         }
-        return date
-    }
-}
-
-exports.validateTime = (time) => {
-    if (time!== undefined && time!=null){
-        const validate =  /^([01]\d|2[0-3]):([0-5]\d)$/.test(time)
-        if (!validate){
-            throw new AppError(
-                'A hora deve estar no formato HH:MM',
-                400,
-                'VALIDATION_ERROR'
-            )
-        }
-        return time
     }
     throw new AppError(
-        'Informação de hora é obrigatória',
+        'Data é obrigatória',
         400,
         'VALIDATION_ERROR'
     )
+}
+
+exports.validateTime = (time) => {
+    if (time === undefined || time === ''){
+        return null
+    }
+
+    const validate =  /^([01]\d|2[0-3]):([0-5]\d)$/.test(time)
+    if (!validate){
+        throw new AppError(
+            'A hora deve estar no formato HH:MM',
+            400,
+            'VALIDATION_ERROR'
+        )
+    }
+    return time
 }
