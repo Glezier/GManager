@@ -1,29 +1,6 @@
 const pool = require('../database/db');
 const AppError = require('../utils/AppError')
-const validator = require('validator')
-
-// Funções de validação dos campos
-function isValidDate(date) {
-    return validator.isDate(date, {
-        format: 'YYYY-MM-DD',
-        strictMode: true,
-        delimiters: ['-'],
-    })
-}
-
-function isValidTime(time) {
-    return /^([01]\d|2[0-3]):([0-5]\d)$/.test(time)
-}
-
-function isValidStatus(status) {
-    return validator.isIn(status, ['pendente', 'concluida'])
-}
-
-// Validação do tamanho das entradas
-const LIMITES_TAREFA = {
-    titulo: 60,
-    descricao: 120
-}
+const taskValidators = require("../validators/taskValidators")
 
 // Validação do periodo permitido para data de tarefa
 async function periodoPermitido(usuarioId, dataTarefa) {
@@ -107,6 +84,8 @@ exports.criarTarefa = async (req, res, next) => {
             ))
         }
 
+        taskValidators.validateTitle(titulo)
+
         // Validaçao da descrição
         if (descricao !== undefined && descricao !== null && descricao.trim().length > LIMITES_TAREFA.descricao) {
             return next(new AppError(
@@ -116,6 +95,8 @@ exports.criarTarefa = async (req, res, next) => {
             ))
         }
 
+        taskValidators.validateDesc(descricao)
+
         // Validação da data informada
         if (!isValidDate(data)) {
             return next(new AppError(
@@ -124,6 +105,10 @@ exports.criarTarefa = async (req, res, next) => {
                 'VALIDATION_ERROR'
             ))
         }
+
+        taskValidators.validateDate(data)
+
+
         // Validação do período
         await periodoPermitido(usuario_id, data)
         // Validação da hora informada
@@ -134,6 +119,8 @@ exports.criarTarefa = async (req, res, next) => {
                 'VALIDATION_ERROR'
             ))
         }
+
+        taskValidators.validateTime(hora)
 
         // Permite no máximo 30 tarefas por dia
         const totalNoDia = await pool.query(
@@ -243,6 +230,8 @@ exports.atualizarTarefa = async (req, res, next) => {
             ))
         }
 
+        taskValidators.validateTitle(titulo)
+
         // Validação da descrição
         if (descricao !== undefined && descricao !== null && descricao.trim().length > LIMITES_TAREFA.descricao) {
             return next(new AppError(
@@ -252,6 +241,8 @@ exports.atualizarTarefa = async (req, res, next) => {
             ))
         }
 
+        taskValidators.validateDesc(descricao)
+
         // Verificação do status informado
         if (status !== undefined && !isValidStatus(status)) {
             return next(new AppError(
@@ -260,6 +251,8 @@ exports.atualizarTarefa = async (req, res, next) => {
                 'VALIDATION_ERROR'
             ))
         }
+
+        taskValidators.validateStatus(status)
         
         // Verificação da data informada
         if (data !== undefined && !isValidDate(data)) {
@@ -269,6 +262,8 @@ exports.atualizarTarefa = async (req, res, next) => {
                 'VALIDATION_ERROR'
             ))
         }
+
+        taskValidators.validateDate(data)
 
         // Validação do período
         if (data!== undefined){
@@ -283,6 +278,8 @@ exports.atualizarTarefa = async (req, res, next) => {
                 'VALIDATION_ERROR'
             ))
         }
+
+        taskValidators.validateTime(hora)
 
         // Update no banco de dados
         const result = await pool.query(

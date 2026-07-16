@@ -1,5 +1,3 @@
-const pool = require('../database/db')
-
 const userRepository = require('../repositories/userRepository')
 const refreshTokenRepository = require('../repositories/refreshTokensRepository')
 const emailVerificationRepository = require('../repositories/emailVerificationRepository')
