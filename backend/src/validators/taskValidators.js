@@ -102,3 +102,39 @@ exports.validateTime = (time) => {
     }
     return time
 }
+
+exports.validateResultAfterQuery = (result) => {
+    if (!result){
+        throw new AppError(
+            'Tarefa não encontrada',
+            404,
+            'TASK_NOT_FOUND'
+        )
+    }
+}
+
+exports.validarCriacaoTarefa = (dados) => {
+    return {
+        titulo: exports.validateTitle(dados.titulo),
+        data: exports.validateDate(dados.data),
+        descricao: exports.validateDesc(dados.descricao),
+        hora: exports.validateTime(dados.hora),
+    }
+}
+
+exports.validarListagemTarefas = (filtros) => {
+    return {
+        inicio: exports.validateDate(filtros.inicio),
+        fim: exports.validateDate(filtros.fim),
+    }
+}
+
+exports.validarAtualizacaoTarefa = (dados) => {
+    return {
+        titulo: exports.validateTitle(dados.titulo),
+        descricao: exports.validateDesc(dados.descricao),
+        status: exports.validateStatus(dados.status),
+        data: exports.validateDate(dados.data),
+        hora: exports.validateTime(dados.hora),
+    }
+}

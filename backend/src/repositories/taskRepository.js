@@ -1,6 +1,6 @@
 const pool = require("../database/db")
 
-exports.checkDateAllowed = async (usuarioId, dataTerefa) => {
+exports.verificarDataPermitida = async (usuarioId, dataTarefa) => {
     const result = await pool.query(
         `SELECT
             $2::date BETWEEN
@@ -15,7 +15,8 @@ exports.checkDateAllowed = async (usuarioId, dataTerefa) => {
     return result.rows[0] || null   
 }
 
-exports.checkRangeAllowed = async (usuarioId, inicio, fim) => {
+// Insercao de tarefas deve ser no intervalo de 1 ano atras e 3 anos para frente
+exports.verificarIntervaloPermitido = async (usuarioId, inicio, fim) => {
     const result = await pool.query(
         `SELECT
             $2::date >= (created_at::date - INTERVAL '1 year')::date
@@ -29,3 +30,86 @@ exports.checkRangeAllowed = async (usuarioId, inicio, fim) => {
     return result.rows[0] || null
 }
 
+exports.contarTarefasDoDia = async (usuarioId, data) => {
+    const response = await pool.query(
+        `SELECT COUNT(*)::int AS total
+        FROM tarefas
+        WHERE usuario_id = $1
+        AND data = $2`,
+        [usuarioId, data]
+    )
+    return response.rows[0].total
+}
+
+exports.criarTarefa = async (titulo, descricao, usuarioId, data, hora) => {
+    const result = await pool.query(
+        `INSERT INTO tarefas (titulo, descricao, status, usuario_id, data, hora)
+        VALUES ($1, $2, $3, $4, $5, $6)
+        RETURNING *`,
+        [
+            titulo, 
+            descricao, 
+            'pendente', 
+            usuarioId, 
+            data, 
+            hora
+        ]
+    )
+    return result.rows[0]
+}
+
+exports.listarTarefas = async (usuarioId, inicio, fim) => {
+    const result = await pool.query(
+        `SELECT * 
+        FROM tarefas
+        WHERE usuario_id = $1
+        AND data BETWEEN $2 AND $3
+        ORDER BY data ASC, hora ASC NULLS LAST, created_at ASC, id ASC`,
+        [usuarioId, inicio, fim]
+    )
+    return result.rows
+}
+exports.atualizarTarefa = async (titulo, descricao, status, data, hora, id, usuarioId) => {
+    const result = await pool.query(
+        `UPDATE tarefas
+        SET titulo = COALESCE($1, titulo),
+            descricao = COALESCE($2, descricao),
+            status = COALESCE($3, status),
+            data = COALESCE($4, data),
+            hora = COALESCE($5, hora)
+        WHERE id = $6 AND usuario_id = $7
+        RETURNING *`,
+        [
+            titulo,
+            descricao,
+            status,
+            data,
+            hora,
+            id,
+            usuarioId,
+        ]
+    )
+    return result.rows[0] || null
+}
+
+exports.concluirTarefa = async (id, usuarioId) => {
+    const result = await pool.query(
+        `UPDATE tarefas
+        SET status = $1
+        WHERE id = $2
+        AND usuario_id = $3
+        RETURNING *`,
+        ["concluida", id, usuarioId]
+    )
+    return result.rows[0] || null
+}
+
+exports.deletarTarefa = async (id, usuarioId) => {
+    const result = await pool.query(
+        `DELETE FROM tarefas
+        WHERE id = $1 AND usuario_id = $2 
+        RETURNING id`,
+        [id, usuarioId]
+    )
+    return result.rows[0] || null
+}

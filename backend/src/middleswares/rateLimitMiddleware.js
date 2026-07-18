@@ -93,7 +93,7 @@ exports.themeLimiter = rateLimit({
     message: {
         error:{
             code: 'THEME_CHANGE_RATE_LIMIT_EXCEEDED',
-            message: 'Aguarde 5 minutos para mudar de tema novamente.'
+            message: 'Aguarde 1 minuto para mudar de tema novamente.'
         }
     }
 })
