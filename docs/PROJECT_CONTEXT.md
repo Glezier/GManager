@@ -35,16 +35,10 @@ O projeto agora esta na fase de estabilizacao pos-deploy: separar ambiente de de
 - desenhar esquema do banco com draw.io
 
 ### Fase 2: Arquitetura em camadas no backend
-- conversar sobre padrão SOLID
-- organizar backend no padrão Controller-Service-Repository
-- mover SQL dos controllers para repositories
-- mover regras de negócio para services
-- mover validações reutilizáveis para validators
-- reduzir controllers para entrada/saída HTTP
-- começar pelo módulo de tarefas
-- depois aplicar no módulo de autenticação
-- validator no frontend tambem
-- padronizar respostas de erro pra não depender de mensagens e sim de codes (ajustar rate limit pra mostrar o tempo que falta pra fazer algo ao invés de algo estático)
+- Revisão geral de nomes e contratos dos repositories.
+Garantir que todos retornam dado limpo ou null, e não result do pg
+- padronizar respostas de erro pra não depender de mensagens e sim de codes 
+- ajustar rate limit pra mostrar o tempo que falta pra fazer algo ao invés de algo estático
 - preparar base para testes automatizados
 - avaliar se usa git hub actions ou nao
 - avaliar se há algo mais pra ser modularizado ou reorganizado
@@ -59,6 +53,7 @@ O projeto agora esta na fase de estabilizacao pos-deploy: separar ambiente de de
 
 ### Fase 4: Produto
 - responsividade
+- adicionar validators no frontend
 - filtros por status e data
 - busca de tarefas
 - tarefas com datas continuas ou frequencia definida

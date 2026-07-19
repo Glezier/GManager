@@ -15,7 +15,7 @@ exports.validarRegistro = ({ nome, email, senha}) => {
 
 exports.validarLogin = ({ email, senha}) => {
     if (!email || !senha){
-        throw new AppError("Email e senha são origatórios", 400, "VALIDATION_ERROR")
+        throw new AppError("Email e senha são obrigatórios", 400, "VALIDATION_ERROR")
     }
 
     const emailCorrigido = userValidators.validarEmail(email)
