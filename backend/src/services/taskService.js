@@ -54,6 +54,23 @@ exports.validarLimiteDiario = async (usuarioId, data) => {
     }
 }
 
+exports.validarLimiteDiarioAoAtualizar = async(usuarioId, data, tarefaId) => {
+    const totalNoDia = await taskRepository.contarTarefasDoDiaExcetoTarefa(
+        usuarioId, 
+        data, 
+        tarefaId
+    )
+
+    if (totalNoDia >= 30){
+        throw new AppError(
+            "Limite de 30 tarefas por dia atingido",
+            400,
+            "DAILY_TASK_LIMIT_REACHED"
+        )
+    }
+
+}
+
 exports.criarTarefa = async (usuarioId, dados) => {
     // Recebe dados da requisicao
     const tarefa = taskValidators.validarCriacaoTarefa(dados)
@@ -85,6 +102,7 @@ exports.atualizarTarefa = async (usuarioId, id, dados) => {
     const tarefa = taskValidators.validarAtualizacaoTarefa(dados)
 
     await exports.validarPeriodoPermitido(usuarioId, tarefa.data)
+    await exports.validarLimiteDiarioAoAtualizar(usuarioId, tarefa.data, id)
 
     const tarefaAtualizada = await taskRepository.atualizarTarefa(
         tarefa.titulo,

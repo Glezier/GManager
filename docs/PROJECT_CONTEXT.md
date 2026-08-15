@@ -28,21 +28,6 @@ O projeto agora esta na fase de estabilizacao pos-deploy: separar ambiente de de
 - variaveis reais configuradas apenas nos paineis dos provedores
 - branch `main` deve representar o estado estavel publicado
 
-## Plano de execucao
-
-### Fase 1: Banco dev e backup
-- fazer docs
-- desenhar esquema do banco com draw.io
-
-### Fase 2: Arquitetura em camadas no backend
-- Revisão geral de nomes e contratos dos repositories.
-Garantir que todos retornam dado limpo ou null, e não result do pg
-- padronizar respostas de erro pra não depender de mensagens e sim de codes 
-- ajustar rate limit pra mostrar o tempo que falta pra fazer algo ao invés de algo estático
-- preparar base para testes automatizados
-- avaliar se usa git hub actions ou nao
-- avaliar se há algo mais pra ser modularizado ou reorganizado
-
 ### Fase 3: Detalhes importantes
 - botão voltar para calendario do daypage não guarda o mês que a pessoa tava
 - adicionar recuperacao de senha
@@ -86,7 +71,18 @@ Garantir que todos retornam dado limpo ou null, e não result do pg
 - configurar logs, monitoramento e backups
 - comparar custo, complexidade e ganho real em relacao a Vercel/Neon
 
+### pulados
+- Revisão geral de nomes e contratos dos repositories.
+Garantir que todos retornam dado limpo ou null, e não result do pg
+
 ## Acordo de trabalho
 - quando o objetivo for aprendizado, explicar antes de alterar codigo
 - editar arquivos diretamente apenas quando solicitado
 - manter este documento como guia pratico de sequencia do projeto
+- ajustar rate limit pra mostrar o tempo que falta pra fazer algo ao invés de algo estático
+- preparar base para testes automatizados
+
+
+não deixar api exposta
+fazer secao de treinos de academia
+botar anuncio e monetizar

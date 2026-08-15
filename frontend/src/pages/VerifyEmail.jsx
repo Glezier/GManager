@@ -34,7 +34,7 @@ export default function VerifyEmail(){
             setStatus('error')
             setMensagem(error.message)
 
-            if(error.message === 'Muitas tentativas. Tente novamente em 15 minutos.'){
+            if(error.code === 'RATE_LIMIT_EXCEEDED'){
                 setBloqueado(true)
             }
         } finally{

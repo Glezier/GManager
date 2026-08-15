@@ -41,6 +41,20 @@ exports.contarTarefasDoDia = async (usuarioId, data) => {
     return response.rows[0].total
 }
 
+// Para validação de quantidade diária de tarefas ao atualizar
+exports.contarTarefasDoDiaExcetoTarefa = async (usuarioId, data, tarefaId) => {
+    const result = await pool.query(
+        `SELECT COUNT(*)::int AS total
+        FROM tarefas
+        WHERE usuario_id = $1
+        AND data = $2
+        AND id <> $3`,
+        [usuarioId, data, tarefaId]
+    )
+
+    return result.rows[0].total
+}
+
 exports.criarTarefa = async (titulo, descricao, usuarioId, data, hora) => {
     const result = await pool.query(
         `INSERT INTO tarefas (titulo, descricao, status, usuario_id, data, hora)
@@ -69,14 +83,15 @@ exports.listarTarefas = async (usuarioId, inicio, fim) => {
     )
     return result.rows
 }
+
 exports.atualizarTarefa = async (titulo, descricao, status, data, hora, id, usuarioId) => {
     const result = await pool.query(
         `UPDATE tarefas
-        SET titulo = COALESCE($1, titulo),
-            descricao = COALESCE($2, descricao),
-            status = COALESCE($3, status),
-            data = COALESCE($4, data),
-            hora = COALESCE($5, hora)
+        SET titulo = $1,
+            descricao = $2,
+            status = $3,
+            data = $4,
+            hora = $5
         WHERE id = $6 AND usuario_id = $7
         RETURNING *`,
         [

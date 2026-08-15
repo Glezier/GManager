@@ -34,6 +34,7 @@ export default function useTasks({token, inicio, fim, navigate, enabled = true})
 
     const loading = isLoading || isFetching
     const erroBuscaMensagem = erroBusca?.message || ''
+    const erroBuscaCode = erroBusca?.code
     const erroPaginaExibido = erroPagina || erroBuscaMensagem
 
     async function carregarTarefas() {
@@ -56,13 +57,13 @@ export default function useTasks({token, inicio, fim, navigate, enabled = true})
         }
 
         if(
-            erroBuscaMensagem === 'Sessão expirada. Faça login novamente.' ||
-            isAuthError(erroBuscaMensagem)
+            erroBuscaCode === 'SESSION_EXPIRED' ||
+            isAuthError(erroBuscaCode)
         ){
             removeToken()
             navigate('/')
         }
-    }, [token, erroBuscaMensagem, navigate, enabled])
+    }, [token, erroBuscaMensagem, erroBuscaCode, navigate, enabled])
 
     async function salvarTarefa(tarefa){
         try{
@@ -182,13 +183,17 @@ export default function useTasks({token, inicio, fim, navigate, enabled = true})
     }
 
     useEffect(() => {
+        let timer = null
         if (sucesso){
-            const timer = setTimeout(()=>{
+            timer = setTimeout(()=>{
                 setSucesso('')
             },2500)
-            return ()=>clearTimeout(timer)
         }
-        return
+        return () => {
+            if (timer){
+                clearTimeout(timer)
+            }
+        }
     }, [sucesso])
 
     // Bloqueio do scroll ao adicionar tarefa

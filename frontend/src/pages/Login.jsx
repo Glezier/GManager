@@ -54,12 +54,12 @@ export default function Login(){
             setErro(error.message)
 
             setBloqueado(
-                error.message === 'Muitas tentativas de login. Tente novamente em 15 minutos.'
+                error.code === 'LOGIN_RATE_LIMIT_EXCEEDED'
             )
 
             // Só coloca email como não verificaso se esse for o caso
             setEmailNaoVerificado(
-                error.message === 'Verifique seu email antes de entrar na conta'
+                error.code === 'EMAIL_NOT_VERIFIED'            
             )        
         } finally{
             setLoading(false)
