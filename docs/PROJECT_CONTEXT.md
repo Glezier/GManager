@@ -29,7 +29,6 @@ O projeto agora esta na fase de estabilizacao pos-deploy: separar ambiente de de
 - branch `main` deve representar o estado estavel publicado
 
 ### Fase 3: Detalhes importantes
-- botão voltar para calendario do daypage não guarda o mês que a pessoa tava
 - adicionar recuperacao de senha
 - pagina inicial antes de login
 - social login com Google

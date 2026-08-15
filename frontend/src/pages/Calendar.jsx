@@ -2,8 +2,7 @@ import FullCalendar from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import interactionPlugin from '@fullcalendar/interaction'
 import { useState, useEffect, useMemo, useRef } from 'react'
-import { useNavigate } from 'react-router-dom'
-
+import { useNavigate, useLocation } from 'react-router-dom'
 import { useMe } from '../hooks/useMe'
 import { useTarefas } from '../hooks/useTarefas'
 import { getToken } from '../utils/auth'
@@ -28,16 +27,24 @@ export default function Calendar(){
     })
     const calendarRef = useRef(null)
 
-    const hoje = new Date()
-    const [mesSelecionado, setMesSelecionado] = useState(hoje.getMonth())
-    const [anoSelecionado, setAnoSelecionado] = useState(hoje.getFullYear())
+    // Voltar para mes correto apos entrar em um daypage
+    // Mostra o dia de hoje ao entrar pela primeira vez
+    const location = useLocation()
+    const dataCalendario = location.state?.calendarDate
+    const dataInicialCalendario = dataCalendario 
+        ? new Date(`${dataCalendario}T00:00:00`) 
+        : new Date()
+
+    
+    const [mesSelecionado, setMesSelecionado] = useState(dataInicialCalendario.getMonth())
+    const [anoSelecionado, setAnoSelecionado] = useState(dataInicialCalendario.getFullYear())
 
     const { data: usuario, isLoading: carregandoUsuario, error: erroUsuario } = useMe()
 
     const {
         data: tarefas = [],
         isLoading: carregandoTarefas,
-        isFetchung: atualizandoTarefas,
+        isFetching: atualizandoTarefas,
         error: erroTarefas,
     } = useTarefas({
         token,
@@ -119,15 +126,27 @@ export default function Calendar(){
         }))
     }, [tarefas])
 
-    function handleDate(info){
-        navigate(`/dia/${info.dateStr}`)
+    // Vai para o mês correto após day page
+    function getCalendarState(){
+        return {
+            from: "calendario",
+            calendarDate: getData(new Date(anoSelecionado, mesSelecionado, 1))
+        }
     }
+
+    function handleDate(info){
+        navigate(`/dia/${info.dateStr}`, {
+            state: getCalendarState()
+        })
+    }    
 
     // Clicar em tarefa do dia também abre o dia da tarefa
     function handleDateClick(info){
         const data = info.event.start
-        navigate(`/dia/${getData(data)}`)
-    }
+        navigate(`/dia/${getData(data)}`, {
+            state: getCalendarState()
+        })
+    }    
 
     // Sincroniza os selects quando o usuário navega pelas setas do FullCalendar
     function handleDatesSet(info) {
@@ -142,7 +161,7 @@ export default function Calendar(){
         dataCentral.setDate(dataCentral.getDate() + 7) // garante que está no mês correto
         setMesSelecionado(dataCentral.getMonth())
         setAnoSelecionado(dataCentral.getFullYear())
-    }
+    }    
 
     // Botão voltar do navegador apontar para Dashboard
     useEffect(()=>{

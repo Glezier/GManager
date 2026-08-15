@@ -108,15 +108,24 @@ export default function DayPage(){
     return ordenarTarefas(tarefas)
   }, [tarefas])
     
+  // Voltar do navegador não empilha coisas, troca a rota atual
   function navegarDia(indice){
     const novaData = new Date(`${data}T00:00:00`)
     novaData.setDate(novaData.getDate() + indice)
-    navigate(`/dia/${getData(novaData)}`, {replace: true, state:{from:origem}}) // Voltar do navegador não empilha coisas, troca a rota atual
+    navigate(`/dia/${getData(novaData)}`, {
+      replace: true, 
+      state: {
+        from:origem,
+        calendarDate
+      }}) 
   }
 
   // Texto do botão voltar de acordo com a origem
   const location = useLocation()
   const origem = location.state?.from === 'dashboard' ? 'dashboard' : 'calendario'
+
+  // Voltar para mês correto visitado por último
+  const calendarDate = location.state?.calendarDate
 
   // Validação da data
   if(!dataPermitida){
@@ -130,7 +139,15 @@ export default function DayPage(){
           <button 
             type="button" 
             className='day-back' 
-            onClick={() => navigate(`/${origem}`)}
+            onClick={() => {
+              if (origem === "calendario") {
+                navigate("/calendario", {
+                  state: { calendarDate }
+                })
+                return
+              }
+              navigate("/dashboard")
+            }}
           >
             Voltar para {origem}
           </button>
