@@ -29,10 +29,10 @@ O projeto agora esta na fase de estabilizacao pos-deploy: separar ambiente de de
 - branch `main` deve representar o estado estavel publicado
 
 ### Fase 3: Detalhes importantes
-- adicionar recuperacao de senha
 - pagina inicial antes de login
 - social login com Google
 - upload de foto pra aba perfil
+- organizar a api em pastas
 - aprender hackear tentando hackear o proprio site
 
 ### Fase 4: Produto
@@ -85,3 +85,4 @@ Garantir que todos retornam dado limpo ou null, e não result do pg
 não deixar api exposta
 fazer secao de treinos de academia
 botar anuncio e monetizar
+implementar migrations

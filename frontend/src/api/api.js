@@ -173,7 +173,7 @@ async function fetchComTratamento(url, options = {}){
     }
 }
 
-// Infosmações do usuário
+// Informações do usuário
 export async function infosUser(){
     const response = await fetchAutenticado(`${API_URL}/profile/me`)
 
@@ -303,6 +303,40 @@ export async function logout(){
     })
 
     if(!response.ok){
+        throw await getApiError(response)
+    }
+
+    return response.json()
+}
+
+// Solicitar recuperação de senha
+export async function solicitarRecuperacaoSenha(email){
+    const response = await fetchComTratamento(`${API_URL}/auth/forgot-password`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ email })
+    })
+
+    if (!response.ok){
+        throw await getApiError(response)
+    }
+
+    return response.json()
+}
+
+// Redefinir senha
+export async function redefinirSenha(dados){
+    const response = await fetchComTratamento(`${API_URL}/auth/reset-password`, {
+        method: 'POST',
+        headers: {
+            'Content-Type' : 'application/json'
+        },
+        body: JSON.stringify(dados)
+    })
+
+    if (!response.ok){
         throw await getApiError(response)
     }
 

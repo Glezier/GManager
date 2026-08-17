@@ -209,6 +209,7 @@ export default function Login(){
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}  
                                 ref={userRef}
+                                maxLength={120}
                                 disabled={bloqueado} 
                                 required
                             />
@@ -252,7 +253,11 @@ export default function Login(){
                     </p>
 
                     <p className='auth-alt'>
-                        Recuperação de senha e social login disponiveis em breve...
+                        <Link to='/recuperar-senha'>Esqueci minha senha</Link>
+                    </p>
+
+                    <p className='auth-alt'>
+                        Social login disponível em breve...
                     </p>
 
                 </div>

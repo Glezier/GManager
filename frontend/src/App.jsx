@@ -3,6 +3,8 @@ import Register from './pages/Register'
 import VerifyEmail from './pages/VerifyEmail'
 import ValidarEmail from './pages/ValidarEmail'
 import Login from './pages/Login'
+import ForgotPassword from './pages/ForgotPassword'
+import ResetPassword from './pages/ResetPassword'
 import Dashboard from './pages/Dashboard'
 import Calendar from './pages/Calendar'
 import PrivateRoute from './routes/PrivateRoute'
@@ -16,6 +18,8 @@ export default function App(){
         <Route path="/register" element={<Register />}/>
         <Route path="/verificar-email" element={<VerifyEmail />}/>
         <Route path="/validar-email" element={<ValidarEmail />}/>
+        <Route path="/recuperar-senha" element={<ForgotPassword />} />
+        <Route path="/resetar-senha" element={<ResetPassword />} />
         <Route path="/" element={<Login />}/>
         <Route path="/perfil" element={
           <PrivateRoute>
