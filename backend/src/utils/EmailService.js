@@ -67,6 +67,7 @@ async function enviarEmailVerificacao({ email, nome, token, motivo = "cadastro"}
 
 async function enviarEmailRecuperacaoSenha({ email, nome, token }){
     const resetUrl = `${process.env.FRONTEND_URL}/resetar-senha?token=${token}`
+    const minutosExpiracao = process.env.PASSWORD_RESET_EXPIRES_MINUTES || 15
 
     await resend.emails.send({
         from: process.env.EMAIL_FROM,
