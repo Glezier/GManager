@@ -10,6 +10,35 @@ exports.registrarUsuario = async (nome, email, senha) => {
     return result.rows[0] || null
 }
 
+// Inserir usuário a partir do google id
+exports.createGoogleUser = async({ nome, email, googleId }) => {
+    const result = await pool.query(
+        `INSERT INTO usuarios (nome, email, senha, email_verificado, email_verificado_em, provider, google_id)
+        VALUES
+            ($1, $2, $3, true, CURRENT_TIMESTAMP AT TIME ZONE 'America/Sao_Paulo', 'google', $4)
+        RETURNING id, nome, email, email_verificado, tema`,
+        [nome, email, '', googleId]
+    )
+
+    return result.rows[0] || null
+}
+
+// Adicionar google id
+exports.linkGoogleAccount = async (usuarioId, googleId) => {
+    const result = await pool.query(
+        `UPDATE usuarios
+        SET google_id = $1,
+            email_verificado = true,
+            email_verificado_em = COALESCE(email_verificado_em, CURRENT_TIMESTAMP AT TIME ZONE 'America/Sao_Paulo'),
+            updated_at = CURRENT_TIMESTAMP AT TIME ZONE 'America/Sao_Paulo'
+        WHERE id = $2
+        RETURNING id, nome, email, email_verificado,tema`,
+        [googleId, usuarioId]
+    )
+
+    return result.rows[0] || null
+}
+
 exports.findPublicById = async (id) => {
     const result = await pool.query(
         `SELECT id, nome, email, created_at, tema
@@ -43,6 +72,18 @@ exports.findByEmailExceptUser = async (email, id) => {
     return result.rows[0] || null
 }
 
+// Busca usuário pelo google id
+exports.findByGoogleId = async (googleId) => {
+    const result = await pool.query(
+        `SELECT id, nome, email, email_verificado, tema
+        FROM usuarios
+        WHERE google_id = $1`,
+        [googleId]
+    )
+
+    return result.rows[0] || null
+}
+
 // Confirmação de verificação de email
 // Em troca de email
 exports.setNovoEmailVerificado = async (usuario_id, novo_email) => {
@@ -69,7 +110,7 @@ exports.getUserByEmail = async (email) => {
     return result.rows[0] || null
 }
 
-// Busa usuário via email
+// Busca usuário via email
 // Usada no login
 exports.getUserByEmailLogin = async(email) => {
     const result = await pool.query(
@@ -78,8 +119,6 @@ exports.getUserByEmailLogin = async(email) => {
     )
     return result.rows[0] || null
 }
-
-
 
 // Em cadastro
 exports.setEmailVerificado = async (usuario_id) => {

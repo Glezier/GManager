@@ -9,7 +9,9 @@ if (process.env.NODE_ENV === 'production'){
     'DB_URL', 'JWT_SECRET', 
     'REFRESH_TOKEN_SECRET', 
     'FRONTEND_URL', 
-    'RESEND_API_KEY', 'EMAIL_FROM'
+    'RESEND_API_KEY', 'EMAIL_FROM',
+    'PASSWORD_RESET_TOKEN_SECRET',
+    'GOOGLE_CLIENT_ID'
   ]
 
   const missingEnv = requiredEnv.filter((envVar) => !process.env[envVar])

@@ -43,6 +43,27 @@ exports.login = async (req, res, next) => {
     }
 }
 
+// Login com Google
+exports.loginGoogle = async (req, res, next) => {
+    try{
+        const response = await authService.loginGoogle(req.body)
+
+        res.cookie(
+            'refreshToken',
+            response.refreshToken,
+            getRefreshTokenOptions()
+        )
+
+        res.json({
+            token: response.accessToken,
+            usuario: response.usuario
+        })
+
+    } catch(error){
+        next(error)
+    }
+}
+
 // Refresh token
 exports.refreshToken = async (req,res,next) => {
     try{

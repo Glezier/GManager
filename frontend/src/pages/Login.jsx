@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate, Link, useLocation } from 'react-router-dom'
-import { login, reenviarVerificacao, refreshToken } from '../api/api'
+import { GoogleLogin } from '@react-oauth/google'
+import { login, loginGoogle, reenviarVerificacao, refreshToken } from '../api/api'
 import { getToken, setToken } from '../utils/auth'
 import { salvarTemaLocal } from '../utils/theme'
 import './Auth.css'
@@ -76,6 +77,31 @@ export default function Login(){
             setMensagemSucesso(data.message)
             setEmailNaoVerificado(false)
         } catch(error){
+            setErro(error.message)
+        } finally{
+            setLoading(false)
+        }
+    }
+
+    // Login com Google
+    async function handleGoogleSuccess(credentialResponse){
+        try{
+            setErro('')
+            setMensagemSucesso('')
+            setEmailNaoVerificado(false)
+            setLoading(true)
+
+            const data = await loginGoogle(credentialResponse.credential)
+
+            if (data.usuario?.tema){
+                salvarTemaLocal(data.usuario.tema)
+            }
+
+            if (data.token){
+                setToken(data.token)
+                navigate('/dashboard')
+            }
+        } catch (error){
             setErro(error.message)
         } finally{
             setLoading(false)
@@ -246,6 +272,17 @@ export default function Login(){
                         <button className='auth-submit' type='submit' disabled={loading || bloqueado}>
                             {loading ? "Entrando" : "Entrar"}
                         </button>
+
+                        <div className='auth-google-login'>
+                            <GoogleLogin 
+                                onSuccess={handleGoogleSuccess}
+                                onError={() => {
+                                    setErro('Não foi possível entrar com Google')
+                                }}
+                                width="100%"
+                                
+                            />
+                        </div>
                     </form>
 
                     <p className='auth-alt'>
