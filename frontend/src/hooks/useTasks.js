@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
-import { criarTarefa, deletarTarefa, concluirTarefa, atualizarTarefa, isAuthError } from '../api/api'
+import { criarTarefa, deletarTarefa, concluirTarefa, atualizarTarefa } from '../api/tasksApi'
+import { isAuthError } from '../api/errors'
 import { getDataLimiteAnos, getDataMinimaAnos } from '../utils/date'
 import { useTarefas } from './useTarefas'
 import { removeToken } from '../utils/auth'

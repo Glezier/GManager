@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { solicitarRecuperacaoSenha } from '../api/api'
+import { solicitarRecuperacaoSenha } from '../api/authApi'
 import FullLogo from '../assets/icons/full_logo.png'
 import './Auth.css'
 

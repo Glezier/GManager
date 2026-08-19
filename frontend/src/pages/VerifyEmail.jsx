@@ -1,6 +1,6 @@
 import { useSearchParams, Link, useNavigate } from 'react-router-dom'
 import { useState, useEffect, useRef } from 'react'
-import { verificarEmail, reenviarVerificacao } from '../api/api'
+import { verificarEmail, reenviarVerificacao } from '../api/authApi'
 import './Auth.css'
 import FullLogo from '../assets/icons/full_logo.png'
 

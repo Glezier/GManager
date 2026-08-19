@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { useNavigate, Link } from 'react-router-dom'
-import { registrar } from "../api/api"
+import { registrar } from "../api/authApi"
 import './Auth.css'
 import FullLogo from '../assets/icons/full_logo.png'
 import EyeClosed from '../assets/icons/eye-closed.png'

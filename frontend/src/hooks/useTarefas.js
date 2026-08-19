@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query"
-import { listarTarefas } from "../api/api"
+import { listarTarefas } from "../api/tasksApi"
 
 export function useTarefas({ token, inicio, fim, enabled = true }) {
     return useQuery({

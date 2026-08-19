@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import { useMe } from "../hooks/useMe"
-import { atualizarNome, atualizarEmail, atualizarSenha, atualizarTema } from "../api/api"
+import { atualizarNome, atualizarEmail, atualizarSenha, atualizarTema } from "../api/profileApi"
 import { useQueryClient, useMutation } from "@tanstack/react-query"
 import { getTemaSalvo, salvarTemaLocal } from "../utils/theme"
 import { removeToken } from "../utils/auth"

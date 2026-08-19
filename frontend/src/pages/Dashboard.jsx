@@ -5,7 +5,7 @@ import { getData, formatarData } from "../utils/date"
 import { getToken, removeToken } from "../utils/auth"
 import { ordenarTarefas } from "../utils/taskOrder"
 
-import { logout } from "../api/api"
+import { logout } from "../api/authApi"
 
 import MiniCalendar from "../components/MiniCalendar"
 import TaskForm from "../components/TaskForm"

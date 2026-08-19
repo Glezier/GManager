@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { Link, useNavigate, useSearchParams } from "react-router-dom"
-import { redefinirSenha } from "../api/api"
+import { redefinirSenha } from "../api/authApi"
 import FullLogo from '../assets/icons/full_logo.png'
 import './Auth.css'
 
