@@ -97,7 +97,7 @@ async function enviarEmailRecuperacaoSenha({ email, nome, token }){
 
                     <a
                         href="${resetUrl}"
-                        style="display: inline-block; padding: 14px 24px; background: #f59e0b; color: #111827; text-decoration: none; font-weight: 700; border-radius: 12px; font-size: 15px;"
+                        style="display: inline-block; padding: 14px 24px; background: #22c55e; color: #111827; text-decoration: none; font-weight: 700; border-radius: 12px; font-size: 15px;"
                     >
                         Redefinir senha
                     </a>

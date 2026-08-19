@@ -30,9 +30,9 @@ O projeto agora esta na fase de estabilizacao pos-deploy: separar ambiente de de
 
 ### Fase 3: Detalhes importantes
 - pagina inicial antes de login
-- social login com Google
 - upload de foto pra aba perfil
 - organizar a api em pastas
+- analisar se a forma de implementação de tema é a melhor possível
 - aprender hackear tentando hackear o proprio site
 
 ### Fase 4: Produto

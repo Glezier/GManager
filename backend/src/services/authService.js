@@ -5,6 +5,7 @@ const refreshTokenRepository = require("../repositories/refreshTokensRepository"
 const AppError = require("../utils/AppError")
 const { enviarEmailVerificacao } = require("../utils/EmailService")
 const bcrypt = require('bcryptjs')
+const { OAuth2Client } = require('google-auth-library')
 const jwt = require("jsonwebtoken")
 const { gerarRefreshToken, gerarHashRefreshToken, gerarExpiracaoRefreshToken } = require("../utils/RefreshToken")
 const { gerarTokenEmail, gerarHashToken } = require("../utils/EmailVerification")
@@ -175,5 +176,71 @@ exports.logout = async (refreshToken) => {
 
     return {
         message: 'Logout realizado com sucesso'
+    }
+}
+
+// Cliente para validar as credenciais enviadas
+const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID)
+
+exports.loginGoogle = async ({ credential }) => {
+    if (!credential){
+        throw new AppError(
+            'Credencial do Google não informada',
+            400,
+            'VALIDATION_ERROR'
+        )
+    }
+
+    // Validação do token
+    // Se foi enviado para o My Gmanager
+    const ticket = await googleClient.verifyIdToken({
+        idToken: credential,
+        audience: process.env.GOOGLE_CLIENT_ID
+    })
+
+    const payload = ticket.getPayload()
+
+    if (!payload?.email || !payload?.sub){
+        throw new AppError(
+            'Não foi possível validar a conta Google',
+            401,
+            'INVALID_GOOGLE_TOKEN'
+        )
+    }
+
+    const googleId = payload.sub
+    const emailCorrigido = payload.email.trim().toLocaleLowerCase()
+    const nome = payload.name || emailCorrigido.split('@')[0]
+
+    let usuario = await userRepository.findByGoogleId(googleId)
+
+    // Caso de usuário sem link com o Google
+    if (!usuario){
+        const usuarioExistente = await userRepository.getUserByEmailLogin(emailCorrigido)
+
+        // Usuário com email existente 
+        if (usuarioExistente) {
+            usuario = await userRepository.linkGoogleAccount(usuarioExistente.id, googleId)
+        } else{ // Usuário que nunca realizou registro
+            usuario = await userRepository.createGoogleUser({
+                nome,
+                email: emailCorrigido,
+                googleId
+            })
+        }
+    }
+
+    const accessToken = gerarAccessToken(usuario.id)
+    const refreshToken = await criarSessaoRefreshToken(usuario.id)
+
+    return {
+        accessToken,
+        refreshToken,
+        usuario : {
+            id: usuario.id,
+            nome: usuario.nome,
+            email: usuario.email,
+            tema: usuario.tema
+        }
     }
 }

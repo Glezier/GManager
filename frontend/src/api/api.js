@@ -277,6 +277,24 @@ export async function reenviarVerificacao(email){
     return response.json()
 }
 
+// Login com Google
+export async function loginGoogle(credential){
+    const response = await fetchComTratamento(`${API_URL}/auth/google`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        credentials: 'include',
+        body: JSON.stringify({ credential })
+    })
+
+    if (!response.ok){
+        throw await getApiError(response)
+    }
+
+    return response.json()
+}
+
 // Login
 export async function login(email,senha){
     const response = await fetchComTratamento(`${API_URL}/auth/login`,{

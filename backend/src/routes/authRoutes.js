@@ -9,6 +9,7 @@ const authMiddleware = require('../middleswares/authMiddleware')
 
 router.post('/register', rateLimitMiddleware.authLimiter, authController.registrar)
 router.post('/login', rateLimitMiddleware.loginLimiter, authController.login)
+router.post('/google', rateLimitMiddleware.loginLimiter, authController.loginGoogle)
 router.get('/verificar-email', emailVerificationController.verificarEmail)
 router.post('/reenviar-verificacao', rateLimitMiddleware.authLimiter, emailVerificationController.reenviarVerificacao)
 router.post('/forgot-password', rateLimitMiddleware.authLimiter, passwordResetController.solicitarRecuperacaoSenha)
