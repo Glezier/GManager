@@ -1,8 +1,9 @@
 .profile-page {
   max-width: var(--max-layout-width);
-  min-height: 100vh;
-  margin: 50px auto;
-  padding: 20px;
+  width: 100%;
+  min-height: 100dvh;
+  margin: clamp(16px, 4vw, 50px) auto;
+  padding: clamp(12px, 2.4vw, 20px);
 }
 
 .profile-shell {
@@ -141,8 +142,10 @@
 .profile-card-header {
   display: flex;
   justify-content: space-between;
+  align-items: flex-start;
   gap: 16px;
   margin-bottom: 28px;
+  min-width: 0;
 }
 
 .profile-card-header h1 {
@@ -183,6 +186,7 @@
   min-width: 0;
   display: grid;
   gap: 8px;
+  flex: 1;
 }
 
 .profile-edit-button {
@@ -314,6 +318,7 @@
   align-items: center;
   padding: 0 12px;
   background: var(--bg-interactive-muted);
+  gap: 18px;
 }
 
 .theme .profile-info-row {
@@ -377,7 +382,6 @@
 }
 
 .theme {
-  gap: 18px;
   padding: 0 18px;
 }
 
@@ -403,16 +407,105 @@
     grid-template-columns: 1fr;
   }
 
+  .profile-sidebar {
+    grid-template-columns: 1fr;
+  }
+
   .profile-card {
     padding: 22px;
   }
 
   .profile-info-row {
-    flex-direction: column;
+    align-items: flex-start;
     gap: 6px;
   }
 
   .profile-info-row strong {
     text-align: left;
+  }
+}
+
+@media (max-width: 640px) {
+  .profile-card,
+  .profile-sidebar {
+    border-radius: 18px;
+  }
+
+  .profile-card {
+    padding: 18px;
+  }
+
+  .profile-card-header {
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .profile-card-header h1 {
+    font-size: 2rem;
+    line-height: 1.05;
+  }
+
+  .profile-summary {
+    padding: 12px;
+  }
+
+  .profile-info-row {
+    padding: 16px;
+  }
+
+  .profile-edit-button {
+    align-self: flex-end;
+    margin-top: -42px;
+  }
+
+  .theme {
+    align-items: center;
+    padding: 0 14px;
+  }
+
+  .theme .profile-info-row {
+    padding: 16px 0;
+  }
+
+  .profile-edit-actions .btn-secondary,
+  .profile-edit-actions .btn-primary,
+  .profile-edit-actions .btn-danger {
+    flex: 1 1 160px;
+  }
+}
+
+@media (max-width: 420px) {
+  .profile-summary {
+    align-items: flex-start;
+  }
+
+  .profile-avatar {
+    width: 48px;
+    height: 48px;
+    flex-basis: 48px;
+  }
+
+  .profile-info-row {
+    gap: 10px;
+  }
+
+  .profile-edit-button {
+    margin-top: 0;
+    align-self: flex-start;
+  }
+
+  .theme {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 14px;
+  }
+
+  .theme .profile-info-row {
+    padding: 0;
+  }
+
+  .theme-switch {
+    align-self: flex-start;
   }
 }

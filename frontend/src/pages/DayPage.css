@@ -1,13 +1,14 @@
 .day-page {
   max-width: 1200px;
+  width: 100%;
   margin: 0 auto;
-  padding: 20px;
-  min-height: 100vh;
+  padding: clamp(14px, 2.4vw, 20px);
+  min-height: 100dvh;
 }
 
 .day-hero {
   margin-bottom: 28px;
-  padding: 32px;
+  padding: clamp(22px, 3vw, 32px);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-panel);
   background:
@@ -50,6 +51,7 @@
   align-items: center;
   gap: 16px;
   margin-bottom: 24px;
+  min-width: 0;
 }
 
 .day-nav {
@@ -80,7 +82,7 @@
 }
 
 .day-nav button {
-  min-width: 164px;
+  min-width: min(164px, 100%);
 }
 
 .day-back:hover,
@@ -137,21 +139,52 @@
 
   .day-nav {
     width: 100%;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .day-nav button,
   .day-back {
     width: 100%;
   }
+
+  .day-nav button {
+    width: 100%;
+  }
+
   .day-hero {
-  padding: 24px;
+    padding: 24px;
+  }
+
+  .day-page .dashboard-panel-today {
+    padding: 24px;
+  }
+
+  .day-page .dashboard-progress {
+    width: 100%;
+  }
 }
 
-.day-page .dashboard-panel-today {
-  padding: 24px;
-}
+@media (max-width: 640px) {
+  .day-page {
+    padding: 12px;
+  }
 
-.day-page .dashboard-progress {
-  width: 100%;
-}
+  .day-hero,
+  .day-page .dashboard-panel {
+    border-radius: 18px;
+  }
+
+  .day-hero-title {
+    font-size: 2rem;
+    line-height: 1.05;
+  }
+
+  .day-nav {
+    grid-template-columns: 1fr;
+  }
+
+  .task-modal-overlay {
+    align-items: flex-end;
+    padding: 12px;
+  }
 }

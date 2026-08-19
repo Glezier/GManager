@@ -38,6 +38,9 @@ export default function Calendar(){
     
     const [mesSelecionado, setMesSelecionado] = useState(dataInicialCalendario.getMonth())
     const [anoSelecionado, setAnoSelecionado] = useState(dataInicialCalendario.getFullYear())
+    const [calendarioCompacto, setCalendarioCompacto] = useState(() => {
+        return typeof window !== 'undefined' && window.matchMedia('(max-width: 640px)').matches
+    })
 
     const { data: usuario, isLoading: carregandoUsuario, error: erroUsuario } = useMe()
 
@@ -64,6 +67,20 @@ export default function Calendar(){
         }
 
     }, [token, navigate])
+
+    useEffect(() => {
+        const mediaQuery = window.matchMedia('(max-width: 640px)')
+
+        function atualizarCalendarioCompacto(event){
+            setCalendarioCompacto(event.matches)
+        }
+
+        mediaQuery.addEventListener('change', atualizarCalendarioCompacto)
+
+        return () => {
+            mediaQuery.removeEventListener('change', atualizarCalendarioCompacto)
+        }
+    }, [])
 
     // Anos mostrados no calendário pelo select
     const anos = useMemo(() => {
@@ -250,10 +267,20 @@ export default function Calendar(){
                     plugins={[dayGridPlugin, interactionPlugin]}
                     initialView='dayGridMonth'
                     locale='pt-br'
+                    headerToolbar={{
+                        left: 'title',
+                        center: '',
+                        right: 'today prev,next'
+                    }}
+                    buttonText={{
+                        today: 'Hoje'
+                    }}
+                    dayHeaderFormat={calendarioCompacto ? { weekday: 'narrow' } : { weekday: 'short' }}
                     events={eventos}
                     dateClick={handleDate}
                     eventClick={handleDateClick}
-                    dayMaxEvents={3}
+                    dayMaxEvents={calendarioCompacto ? 1 : 3}
+                    fixedWeekCount={false}
                     height="auto"
                     datesSet={handleDatesSet}
                     validRange={limiteCalendario}

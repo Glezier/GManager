@@ -5,7 +5,7 @@ export const API_URL = import.meta.env.VITE_API_URL // URL para busca da API
 
 // O usuário deve estar autenticado para todas as ações
 // Essa função protege as rotas de fetch contra usuarios nao autenticados
-export async function fetchAutenticado(url, options = {}){
+export async function fetchAutenticado(url, options){
     const token = getToken()
 
     let response
@@ -14,7 +14,7 @@ export async function fetchAutenticado(url, options = {}){
         response = await fetch(url, {
             ...options,
             headers: {
-                ...(options.headers || {}),
+                ...(options?.headers || {}),
                 Authorization: `Bearer ${token}`
             }
         })
@@ -71,7 +71,7 @@ export async function fetchAutenticado(url, options = {}){
         response = await fetch(url, {
             ...options,
             headers: {
-                ...(options.headers || {}),
+                ...(options?.headers || {}),
                 Authorization: `Bearer ${getToken()}`
             }
         })
@@ -90,7 +90,7 @@ export async function fetchAutenticado(url, options = {}){
 }
 
 // Tratamento fetch para buscar com problema no servidor para funções não de tarefas
-export async function fetchComTratamento(url, options = {}){
+export async function fetchComTratamento(url, options){
     try{
         return await fetch(url, options)
     } catch(error){

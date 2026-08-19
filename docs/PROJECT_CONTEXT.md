@@ -31,12 +31,11 @@ O projeto agora esta na fase de estabilizacao pos-deploy: separar ambiente de de
 ### Fase 3: Detalhes importantes
 - pagina inicial antes de login
 - upload de foto pra aba perfil
-- organizar a api em pastas
 - analisar se a forma de implementação de tema é a melhor possível
 - aprender hackear tentando hackear o proprio site
+- add footer
 
 ### Fase 4: Produto
-- responsividade
 - adicionar validators no frontend
 - filtros por status e data
 - busca de tarefas
@@ -46,6 +45,7 @@ O projeto agora esta na fase de estabilizacao pos-deploy: separar ambiente de de
 - exportacao em PDF
 - importar tarefas de outros apps
 - metricas simples
+- colocar anuncios
 
 ### Fase 5: Recursos em breve
 - avaliar notas (por dia e uma aba só pra ela com várias)
