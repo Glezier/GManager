@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import './TaskForm.css'  
 import { formatarData, formatarHora, getDataLimiteAnos, getDataMinimaAnos } from '../utils/date'
+import { validarTarefa } from '../validators/tasksValidators'
 
 export default function TaskForm ({ criar, cancelar, hoje, erro='', tarefaInicial = null }){
 
@@ -19,6 +20,13 @@ export default function TaskForm ({ criar, cancelar, hoje, erro='', tarefaInicia
     function handleSubmit(e){
         e.preventDefault() // React controlar a execução do formulário
 
+        const erroValidacao = validarTarefa({ titulo })
+
+        if (erroValidacao){
+            setErroForm(erroValidacao)
+            return
+        }
+        
         criar({
             titulo,
             descricao, 

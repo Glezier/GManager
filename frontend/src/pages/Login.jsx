@@ -5,6 +5,7 @@ import { login, loginGoogle, reenviarVerificacao } from '../api/authApi'
 import { refreshToken } from '../api/client'
 import { getToken, setToken } from '../utils/auth'
 import { salvarTemaLocal } from '../utils/theme'
+import { validarLogin } from '../validators/authValidators'
 import './Auth.css'
 import FullLogo from '../assets/icons/full_logo.png'
 import EyeClosed from '../assets/icons/eye-closed.png'
@@ -36,6 +37,13 @@ export default function Login(){
     const handleLogin = async(e) => {
         e.preventDefault()
         setErro("")
+
+        const erroValidacao = validarLogin({ email, senha })
+        if (erroValidacao){
+            setErro(erroValidacao)
+            return
+        }
+        
         setLoading(true)
         setMensagemSucesso('')
         setEmailNaoVerificado(false)

@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { solicitarRecuperacaoSenha } from '../api/authApi'
+import { validarRecuperacaoSenha } from '../validators/authValidators'
 import FullLogo from '../assets/icons/full_logo.png'
 import './Auth.css'
 
@@ -19,6 +20,13 @@ export default function ForgotPassword() {
         e.preventDefault()
         setErro("")
         setSucesso("")
+
+        const erroValidacao = validarRecuperacaoSenha({ email })
+        if (erroValidacao){
+            setErro(erroValidacao)
+            return
+        }
+        
         setLoading(true)
 
         try{

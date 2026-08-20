@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { useNavigate, Link } from 'react-router-dom'
 import { registrar } from "../api/authApi"
+import { validarCadastro } from "../validators/authValidators"
 import './Auth.css'
 import FullLogo from '../assets/icons/full_logo.png'
 import EyeClosed from '../assets/icons/eye-closed.png'
@@ -22,8 +23,15 @@ export default function Register(){
         e.preventDefault()
         setErro("")
 
-        if(senha !== confirmarSenha){
-            setErro('As senhas devem ser iguais')
+        const erroValidacao = validarCadastro({
+            nome,
+            email,
+            senha,
+            confirmarSenha
+        })
+
+        if (erroValidacao) {
+            setErro(erroValidacao)
             return
         }
 

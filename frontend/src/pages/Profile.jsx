@@ -5,6 +5,7 @@ import { atualizarNome, atualizarEmail, atualizarSenha, atualizarTema } from "..
 import { useQueryClient, useMutation } from "@tanstack/react-query"
 import { getTemaSalvo, salvarTemaLocal } from "../utils/theme"
 import { removeToken } from "../utils/auth"
+import { validarNomePerfil, validarSenhaPerfil, validarEmailPerfil } from "../validators/profileValidators"
 import "./Profile.css"
 import LoadingState from "../components/ui/LoadingState"
 import ConfirmBox from "../components/ConfirmBox"
@@ -90,12 +91,14 @@ export default function Profile(){
 
         const nomeCorrigido = nomeEditado.trim()
 
-        if (!nomeCorrigido){
-            setErroForm("Nome é obrigatório")
+        const erroValidacao = validarNomePerfil({ nome: nomeCorrigido })
+
+        if (erroValidacao){
+            setErroForm(erroValidacao)
             return
         }
 
-        if(nomeCorrigido === usuario.nome){
+        if (nomeCorrigido === usuario.nome){
             cancelarEdicao()
             return
         }
@@ -108,8 +111,13 @@ export default function Profile(){
 
         const emailCorrigido = emailEditado.trim().toLowerCase()
 
-        if (!emailCorrigido || !senhaEmail){
-            setErroForm("Novo email e senha atual são obrigatórios")
+        const erroValidacao = validarEmailPerfil({
+            email: emailCorrigido,
+            senha: senhaEmail
+        })
+
+        if (erroValidacao){
+            setErroForm(erroValidacao)
             return
         }
 
@@ -129,23 +137,14 @@ export default function Profile(){
     function salvarSenha(event){
         event.preventDefault()
 
-        if (!senhaAtual || !novaSenha || !confirmarSenha){
-            setErroForm("Preencha todos os campos de senha")
-            return
-        }
+        const erroValidacao = validarSenhaPerfil({
+            senhaAtual,
+            novaSenha, 
+            confirmarSenha
+        })
 
-        if (novaSenha.length < 8 || novaSenha.length > 50) {
-            setErroForm("A nova senha deve possuir entre 8 e 50 caracteres")
-            return
-        }
-
-        if (novaSenha !== confirmarSenha) {
-            setErroForm("Nova senha e confirmação devem ser iguais")
-            return
-        }
-
-        if (senhaAtual === novaSenha) {
-            setErroForm("A nova senha deve ser diferente da senha atual")
+        if (erroValidacao){
+            setErroForm(erroValidacao)
             return
         }
 

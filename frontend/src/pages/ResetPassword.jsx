@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { Link, useNavigate, useSearchParams } from "react-router-dom"
 import { redefinirSenha } from "../api/authApi"
+import { validarRedefinicaoSenha } from "../validators/authValidators"
 import FullLogo from '../assets/icons/full_logo.png'
 import './Auth.css'
 
@@ -19,6 +20,17 @@ export default function ResetPassword () {
     async function handleSubmit(e){
         e.preventDefault()
         setErro('')
+
+        const erroValidacao = validarRedefinicaoSenha({
+            senha: novaSenha,
+            confirmarSenha
+        })
+
+        if (erroValidacao) {
+            setErro(erroValidacao)
+            return
+        }
+        
         setLoading(true)
 
         try{
