@@ -2,6 +2,7 @@ import { useState } from "react"
 import { useNavigate, Link } from 'react-router-dom'
 import { registrar } from "../api/authApi"
 import { validarCadastro } from "../validators/authValidators"
+import { VALIDATION_LIMITS } from "../validators/validationRules"
 import './Auth.css'
 import FullLogo from '../assets/icons/full_logo.png'
 import EyeClosed from '../assets/icons/eye-closed.png'
@@ -93,7 +94,7 @@ export default function Register(){
                         <p className="auth-feedback auth-feedback-error">{erro}</p>
                     )}
 
-                    <form className="auth-form" onSubmit={handleSubmit}>
+                    <form className="auth-form" onSubmit={handleSubmit} noValidate>
                         <div className="auth-field">
                             <label htmlFor="register-name">Nome</label>
                             <input 
@@ -102,7 +103,7 @@ export default function Register(){
                                 placeholder="Digite seu nome"
                                 value={nome}
                                 onChange={(e) => setNome(e.target.value)}
-                                maxLength={100}
+                                maxLength={VALIDATION_LIMITS.nomeMax}
                                 required
                             />
                         </div>
@@ -115,7 +116,7 @@ export default function Register(){
                                 placeholder="Digite seu email"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
-                                maxLength={120}
+                                maxLength={VALIDATION_LIMITS.emailMax}
                                 required
                             />
                         </div>
@@ -130,8 +131,8 @@ export default function Register(){
                                     value={senha}
                                     onChange={(e) => setSenha(e.target.value)}
                                     required
-                                    minLength={8}
-                                    maxLength={50}
+                                    minLength={VALIDATION_LIMITS.senhaMin}
+                                    maxLength={VALIDATION_LIMITS.senhaMax}
                                 />
                                 <button className="auth-password-toggle"
                                     type='button'  
@@ -158,8 +159,8 @@ export default function Register(){
                                     value={confirmarSenha}
                                     onChange={(e) => setConfirmarSenha(e.target.value)}
                                     required
-                                    minLength={8}
-                                    maxLength={50}
+                                    minLength={VALIDATION_LIMITS.senhaMin}
+                                    maxLength={VALIDATION_LIMITS.senhaMax}
                                 />
                                 <button className="auth-password-toggle"
                                     type='button'  

@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { solicitarRecuperacaoSenha } from '../api/authApi'
+import { VALIDATION_LIMITS } from '../validators/validationRules'
 import { validarRecuperacaoSenha } from '../validators/authValidators'
 import FullLogo from '../assets/icons/full_logo.png'
 import './Auth.css'
@@ -69,7 +70,7 @@ export default function ForgotPassword() {
                         <p className='auth-feedback dashboard-feedback-success'>{sucesso}</p>
                     )}
 
-                    <form className='auth-form' onSubmit={handleSubmit}>
+                    <form className='auth-form' onSubmit={handleSubmit} noValidate>
                         <div className='auth-field'>
                             <label htmlFor="forgot-email">Email</label>
                             <input
@@ -80,7 +81,7 @@ export default function ForgotPassword() {
                                 onChange={(e) => setEmail(e.target.value)}
                                 ref={emailRef}
                                 disabled={loading}
-                                maxLength={120}
+                                maxLength={VALIDATION_LIMITS.emailMax}
                                 required
                             />
                         </div>

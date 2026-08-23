@@ -6,6 +6,7 @@ import { useQueryClient, useMutation } from "@tanstack/react-query"
 import { getTemaSalvo, salvarTemaLocal } from "../utils/theme"
 import { removeToken } from "../utils/auth"
 import { validarNomePerfil, validarSenhaPerfil, validarEmailPerfil } from "../validators/profileValidators"
+import { VALIDATION_LIMITS } from "../validators/validationRules"
 import "./Profile.css"
 import LoadingState from "../components/ui/LoadingState"
 import ConfirmBox from "../components/ConfirmBox"
@@ -418,13 +419,12 @@ export default function Profile(){
                                             <span>Nome</span>
 
                                             {editando === "nome" ? (
-                                                <form className="profile-edit-form" onSubmit={salvarNome}>
+                                                <form className="profile-edit-form" onSubmit={salvarNome} noValidate>
                                                     <input 
                                                         type="text"
                                                         value={nomeEditado}
                                                         onChange={(e) => setNomeEditado(e.target.value)}
-                                                        minLength={2}
-                                                        maxLength={100} 
+                                                        maxLength={VALIDATION_LIMITS.nomeMax} 
                                                         autoFocus
                                                     />
 
@@ -460,12 +460,12 @@ export default function Profile(){
 
                                             {editando === "email" ? (
                                                 <>
-                                                    <form className="profile-edit-form" onSubmit={salvarEmail}>
+                                                    <form className="profile-edit-form" onSubmit={salvarEmail} noValidate>
                                                         <input
                                                             type="email"
                                                             value={emailEditado}
                                                             onChange={(e) => setEmailEditado(e.target.value)}
-                                                            maxLength={120}
+                                                            maxLength={VALIDATION_LIMITS.emailMax}
                                                             placeholder="Digite seu novo email"
                                                             autoFocus
                                                             required
@@ -477,7 +477,7 @@ export default function Profile(){
                                                                 placeholder="Senha atual"
                                                                 value={senhaEmail}
                                                                 onChange={(e) => setSenhaEmail(e.target.value)}
-                                                                minLength={8}
+                                                                minLength={VALIDATION_LIMITS.senhaMin}
                                                                 required
                                                             />
 
@@ -545,7 +545,7 @@ export default function Profile(){
 
                                             {editando === "senha" ? (
                                                 <>
-                                                    <form className="profile-edit-form" onSubmit={salvarSenha}>
+                                                    <form className="profile-edit-form" onSubmit={salvarSenha} noValidate>
                                                         <div className="profile-password-field">
                                                             <input
                                                                 type={mostrarSenhaPerfil1 ? "text" : "password"}
@@ -553,7 +553,7 @@ export default function Profile(){
                                                                 value={senhaAtual}
                                                                 onChange={(e) => setSenhaAtual(e.target.value)}
                                                                 autoFocus
-                                                                minLength={8}
+                                                                minLength={VALIDATION_LIMITS.senhaMin}
                                                                 required
                                                             />
 
@@ -573,8 +573,8 @@ export default function Profile(){
                                                                 placeholder="Nova senha"
                                                                 value={novaSenha}
                                                                 onChange={(e) => setNovaSenha(e.target.value)}
-                                                                minLength={8}
-                                                                maxLength={50}
+                                                                minLength={VALIDATION_LIMITS.senhaMin}
+                                                                maxLength={VALIDATION_LIMITS.senhaMax}
                                                                 required
                                                             />
 
@@ -594,8 +594,8 @@ export default function Profile(){
                                                                 placeholder="Confirmar nova senha"
                                                                 value={confirmarSenha}
                                                                 onChange={(e) => setConfirmarSenha(e.target.value)}
-                                                                minLength={8}
-                                                                maxLength={50}
+                                                                minLength={VALIDATION_LIMITS.senhaMin}
+                                                                maxLength={VALIDATION_LIMITS.senhaMax}
                                                                 required
                                                             />
 

@@ -2,6 +2,7 @@ import { useState } from "react"
 import { Link, useNavigate, useSearchParams } from "react-router-dom"
 import { redefinirSenha } from "../api/authApi"
 import { validarRedefinicaoSenha } from "../validators/authValidators"
+import { VALIDATION_LIMITS } from "../validators/validationRules"
 import FullLogo from '../assets/icons/full_logo.png'
 import './Auth.css'
 
@@ -82,15 +83,15 @@ export default function ResetPassword () {
                         <p className='auth-feedback auth-feedback-error'>{erro}</p>
                     )}
 
-                    <form className='auth-form' onSubmit={handleSubmit}>
+                    <form className='auth-form' onSubmit={handleSubmit} noValidate>
                         <div className='auth-field'>
                             <label htmlFor="reset-password">Nova senha</label>
                             <input
                                 id='reset-password'
                                 type="password"
                                 placeholder='Digite a nova senha'
-                                minLength={8}
-                                maxLength={50}
+                                minLength={VALIDATION_LIMITS.senhaMin}
+                                maxLength={VALIDATION_LIMITS.senhaMax}
                                 value={novaSenha}
                                 onChange={(e) => setNovaSenha(e.target.value)}
                                 disabled={loading || !token}
@@ -104,8 +105,8 @@ export default function ResetPassword () {
                                 id='reset-confirm-password'
                                 type="password"
                                 placeholder='Confirme a nova senha'
-                                minLength={8}
-                                maxLength={50}
+                                minLength={VALIDATION_LIMITS.senhaMin}
+                                maxLength={VALIDATION_LIMITS.senhaMax}
                                 value={confirmarSenha}
                                 onChange={(e) => setConfirmarSenha(e.target.value)}
                                 disabled={loading || !token}

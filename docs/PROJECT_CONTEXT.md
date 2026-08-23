@@ -36,12 +36,7 @@ O projeto agora esta na fase de estabilizacao pos-deploy: separar ambiente de de
 - add footer
 
 ### Fase 4: Produto
-- adicionar validators no frontend (- Adicionar noValidate nos forms para garantir que as mensagens venham dos seus validators, e não do navegador.
-- Mover validação de data do TaskForm para tasksValidators.js, porque ainda está em onInvalid.
-- No TaskForm, limpar erroForm no começo do submit:
-setErroForm('')
-- Futuramente validar formato de email no frontend também, não só campo vazio.
-- Futuramente centralizar limites como senha min 8, senha max 50, nome max 100, titulo max 60, para evitar número repetido entre input e validator.)
+
 - filtros por status e data
 - busca de tarefas
 - tarefas com datas continuas ou frequencia definida

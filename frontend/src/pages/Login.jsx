@@ -6,6 +6,7 @@ import { refreshToken } from '../api/client'
 import { getToken, setToken } from '../utils/auth'
 import { salvarTemaLocal } from '../utils/theme'
 import { validarLogin } from '../validators/authValidators'
+import { VALIDATION_LIMITS } from '../validators/validationRules'
 import './Auth.css'
 import FullLogo from '../assets/icons/full_logo.png'
 import EyeClosed from '../assets/icons/eye-closed.png'
@@ -234,7 +235,7 @@ export default function Login(){
                         <p className='auth-feedback dashboard-feedback-success'>{mensagemSucesso}</p>
                     )}
 
-                    <form className='auth-form' onSubmit={handleLogin}>
+                    <form className='auth-form' onSubmit={handleLogin} noValidate>
                         <div className='auth-field'>
                             <label htmlFor="login-email">Email</label>
                             <input
@@ -244,7 +245,7 @@ export default function Login(){
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}  
                                 ref={userRef}
-                                maxLength={120}
+                                maxLength={VALIDATION_LIMITS.emailMax}
                                 disabled={bloqueado} 
                                 required
                             />
@@ -257,8 +258,8 @@ export default function Login(){
                                     id='login-password'
                                     type={mostrarSenha ? "text" : "password"}
                                     placeholder='Digite sua senha'
-                                    minLength={8}
-                                    maxLength={50}
+                                    minLength={VALIDATION_LIMITS.senhaMin}
+                                    maxLength={VALIDATION_LIMITS.senhaMax}
                                     value={senha}
                                     disabled={bloqueado} 
                                     onChange={(e) => setSenha(e.target.value)}
