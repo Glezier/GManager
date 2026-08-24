@@ -9,7 +9,7 @@
 }
 
 .auth-card {
-  width: min(100%, 1000px);
+  width: 100%;
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(320px, 460px);
   background: linear-gradient(180deg, var(--bg-surface) 0%, var(--bg-surface-elevated) 100%);
@@ -19,6 +19,13 @@
   box-shadow: var(--shadow-elevated);
   backdrop-filter: blur(10px);
 }
+
+.auth-page-content {
+  width: min(100%, 1000px);
+  display: grid;
+  gap: 18px;
+}
+
 
 .auth-hero {
   min-width: 0;

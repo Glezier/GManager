@@ -3,6 +3,7 @@ import { Link, useNavigate, useSearchParams } from "react-router-dom"
 import { redefinirSenha } from "../api/authApi"
 import { validarRedefinicaoSenha } from "../validators/authValidators"
 import { VALIDATION_LIMITS } from "../validators/validationRules"
+import AppFooter from "../components/AppFooter"
 import FullLogo from '../assets/icons/full_logo.png'
 import './Auth.css'
 
@@ -53,77 +54,81 @@ export default function ResetPassword () {
 
     return (
         <main className='auth-page'>
-            <section className='auth-card'>
-                <aside className='auth-hero'>
-                    <div>
-                        <span className='auth-brand'>
-                            <img src={FullLogo} alt="Logo My GManager" className='auth-logo'/>
-                        </span>
-                    </div>
+            <div className="auth-page-content">
+                <section className='auth-card'>
+                    <aside className='auth-hero'>
+                        <div>
+                            <span className='auth-brand'>
+                                <img src={FullLogo} alt="Logo My GManager" className='auth-logo'/>
+                            </span>
+                        </div>
 
-                    <div>
-                        <h1>Nova senha</h1>
-                        <p>Crie uma nova senha para voltar a acessar sua conta.</p>
-                    </div>
-                </aside>
+                        <div>
+                            <h1>Nova senha</h1>
+                            <p>Crie uma nova senha para voltar a acessar sua conta.</p>
+                        </div>
+                    </aside>
 
-                <div className='auth-form-wrap'>
-                    <div className='auth-form-head'>
-                        <h2>Redefinir senha</h2>
-                        <p>Use uma senha segura, diferente da atual.</p>
-                    </div>
+                    <div className='auth-form-wrap'>
+                        <div className='auth-form-head'>
+                            <h2>Redefinir senha</h2>
+                            <p>Use uma senha segura, diferente da atual.</p>
+                        </div>
 
-                    {!token && (
-                        <p className='auth-feedback auth-feedback-error'>
-                            Link de recuperação inválido ou incompleto.
+                        {!token && (
+                            <p className='auth-feedback auth-feedback-error'>
+                                Link de recuperação inválido ou incompleto.
+                            </p>
+                        )}
+
+                        {erro && (
+                            <p className='auth-feedback auth-feedback-error'>{erro}</p>
+                        )}
+
+                        <form className='auth-form' onSubmit={handleSubmit} noValidate>
+                            <div className='auth-field'>
+                                <label htmlFor="reset-password">Nova senha</label>
+                                <input
+                                    id='reset-password'
+                                    type="password"
+                                    placeholder='Digite a nova senha'
+                                    minLength={VALIDATION_LIMITS.senhaMin}
+                                    maxLength={VALIDATION_LIMITS.senhaMax}
+                                    value={novaSenha}
+                                    onChange={(e) => setNovaSenha(e.target.value)}
+                                    disabled={loading || !token}
+                                    required
+                                />
+                            </div>
+
+                            <div className='auth-field'>
+                                <label htmlFor="reset-confirm-password">Confirmar senha</label>
+                                <input
+                                    id='reset-confirm-password'
+                                    type="password"
+                                    placeholder='Confirme a nova senha'
+                                    minLength={VALIDATION_LIMITS.senhaMin}
+                                    maxLength={VALIDATION_LIMITS.senhaMax}
+                                    value={confirmarSenha}
+                                    onChange={(e) => setConfirmarSenha(e.target.value)}
+                                    disabled={loading || !token}
+                                    required
+                                />
+                            </div>
+
+                            <button className='auth-submit' type='submit' disabled={loading || !token}>
+                                {loading ? 'Salvando...' : 'Salvar nova senha'}
+                            </button>
+                        </form>
+
+                        <p className='auth-alt'>
+                            <Link to='/'>Voltar para login</Link>
                         </p>
-                    )}
+                    </div>
+                </section>
 
-                    {erro && (
-                        <p className='auth-feedback auth-feedback-error'>{erro}</p>
-                    )}
-
-                    <form className='auth-form' onSubmit={handleSubmit} noValidate>
-                        <div className='auth-field'>
-                            <label htmlFor="reset-password">Nova senha</label>
-                            <input
-                                id='reset-password'
-                                type="password"
-                                placeholder='Digite a nova senha'
-                                minLength={VALIDATION_LIMITS.senhaMin}
-                                maxLength={VALIDATION_LIMITS.senhaMax}
-                                value={novaSenha}
-                                onChange={(e) => setNovaSenha(e.target.value)}
-                                disabled={loading || !token}
-                                required
-                            />
-                        </div>
-
-                        <div className='auth-field'>
-                            <label htmlFor="reset-confirm-password">Confirmar senha</label>
-                            <input
-                                id='reset-confirm-password'
-                                type="password"
-                                placeholder='Confirme a nova senha'
-                                minLength={VALIDATION_LIMITS.senhaMin}
-                                maxLength={VALIDATION_LIMITS.senhaMax}
-                                value={confirmarSenha}
-                                onChange={(e) => setConfirmarSenha(e.target.value)}
-                                disabled={loading || !token}
-                                required
-                            />
-                        </div>
-
-                        <button className='auth-submit' type='submit' disabled={loading || !token}>
-                            {loading ? 'Salvando...' : 'Salvar nova senha'}
-                        </button>
-                    </form>
-
-                    <p className='auth-alt'>
-                        <Link to='/'>Voltar para login</Link>
-                    </p>
-                </div>
-            </section>
+                <AppFooter />
+            </div>
         </main>
     )
 }

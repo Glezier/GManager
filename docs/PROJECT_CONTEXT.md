@@ -33,10 +33,8 @@ O projeto agora esta na fase de estabilizacao pos-deploy: separar ambiente de de
 - upload de foto pra aba perfil
 - analisar se a forma de implementação de tema é a melhor possível
 - aprender hackear tentando hackear o proprio site
-- add footer
 
 ### Fase 4: Produto
-
 - filtros por status e data
 - busca de tarefas
 - tarefas com datas continuas ou frequencia definida

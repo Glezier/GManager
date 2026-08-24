@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { solicitarRecuperacaoSenha } from '../api/authApi'
 import { VALIDATION_LIMITS } from '../validators/validationRules'
 import { validarRecuperacaoSenha } from '../validators/authValidators'
+import AppFooter from '../components/AppFooter'
 import FullLogo from '../assets/icons/full_logo.png'
 import './Auth.css'
 
@@ -42,60 +43,64 @@ export default function ForgotPassword() {
 
     return(
         <main className='auth-page'>
-            <section className='auth-card'>
-                <aside className='auth-hero'>
-                    <div>
-                        <span className='auth-brand'>
-                            <img src={FullLogo} alt="Logo My GManager" className='auth-logo'/>
-                        </span>
-                    </div>
-
-                    <div>
-                        <h1>Recuperar senha</h1>
-                        <p>Informe seu email para receber um link seguro de redefinição.</p>
-                    </div>
-                </aside>
-
-                <div className='auth-form-wrap'>
-                    <div className='auth-form-head'>
-                        <h2>Esqueci minha senha</h2>
-                        <p>Enviaremos as instruções caso o email esteja cadastrado.</p>
-                    </div>
-
-                    {erro && (
-                        <p className='auth-feedback auth-feedback-error'>{erro}</p>
-                    )}
-
-                    {sucesso && (
-                        <p className='auth-feedback dashboard-feedback-success'>{sucesso}</p>
-                    )}
-
-                    <form className='auth-form' onSubmit={handleSubmit} noValidate>
-                        <div className='auth-field'>
-                            <label htmlFor="forgot-email">Email</label>
-                            <input
-                                id='forgot-email'
-                                type="email"
-                                placeholder='Digite seu email'
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                ref={emailRef}
-                                disabled={loading}
-                                maxLength={VALIDATION_LIMITS.emailMax}
-                                required
-                            />
+            <div className='auth-page-content'>
+                <section className='auth-card'>
+                    <aside className='auth-hero'>
+                        <div>
+                            <span className='auth-brand'>
+                                <img src={FullLogo} alt="Logo My GManager" className='auth-logo'/>
+                            </span>
                         </div>
 
-                        <button className='auth-submit' type='submit' disabled={loading}>
-                            {loading ? 'Enviando...' : 'Enviar link'}
-                        </button>
-                    </form>
+                        <div>
+                            <h1>Recuperar senha</h1>
+                            <p>Informe seu email para receber um link seguro de redefinição.</p>
+                        </div>
+                    </aside>
 
-                    <p className='auth-alt'>
-                        <Link to='/'>Voltar para login</Link>
-                    </p>
-                </div>
-            </section>
+                    <div className='auth-form-wrap'>
+                        <div className='auth-form-head'>
+                            <h2>Esqueci minha senha</h2>
+                            <p>Enviaremos as instruções caso o email esteja cadastrado.</p>
+                        </div>
+
+                        {erro && (
+                            <p className='auth-feedback auth-feedback-error'>{erro}</p>
+                        )}
+
+                        {sucesso && (
+                            <p className='auth-feedback dashboard-feedback-success'>{sucesso}</p>
+                        )}
+
+                        <form className='auth-form' onSubmit={handleSubmit} noValidate>
+                            <div className='auth-field'>
+                                <label htmlFor="forgot-email">Email</label>
+                                <input
+                                    id='forgot-email'
+                                    type="email"
+                                    placeholder='Digite seu email'
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    ref={emailRef}
+                                    disabled={loading}
+                                    maxLength={VALIDATION_LIMITS.emailMax}
+                                    required
+                                />
+                            </div>
+
+                            <button className='auth-submit' type='submit' disabled={loading}>
+                                {loading ? 'Enviando...' : 'Enviar link'}
+                            </button>
+                        </form>
+
+                        <p className='auth-alt'>
+                            <Link to='/'>Voltar para login</Link>
+                        </p>
+                    </div>
+                </section>
+                
+                <AppFooter />
+            </div>
         </main>
     )
 } 

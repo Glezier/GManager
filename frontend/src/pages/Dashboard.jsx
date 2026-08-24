@@ -11,6 +11,7 @@ import MiniCalendar from "../components/MiniCalendar"
 import TaskForm from "../components/TaskForm"
 import DayTasksPanel from "../components/DayTasksPanel"
 import ConfirmBox from "../components/ConfirmBox"
+import AppFooter from "../components/AppFooter"
 
 import useTasks from "../hooks/useTasks"
 import useProgress from "../hooks/useProgress"
@@ -19,7 +20,6 @@ import useSemana from "../hooks/useSemana"
 import "./Dashboard.css"
 import FullLogo from '../assets/icons/full_logo.png'
 import CalendarIcon from '../assets/icons/calendar.png'
-import NotesIcon from '../assets/icons/notes.png'
 import ProfileIcon from './../assets/icons/profile.png'
 import LogoutIcon from '../assets/icons/logout.png'
 import AddIcon from '../assets/icons/add.png'
@@ -312,9 +312,7 @@ export default function Dashboard(){
                 </div>
             </section>
 
-            <footer className="dashboard-footer">
-                Gerenciador de tarefas
-            </footer>
+            <AppFooter minimal />
         </main>
     )
 }

@@ -1,6 +1,7 @@
 import { useSearchParams, Link, useNavigate } from 'react-router-dom'
 import { useState, useEffect, useRef } from 'react'
 import { verificarEmail, reenviarVerificacao } from '../api/authApi'
+import AppFooter from '../components/AppFooter'
 import './Auth.css'
 import FullLogo from '../assets/icons/full_logo.png'
 
@@ -89,86 +90,90 @@ export default function VerifyEmail(){
 
     return(
         <main className='auth-page'>
-            <section className='auth-card'>
-                <aside className='auth-hero'>
-                    <div>
-                        <span className='auth-brand'>
-                            <img src={FullLogo} alt="Logo My GManager" className='auth-logo'/>
-                        </span>
-                    </div>
-                    <div>
-                        <h1>Verificação de email</h1>
-                        <p>Confirme seu acesso para começar a usar o My GManager</p>
-                    </div>
-                </aside>
+            <div className='auth-page-content'>
+                <section className='auth-card'>
+                    <aside className='auth-hero'>
+                        <div>
+                            <span className='auth-brand'>
+                                <img src={FullLogo} alt="Logo My GManager" className='auth-logo'/>
+                            </span>
+                        </div>
+                        <div>
+                            <h1>Verificação de email</h1>
+                            <p>Confirme seu acesso para começar a usar o My GManager</p>
+                        </div>
+                    </aside>
 
-                <div className='auth-form-wrap'>
-                    <div className='auth-form-head'>
-                        <h2>
-                            {status === 'loading' && 'Verificando...'}
-                            {status === 'success' && 'Tudo certo'}
-                            {status === 'error' && 'Não foi possível verificar'}
-                        </h2>
-                        <p>{mensagem}</p>
-                    </div>
+                    <div className='auth-form-wrap'>
+                        <div className='auth-form-head'>
+                            <h2>
+                                {status === 'loading' && 'Verificando...'}
+                                {status === 'success' && 'Tudo certo'}
+                                {status === 'error' && 'Não foi possível verificar'}
+                            </h2>
+                            <p>{mensagem}</p>
+                        </div>
 
-                    <div className='auth-actions'>
-                        {status === 'success' ? (
-                            <button
-                                type='button'
-                                className='auth-submit'
-                                onClick={()=>{
-                                    navigate('/', {
-                                        state:{
-                                            mensagemSucesso: 'Email verificado com sucesso.'
-                                        }
-                                    })
-                                }}
-                            >
-                                Ir para o login
-                            </button>
-                        ) : (
-                            <>
-                                {status === 'error' && (
-                                    <div className='auth-field'>
-                                        <p style={{margin : '0', marginBottom: '4px'
-                                        }}>Informe seu email novamente para reenvio</p>
-
-                                        <label htmlFor="verify-email-resend">Email</label>
-
-                                        <input 
-                                            id='verify-email-resend'
-                                            type="email"
-                                            placeholder='Confirme seu email'
-                                            value={emailReenvio}
-                                            disabled={bloqueado}
-                                            onChange={(e) => setEmailReenvio(e.target.value)}
-                                            required 
-                                        />
-                                    </div>
-                                )}
-
+                        <div className='auth-actions'>
+                            {status === 'success' ? (
                                 <button
                                     type='button'
                                     className='auth-submit'
-                                    onClick={handleReenviar}
-                                    disabled={loadingReenvio || !emailReenvio.trim() || bloqueado}
+                                    onClick={()=>{
+                                        navigate('/', {
+                                            state:{
+                                                mensagemSucesso: 'Email verificado com sucesso.'
+                                            }
+                                        })
+                                    }}
                                 >
-                                    {loadingReenvio ? 'Reenviando...' : 'Reenviar email de verificação'}
+                                    Ir para o login
                                 </button>
+                            ) : (
+                                <>
+                                    {status === 'error' && (
+                                        <div className='auth-field'>
+                                            <p style={{margin : '0', marginBottom: '4px'
+                                            }}>Informe seu email novamente para reenvio</p>
 
-                                {mensagemReenvio && (
-                                    <p className='auth-feedback dashboard-feedback-success'>
-                                        {mensagemReenvio}
-                                    </p>
-                                )}
+                                            <label htmlFor="verify-email-resend">Email</label>
 
-                                <p className='auth-alt'><Link to='/'>Voltar para login</Link></p>
-                            </>
-                        )}
+                                            <input 
+                                                id='verify-email-resend'
+                                                type="email"
+                                                placeholder='Confirme seu email'
+                                                value={emailReenvio}
+                                                disabled={bloqueado}
+                                                onChange={(e) => setEmailReenvio(e.target.value)}
+                                                required 
+                                            />
+                                        </div>
+                                    )}
+
+                                    <button
+                                        type='button'
+                                        className='auth-submit'
+                                        onClick={handleReenviar}
+                                        disabled={loadingReenvio || !emailReenvio.trim() || bloqueado}
+                                    >
+                                        {loadingReenvio ? 'Reenviando...' : 'Reenviar email de verificação'}
+                                    </button>
+
+                                    {mensagemReenvio && (
+                                        <p className='auth-feedback dashboard-feedback-success'>
+                                            {mensagemReenvio}
+                                        </p>
+                                    )}
+
+                                    <p className='auth-alt'><Link to='/'>Voltar para login</Link></p>
+                                </>
+                            )}
+                        </div>
                     </div>
-                </div>
-            </section>
+                </section>
+
+                <AppFooter />
+            </div>
         </main>
     )
 }

@@ -9,6 +9,7 @@ import { getToken } from '../utils/auth'
 import { getData, formatarData } from '../utils/date'
 
 import LoadingState from '../components/ui/LoadingState'
+import AppFooter from '../components/AppFooter'
 
 import "./Calendar.css"
 
@@ -286,6 +287,8 @@ export default function Calendar(){
                     validRange={limiteCalendario}
                 />
             </section>
+
+            <AppFooter minimal />
         </main>
     )
 }

@@ -82,7 +82,7 @@
 }
 
 .day-nav button {
-  min-width: min(164px, 100%);
+  min-width: 170px;
 }
 
 .day-back:hover,
