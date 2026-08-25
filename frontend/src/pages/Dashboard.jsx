@@ -135,6 +135,7 @@ export default function Dashboard(){
                 <DayTasksPanel
                     subtitulo="Hoje"
                     titulo="Tarefas do dia"
+                    data={hoje}
                     erro={erroPagina}
                     sucesso={sucesso}
                     loading={loading}

@@ -205,6 +205,7 @@ export default function DayPage(){
       <DayTasksPanel
         subtitulo="Agenda do dia"
         titulo="Tarefas"
+        data={data}
         erro={erroPagina}
         sucesso={sucesso}
         loading={loading}
