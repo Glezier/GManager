@@ -1,10 +1,7 @@
-import { useState, useEffect, useRef } from "react"
 import TaskCard from "./TaskCard"
 import { compartilharTextoWhatsapp, formatarTarefasDoDiaParaTexto, baixarPdfTarefasDoDia } from "../utils/exportTasks"
+import ExportMenu from "./ExportMenu"
 import LoadingState from "./ui/LoadingState"
-import SendIcon from "../assets/icons/send.png"
-import WhatsappIcon from "../assets/icons/whatsapp.png"
-import PDFIcon from "../assets/icons/download.png"
 
 export default function DayTasksPanel({
     titulo,
@@ -22,51 +19,19 @@ export default function DayTasksPanel({
     onEditar,
     emptyMessage = 'Adicione uma nova tarefa para começar a organizar esse dia'
 }){
-
-    const [mostrarOpcoesCompartilhar, setMostrarOpcoesCompartilhar] = useState(false)
-
-    function alternarOpcoesCompartilhar() {
-        setMostrarOpcoesCompartilhar((atual) => !atual)
-    }
-
     function handleCompartilharWhatsapp(){
         const texto = formatarTarefasDoDiaParaTexto({
             data, tarefas
         })
 
         compartilharTextoWhatsapp(texto)
-        setMostrarOpcoesCompartilhar(false)
     }
 
     function handleCompartilharPDF() {
         baixarPdfTarefasDoDia({
             data, tarefas
         })
-
-        setMostrarOpcoesCompartilhar(false)
     }
-
-    const exportMenuRef = useRef(null)
-    useEffect(()=>{
-        if(!mostrarOpcoesCompartilhar){
-            return
-        }
-
-        function handleClickFora(event) {
-            if (
-                exportMenuRef.current &&
-                !exportMenuRef.current.contains(event.target)
-            ) {
-                setMostrarOpcoesCompartilhar(false)
-            }
-        }
-
-        document.addEventListener('pointerdown', handleClickFora)
-
-        return () => {
-            document.removeEventListener('pointerdown', handleClickFora)
-        }
-    }, [mostrarOpcoesCompartilhar])
 
     return(
         <div className="dashboard-panel dashboard-panel-today">
@@ -85,47 +50,10 @@ export default function DayTasksPanel({
                 <div className="day-tasks-panel-actions">
                     {botaoAcao}
                     {tarefas.length !== 0 && (
-                        <div className="task-export-menu" ref={exportMenuRef}>
-                            <button
-                                type="button"
-                                className="btn-secondary task-export-trigger"
-                                onClick={alternarOpcoesCompartilhar}
-                                aria-expanded={mostrarOpcoesCompartilhar}
-                                aria-haspopup="menu"
-                            >
-                                <img src={SendIcon} alt="Compartilhar tarefas" className="day-icons" />
-                                Compartilhar
-                            </button>
-
-                            {mostrarOpcoesCompartilhar && (
-                                <div className="task-export-options" role="menu">
-                                    <button
-                                        type="button"
-                                        className="task-export-option task-export-option-whatsapp"
-                                        role="menuitem"
-                                        onClick={handleCompartilharWhatsapp}
-                                    >
-                                        <div className="button-options">
-                                            WhatsApp
-                                            <img src={WhatsappIcon} alt="" className="day-icons"/>
-                                        </div>
-                                    </button>
-
-                                    <button
-                                        type="button"
-                                        className="task-export-option task-export-option-pdf"
-                                        role="menuitem"
-                                        onClick={handleCompartilharPDF}
-                                    >
-                                        <div className="button-options">
-                                            PDF
-                                            <img src={PDFIcon} alt="" className="day-icons"/>
-                                        </div>
-                                    </button>
-                                </div>
-                            )}
-                        </div>
-
+                        <ExportMenu 
+                            onWhatsapp={handleCompartilharWhatsapp}
+                            onPdf={handleCompartilharPDF}
+                        />
                     )}
                 </div>
                     {progresso !== null && (

@@ -244,83 +244,6 @@
   flex: 0 1 auto;
 }
 
-.task-export-menu {
-  position: relative;
-  display: inline-flex;
-}
-
-.task-export-trigger {
-  width: auto;
-}
-
-.button-options{
-  display: flex;
-  justify-content: space-between;
-}
-
-.task-export-options {
-  position: absolute;
-  top: calc(100% + 8px);
-  right: 0;
-  z-index: 20;
-  min-width: 190px;
-  padding: 8px;
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-card);
-  background: var(--bg-surface-elevated);
-  box-shadow: var(--shadow-soft);
-  display: grid;
-  gap: 6px;
-}
-
-.task-export-options button {
-  width: 100%;
-  min-height: 42px;
-  padding: 0 14px;
-  border: 1px solid transparent;
-  border-radius: 10px;
-  background: var(--bg-interactive-muted);
-  color: var(--text-primary);
-  text-align: left;
-  font: inherit;
-  font-weight: 700;
-  cursor: pointer;
-  transition:
-    background var(--transition-fast),
-    border-color var(--transition-fast),
-    color var(--transition-fast),
-    transform var(--transition-fast);
-}
-
-.task-export-options button:hover {
-  transform: translateY(-1px);
-  background: var(--bg-interactive-hover);
-}
-
-.task-export-option-whatsapp,
-  .task-export-option-pdf{
-  color: var(--accent-primary);
-}
-
-.task-export-option-whatsapp:hover,
-  .task-export-option-pdf:hover {
-  border-color: var(--accent-primary);
-}
-
-@media (max-width: 640px) {
-  .task-export-menu,
-  .task-export-trigger {
-    width: 100%;
-  }
-
-  .task-export-options {
-    position: static;
-    margin-top: 8px;
-    width: 100%;
-    min-width: 0;
-  }
-}
-
 .dashboard-task-list {
   display: grid;
   gap: 14px;
@@ -403,7 +326,6 @@
 }
 
 .dashboard-notes-box {
- 
   display: grid;
   align-content: start;
   gap: 14px;
