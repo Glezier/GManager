@@ -3,11 +3,14 @@ import dayGridPlugin from '@fullcalendar/daygrid'
 import interactionPlugin from '@fullcalendar/interaction'
 import { useState, useEffect, useMemo, useRef } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
+import { listarTarefas } from '../api/tasksApi'
 import { useMe } from '../hooks/useMe'
 import { useTarefas } from '../hooks/useTarefas'
 import { getToken } from '../utils/auth'
 import { getData, formatarData } from '../utils/date'
+import { compartilharTextoWhatsapp, formatarTarefasPorPeriodoParaTexto, baixarPdfTarefasPorPeriodo } from '../utils/exportTasks'
 
+import ExportMenu from '../components/ExportMenu'
 import LoadingState from '../components/ui/LoadingState'
 import AppFooter from '../components/AppFooter'
 
@@ -26,6 +29,90 @@ export default function Calendar(){
         inicio: "",
         fim:""
     })
+
+    const [exportacaoAberta, setExportacaoAberta] = useState(false)
+
+    const [periodoExportacao, setPeriodoExportacao] = useState({
+        inicio: '',
+        fim: ''
+    })
+
+    const [erroExportacao, setErroExportacao] = useState('')
+    const [carregandoExportacao, setCarregandoExportacao] = useState(false)
+
+    function validarPeriodoExportacao() {
+        const { inicio, fim } = periodoExportacao
+
+        if (!inicio || !fim) {
+            setErroExportacao('Informe a data inicial e a data final.')
+            return false
+        }
+
+        if (inicio > fim) {
+            setErroExportacao('A data inicial não pode ser maior que a data final.')
+            return false
+        }
+
+        if (inicio < limiteCalendario.start) {
+            setErroExportacao('A data inicial está fora do período permitido.')
+            return false
+        }
+
+        if (fim >= limiteCalendario.end) {
+            setErroExportacao('A data final está fora do período permitido.')
+            return false
+        }
+
+        setErroExportacao('')
+        return true
+    }
+
+    useEffect(() => {
+        if (!periodo.inicio || !periodo.fim) {
+            return
+        }
+
+        if (exportacaoAberta) {
+            return
+        }
+
+        setPeriodoExportacao({
+            inicio: periodo.inicio,
+            fim: periodo.fim
+        })
+    }, [periodo, exportacaoAberta])
+
+
+    async function buscarTarefasParaExportacao() {
+        const periodoValido = validarPeriodoExportacao()
+
+        if (!periodoValido) {
+            return null
+        }
+
+        try {
+            setCarregandoExportacao(true)
+            setErroExportacao('')
+
+            const tarefasExportacao = await listarTarefas(
+                periodoExportacao.inicio,
+                periodoExportacao.fim
+            )
+
+            if (tarefasExportacao.length === 0) {
+                setErroExportacao('Nenhuma tarefa encontrada nesse período.')
+                return null
+            }
+
+            return tarefasExportacao
+        } catch (error) {
+            setErroExportacao(error.message)
+            return null
+        } finally {
+            setCarregandoExportacao(false)
+        }
+    }
+
     const calendarRef = useRef(null)
 
     // Voltar para mes correto apos entrar em um daypage
@@ -193,6 +280,36 @@ export default function Calendar(){
         }
     }, [navigate])
 
+    async function handleExportarWhatsapp() {
+        const tarefasExportacao = await buscarTarefasParaExportacao()
+
+        if (!tarefasExportacao) {
+            return
+        }
+
+        const texto = formatarTarefasPorPeriodoParaTexto({
+            inicio: periodo.inicio,
+            fim: periodo.fim,
+            tarefas
+        })
+
+        compartilharTextoWhatsapp(texto)
+    }
+
+    async function handleExportarPdf() {
+        const tarefasExportacao = await buscarTarefasParaExportacao()
+
+        if (!tarefasExportacao) {
+            return
+        }
+
+        baixarPdfTarefasPorPeriodo({
+            inicio: periodo.inicio,
+            fim: periodo.fim,
+            tarefas
+        })
+    }
+
     return(
         <main className='calendar-page'>
             <section className='calendar-hero'>
@@ -231,6 +348,14 @@ export default function Calendar(){
                                 ))}
                             </select>
                         </div>
+
+                        <button
+                            type="button"
+                            className="btn-secondary"
+                            onClick={() => setExportacaoAberta((aberto) => !aberto)}
+                        >
+                            Exportar
+                        </button>
                     </div>
                 </div>
 
@@ -242,6 +367,59 @@ export default function Calendar(){
                     </p>
                 </div>
             </section>
+
+            {exportacaoAberta && (
+                <section className="calendar-export-box">
+                    <div className="calendar-export-fields">
+                        <div className="calendar-toolbar-group">
+                            <label htmlFor="export-inicio">Início:</label>
+                            <input
+                                id="export-inicio"
+                                type="date"
+                                value={periodoExportacao.inicio}
+                                min={limiteCalendario.start}
+                                max={limiteCalendario.end}
+                                onChange={(e) => {
+                                    setPeriodoExportacao((atual) => ({
+                                        ...atual,
+                                        inicio: e.target.value
+                                    }))
+                                }}
+                            />
+                        </div>
+
+                        <div className="calendar-toolbar-group">
+                            <label htmlFor="export-fim">Fim:</label>
+                            <input
+                                id="export-fim"
+                                type="date"
+                                value={periodoExportacao.fim}
+                                min={limiteCalendario.start}
+                                max={limiteCalendario.end}
+                                onChange={(e) => {
+                                    setPeriodoExportacao((atual) => ({
+                                        ...atual,
+                                        fim: e.target.value
+                                    }))
+                                }}
+                            />
+                        </div>
+
+                        <ExportMenu
+                            label={carregandoExportacao ? 'Exportando...' : 'Gerar'}
+                            onWhatsapp={handleExportarWhatsapp}
+                            onPdf={handleExportarPdf}
+                            disabled={carregandoExportacao}
+                        />
+                    </div>
+
+                    {erroExportacao && (
+                        <p className="dashboard-feedback dashboard-feedback-error">
+                            {erroExportacao}
+                        </p>
+                    )}
+                </section>
+            )}
 
             {erro && (
                 <p className="dashboard-feedback dashboard-feedback-error">

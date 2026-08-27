@@ -44,12 +44,15 @@ O projeto agora esta na fase de estabilizacao pos-deploy: separar ambiente de de
 - importar tarefas de outros apps
 - metricas simples
 - colocar anuncios
+- não deixar api exposta
+- implementar migrations
 
 ### Fase 5: Recursos em breve
 - avaliar notas (por dia e uma aba só pra ela com várias)
 - avaliar checklists
 - avaliar financas
 - avaliar metas
+- avaliar notas de pesos de academia
 - avaliar gerenciamento de senhas
 - integracao com time de futebol
 - IA que da dicas e ajuda a fazer as tarefas cadastradas
@@ -78,9 +81,3 @@ Garantir que todos retornam dado limpo ou null, e não result do pg
 - manter este documento como guia pratico de sequencia do projeto
 - ajustar rate limit pra mostrar o tempo que falta pra fazer algo ao invés de algo estático
 - preparar base para testes automatizados
-
-
-não deixar api exposta
-fazer secao de treinos de academia
-botar anuncio e monetizar
-implementar migrations
