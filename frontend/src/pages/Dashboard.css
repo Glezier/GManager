@@ -14,9 +14,10 @@
 
 .dashboard {
   max-width: 1300px;
+  width: 100%;
   margin: 0 auto;
-  padding: 20px;
-  min-height: 100vh;
+  padding: clamp(14px, 2.4vw, 20px);
+  min-height: 100dvh;
   padding-bottom: 40px;
 }
 
@@ -42,12 +43,16 @@
   display: flex;
   align-items: center;
   gap: 14px;
+  min-width: 0;
 }
 
 .dashboard-brand strong {
   display: block;
   font-size: 1.12rem;
   letter-spacing: 0.02em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .dashboard-brand p {
@@ -55,11 +60,13 @@
   color: var(--text-muted);
   font-size: 14px;
   line-height: 1.4;
+  overflow-wrap: anywhere;
 }
 
 .dashboard-nav {
   display: flex;
   gap: 12px;
+  flex-shrink: 0;
 }
 
 .dashboard-topbar button,
@@ -86,7 +93,7 @@
 
 .dashboard-top {
   display: grid;
-  grid-template-columns: minmax(0, 760px) minmax(320px, 1fr);
+  grid-template-columns: minmax(0, 760px) minmax(280px, 1fr);
   gap: 24px;
   margin-bottom: 24px;
   align-items: start;
@@ -105,7 +112,8 @@
 }
 
 .dashboard-panel {
-  padding: 24px;
+  min-width: 0;
+  padding: clamp(18px, 2.5vw, 24px);
   margin-bottom: 24px;
   background: linear-gradient(180deg, var(--bg-surface) 0%, var(--bg-surface-elevated) 100%);
   border: 1px solid var(--border-subtle);
@@ -175,6 +183,7 @@
   gap: 12px;
   margin-bottom: 10px;
   color: var(--text-secondary);
+  flex-wrap: wrap;
 }
 
 .dashboard-progress-bar {
@@ -222,6 +231,19 @@
   line-height: 1;
 }
 
+.day-tasks-panel-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.day-tasks-panel-actions .btn-secondary,
+.day-tasks-panel-actions .dashboard-add-task {
+  flex: 0 1 auto;
+}
+
 .dashboard-task-list {
   display: grid;
   gap: 14px;
@@ -243,7 +265,8 @@
   justify-content: flex-start;
   gap: 8px;
   min-height: 156px;
-  padding: 18px;
+  min-width: 0;
+  padding: clamp(14px, 2vw, 18px);
   background: var(--bg-card-strong);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-card);
@@ -268,6 +291,7 @@
   display: flex;
   justify-content: space-between;
   align-items: baseline;
+  gap: 8px;
   margin-bottom: 2px;
 }
 
@@ -281,6 +305,7 @@
 .dashboard-day-head strong {
   font-size: 1.6rem;
   color: var(--text-primary);
+  flex-shrink: 0;
 }
 
 .dashboard-mini-task {
@@ -301,7 +326,6 @@
 }
 
 .dashboard-notes-box {
- 
   display: grid;
   align-content: start;
   gap: 14px;
@@ -345,20 +369,19 @@
   margin: 0;
 }
 
-.dashboard-footer {
-  padding: 18px;
-  text-align: center;
-  background: linear-gradient(180deg, var(--bg-surface) 0%, var(--bg-surface-elevated) 100%);
-  border: 1px solid var(--border-subtle);
-  color: var(--text-muted);
-  border-radius: 18px;
-  letter-spacing: 0.03em;
+@media (max-width: 1100px) {
+  .dashboard-top {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-week {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 900px) {
   .dashboard-top,
-  .dashboard-bottom,
-  .dashboard-week {
+  .dashboard-bottom {
     grid-template-columns: 1fr;
   }
 
@@ -387,6 +410,69 @@
 
   .dashboard-panel {
     padding: 24px;
+  }
+}
+
+@media (max-width: 640px) {
+  .dashboard {
+    padding: 12px;
+    padding-bottom: 28px;
+  }
+
+  .dashboard-topbar {
+    padding: 12px;
+    gap: 14px;
+    border-radius: 16px;
+  }
+
+  .dashboard-brand-block {
+    align-items: flex-start;
+  }
+
+  .dashboard-panel {
+    padding: 18px;
+    border-radius: 18px;
+  }
+
+  .dashboard-head h1 {
+    font-size: 2rem;
+    line-height: 1.05;
+  }
+
+  .dashboard-week {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .dashboard-day {
+    min-height: 118px;
+  }
+
+  .dashboard-task-list {
+    max-height: none;
+    padding-right: 0;
+  }
+
+  .dashboard-add-task {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .task-modal-overlay {
+    align-items: flex-end;
+    padding: 12px;
+  }
+}
+
+@media (max-width: 640px) {
+  .day-tasks-panel-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .day-tasks-panel-actions .btn-secondary,
+  .day-tasks-panel-actions .dashboard-add-task {
+    width: 100%;
   }
 }
 

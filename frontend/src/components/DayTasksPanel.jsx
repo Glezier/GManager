@@ -1,9 +1,12 @@
 import TaskCard from "./TaskCard"
+import { compartilharTextoWhatsapp, formatarTarefasDoDiaParaTexto, baixarPdfTarefasDoDia } from "../utils/exportTasks"
+import ExportMenu from "./ExportMenu"
 import LoadingState from "./ui/LoadingState"
 
 export default function DayTasksPanel({
     titulo,
     subtitulo, 
+    data,
     erro='',
     sucesso = '',
     loading = false,
@@ -16,6 +19,20 @@ export default function DayTasksPanel({
     onEditar,
     emptyMessage = 'Adicione uma nova tarefa para começar a organizar esse dia'
 }){
+    function handleCompartilharWhatsapp(){
+        const texto = formatarTarefasDoDiaParaTexto({
+            data, tarefas
+        })
+
+        compartilharTextoWhatsapp(texto)
+    }
+
+    function handleCompartilharPDF() {
+        baixarPdfTarefasDoDia({
+            data, tarefas
+        })
+    }
+
     return(
         <div className="dashboard-panel dashboard-panel-today">
             <div className="dashboard-head">
@@ -23,13 +40,22 @@ export default function DayTasksPanel({
                 <h1>{titulo}</h1>
             </div>
 
+
             {erro && <p className="dashboard-feedback dashboard-feedback-error">{erro}</p>}
             {sucesso && <p className="dashboard-feedback dashboard-feedback-success">{sucesso}</p>}
 
             {(botaoAcao || progresso !== null) && (
                 <div className="dashboard-progress">
-                    {botaoAcao}
 
+                <div className="day-tasks-panel-actions">
+                    {botaoAcao}
+                    {tarefas.length !== 0 && (
+                        <ExportMenu 
+                            onWhatsapp={handleCompartilharWhatsapp}
+                            onPdf={handleCompartilharPDF}
+                        />
+                    )}
+                </div>
                     {progresso !== null && (
                         <div className="dashboard-progress-info">
                             <div className="dashboard-progress-text">

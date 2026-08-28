@@ -1,9 +1,13 @@
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate, Link, useLocation } from 'react-router-dom'
 import { GoogleLogin } from '@react-oauth/google'
-import { login, loginGoogle, reenviarVerificacao, refreshToken } from '../api/api'
+import { login, loginGoogle, reenviarVerificacao } from '../api/authApi'
+import { refreshToken } from '../api/client'
 import { getToken, setToken } from '../utils/auth'
 import { salvarTemaLocal } from '../utils/theme'
+import { validarLogin } from '../validators/authValidators'
+import { VALIDATION_LIMITS } from '../validators/validationRules'
+import AppFooter from '../components/AppFooter'
 import './Auth.css'
 import FullLogo from '../assets/icons/full_logo.png'
 import EyeClosed from '../assets/icons/eye-closed.png'
@@ -35,6 +39,13 @@ export default function Login(){
     const handleLogin = async(e) => {
         e.preventDefault()
         setErro("")
+
+        const erroValidacao = validarLogin({ email, senha })
+        if (erroValidacao){
+            setErro(erroValidacao)
+            return
+        }
+        
         setLoading(true)
         setMensagemSucesso('')
         setEmailNaoVerificado(false)
@@ -177,128 +188,133 @@ export default function Login(){
 
     return(   
         <main className='auth-page' onClick={limparTela}>
-            <section className='auth-card'>
-                <aside className='auth-hero'>
-                    <div>
-                        <span className='auth-brand'>
-                            <img src={FullLogo} alt="Logo My GManager" className='auth-logo'/>
-                        </span>
-                    </div>
-                    <div>
-                        <h1>Organize seu dia a dia com clareza</h1>
-                        <p>
-                            Centralize tarefas, acompanhe sua semana e mês, faça anotações,
-                            organize suas finanças e muito mais...
-                        </p>
-                    </div>
+            <div className='auth-page-content'>
 
-                    <div className="auth-highlights">
-                        <div className="auth-highlight">Tarefas por dia</div>
-                        <div className="auth-highlight">Calendário mensal interativo</div>
-                        <div className='auth-highlight'>Registro de gastos</div>
-                        <div className='auth-highlight'>Anotações gerais</div>
-                    </div>
-                </aside>
-
-                <div className='auth-form-wrap'>
-                    <div className='auth-form-head'>
-                        <h2>Entrar</h2>
-                        <p>Acesse sua rotina e continue de onde parou.</p>
-                    </div>
-
-                    {erro && 
-                        <p className='auth-feedback auth-feedback-error'>{erro}</p>
-                    }
-
-                    {emailNaoVerificado && (
-                        <button
-                            type='button'
-                            className='auth-submit'
-                            onClick={handleReenviar}
-                            disabled={loading}
-                        >
-                            Reenviar email de verificação
-                        </button>
-                    )}
-
-                    {mensagemSucesso && (
-                        <p className='auth-feedback dashboard-feedback-success'>{mensagemSucesso}</p>
-                    )}
-
-                    <form className='auth-form' onSubmit={handleLogin}>
-                        <div className='auth-field'>
-                            <label htmlFor="login-email">Email</label>
-                            <input
-                                id='login-email'
-                                type="email"
-                                placeholder='Digite seu email'
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}  
-                                ref={userRef}
-                                maxLength={120}
-                                disabled={bloqueado} 
-                                required
-                            />
+                <section className='auth-card'>
+                    <aside className='auth-hero'>
+                        <div>
+                            <span className='auth-brand'>
+                                <img src={FullLogo} alt="Logo My GManager" className='auth-logo'/>
+                            </span>
+                        </div>
+                        <div>
+                            <h1>Organize seu dia a dia com clareza</h1>
+                            <p>
+                                Centralize tarefas, acompanhe sua semana e mês, faça anotações,
+                                organize suas finanças e muito mais...
+                            </p>
                         </div>
 
-                        <div className='auth-field'>
-                            <label htmlFor="login-password">Senha</label>
-                            <div className='auth-password-wrap'>
-                                <input 
-                                    id='login-password'
-                                    type={mostrarSenha ? "text" : "password"}
-                                    placeholder='Digite sua senha'
-                                    minLength={8}
-                                    maxLength={50}
-                                    value={senha}
+                        <div className="auth-highlights">
+                            <div className="auth-highlight">Tarefas por dia</div>
+                            <div className="auth-highlight">Calendário mensal interativo</div>
+                            <div className='auth-highlight'>Registro de gastos</div>
+                            <div className='auth-highlight'>Anotações gerais</div>
+                        </div>
+                    </aside>
+
+                    <div className='auth-form-wrap'>
+                        <div className='auth-form-head'>
+                            <h2>Entrar</h2>
+                            <p>Acesse sua rotina e continue de onde parou.</p>
+                        </div>
+
+                        {erro && 
+                            <p className='auth-feedback auth-feedback-error'>{erro}</p>
+                        }
+
+                        {emailNaoVerificado && (
+                            <button
+                                type='button'
+                                className='auth-submit'
+                                onClick={handleReenviar}
+                                disabled={loading}
+                            >
+                                Reenviar email de verificação
+                            </button>
+                        )}
+
+                        {mensagemSucesso && (
+                            <p className='auth-feedback dashboard-feedback-success'>{mensagemSucesso}</p>
+                        )}
+
+                        <form className='auth-form' onSubmit={handleLogin} noValidate>
+                            <div className='auth-field'>
+                                <label htmlFor="login-email">Email</label>
+                                <input
+                                    id='login-email'
+                                    type="email"
+                                    placeholder='Digite seu email'
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}  
+                                    ref={userRef}
+                                    maxLength={VALIDATION_LIMITS.emailMax}
                                     disabled={bloqueado} 
-                                    onChange={(e) => setSenha(e.target.value)}
                                     required
                                 />
-                                <button className="auth-password-toggle"
-                                        type='button'  
-                                        onClick={() => setMostrarSenha((valorAtual) => !valorAtual)}
-                                        aria-label={mostrarSenha ? "Ocultar senha" : "Mostrar senha"}
-                                    >
-                                    {mostrarSenha ? (
-                                        <img className='eye-icon' src={EyeClosed} alt="Mostrar senha" title='Ocultar senha'/>
-                                    ) : (
-                                        <img className='eye-icon' src={EyeOpen} alt="Ocultar senha" title='Mostrar senha' />
-                                    )}
-                                </button>
                             </div>
-                        </div>
 
-                        <button className='auth-submit' type='submit' disabled={loading || bloqueado}>
-                            {loading ? "Entrando" : "Entrar"}
-                        </button>
+                            <div className='auth-field'>
+                                <label htmlFor="login-password">Senha</label>
+                                <div className='auth-password-wrap'>
+                                    <input 
+                                        id='login-password'
+                                        type={mostrarSenha ? "text" : "password"}
+                                        placeholder='Digite sua senha'
+                                        minLength={VALIDATION_LIMITS.senhaMin}
+                                        maxLength={VALIDATION_LIMITS.senhaMax}
+                                        value={senha}
+                                        disabled={bloqueado} 
+                                        onChange={(e) => setSenha(e.target.value)}
+                                        required
+                                    />
+                                    <button className="auth-password-toggle"
+                                            type='button'  
+                                            onClick={() => setMostrarSenha((valorAtual) => !valorAtual)}
+                                            aria-label={mostrarSenha ? "Ocultar senha" : "Mostrar senha"}
+                                        >
+                                        {mostrarSenha ? (
+                                            <img className='eye-icon' src={EyeClosed} alt="Mostrar senha" title='Ocultar senha'/>
+                                        ) : (
+                                            <img className='eye-icon' src={EyeOpen} alt="Ocultar senha" title='Mostrar senha' />
+                                        )}
+                                    </button>
+                                </div>
+                            </div>
 
-                        <div className='auth-google-login'>
-                            <GoogleLogin 
-                                onSuccess={handleGoogleSuccess}
-                                onError={() => {
-                                    setErro('Não foi possível entrar com Google')
-                                }}
-                                width="100%"
-                                
-                            />
-                        </div>
-                    </form>
+                            <button className='auth-submit' type='submit' disabled={loading || bloqueado}>
+                                {loading ? "Entrando" : "Entrar"}
+                            </button>
 
-                    <p className='auth-alt'>
-                        Não tem conta? <Link to='/register'>Clique aqui</Link>
-                    </p>
+                            <div className='auth-google-login'>
+                                <GoogleLogin 
+                                    onSuccess={handleGoogleSuccess}
+                                    onError={() => {
+                                        setErro('Não foi possível entrar com Google')
+                                    }}
+                                    width="100%"
+                                    
+                                />
+                            </div>
+                        </form>
 
-                    <p className='auth-alt'>
-                        <Link to='/recuperar-senha'>Esqueci minha senha</Link>
-                    </p>
+                        <p className='auth-alt'>
+                            Não tem conta? <Link to='/register'>Clique aqui</Link>
+                        </p>
 
-                    <p className='auth-alt'>
-                        Social login disponível em breve...
-                    </p>
+                        <p className='auth-alt'>
+                            <Link to='/recuperar-senha'>Esqueci minha senha</Link>
+                        </p>
 
-                </div>
-            </section>
+                        <p className='auth-alt'>
+                            Social login disponível em breve...
+                        </p>
+
+                    </div>
+                </section>
+
+                <AppFooter />
+            </div>
         </main>        
     )
 }

@@ -1,12 +1,9 @@
 # Projeto: My GManager
 
 ## Visao
-Aplicacao full-stack de organizacao pessoal, com foco inicial em tarefas, dashboard, calendario e rotina diaria.
+Aplicacao full-stack de organizacao pessoal, com foco em tarefas, planejamento diario, visao semanal e calendario mensal.
 
-Objetivo do projeto:
-- construir uma ferramenta real de uso pessoal
-- evoluir o sistema com praticas profissionais de desenvolvimento full-stack
-- manter seguranca, confiabilidade, deploy e banco de dados como partes centrais do aprendizado
+O objetivo e manter uma ferramenta real de uso pessoal enquanto o projeto evolui com praticas profissionais de desenvolvimento full-stack. Seguranca, confiabilidade, deploy, banco de dados e organizacao de codigo fazem parte central do aprendizado.
 
 ## Stack
 - Frontend: React + Vite + React Router + FullCalendar
@@ -17,9 +14,43 @@ Objetivo do projeto:
 - Deploy atual: Vercel para frontend e backend
 
 ## Estado atual resumido
-O sistema ja possui autenticacao, verificacao de email, refresh token, rotas privadas, CRUD de tarefas, dashboard, calendario, pagina por dia, validacoes principais, rate limit, CORS, `helmet`, middleware global de erro e deploy inicial em producao.
+O sistema ja possui:
+- autenticacao local com JWT e refresh token
+- login com Google
+- verificacao de email
+- recuperacao de senha
+- rotas privadas
+- CRUD de tarefas
+- dashboard diario
+- visao semanal
+- calendario mensal
+- pagina individual por dia
+- exportacao de tarefas por dia e por periodo
+- tema claro/escuro por usuario
+- validacoes no frontend e no backend
+- rate limit
+- CORS e `helmet`
+- middleware global de erro
+- backend organizado em controllers, services, repositories e validators
+- API frontend modularizada por dominio
+- deploy em producao
 
-O projeto agora esta na fase de estabilizacao pos-deploy: separar ambiente de desenvolvimento da producao, proteger dados, revisar performance do backend e preparar uma base mais profissional para evoluir com seguranca.
+O projeto esta em fase de evolucao pos-deploy, com foco em estabilidade, organizacao, seguranca e preparacao para funcionalidades maiores.
+
+## Estrutura principal
+- `frontend/src/pages`: paginas principais da aplicacao
+- `frontend/src/components`: componentes reutilizaveis
+- `frontend/src/api`: chamadas para a API organizadas por dominio
+- `frontend/src/hooks`: hooks de dados e regras compartilhadas
+- `frontend/src/validators`: validacoes reutilizaveis do frontend
+- `frontend/src/utils`: funcoes auxiliares
+- `backend/src/controllers`: entrada e saida HTTP
+- `backend/src/services`: regras de negocio
+- `backend/src/repositories`: acesso ao banco e SQL
+- `backend/src/validators`: validacoes reutilizaveis do backend
+- `backend/src/middleswares`: middlewares de autenticacao, erro e rate limit
+- `backend/src/utils`: utilitarios de email, tokens e erros
+- `docs`: contexto, guias, checklist manual e informacoes do banco
 
 ## Ambientes
 ### Producao
@@ -28,35 +59,48 @@ O projeto agora esta na fase de estabilizacao pos-deploy: separar ambiente de de
 - variaveis reais configuradas apenas nos paineis dos provedores
 - branch `main` deve representar o estado estavel publicado
 
-### Fase 3: Detalhes importantes
+### Desenvolvimento local
+- Backend: `cd backend` e `npm run dev`
+- Frontend: `cd frontend` e `npm run dev`
+- Antes de commit importante, rodar ao menos `npm run lint` no frontend
+- Testes manuais principais estao em `docs/guides/CHECKLIST_MANUAL.md`
+- Variaveis reais devem ficar apenas em `.env` local ou nos provedores
+
+### Fase 1: Detalhes pontuais
 - pagina inicial antes de login
 - upload de foto pra aba perfil
-- organizar a api em pastas
 - analisar se a forma de implementação de tema é a melhor possível
-- aprender hackear tentando hackear o proprio site
+- Revisão geral de nomes e contratos dos repositories.
+Garantir que todos retornam dado limpo ou null, e não result do pg
+- implementar skills e infos de agentes IA
 
-### Fase 4: Produto
-- responsividade
-- adicionar validators no frontend
+### Fase 2: Produto
 - filtros por status e data
 - busca de tarefas
 - tarefas com datas continuas ou frequencia definida
 - categorias e prioridade
 - recorrencia
-- exportacao em PDF
 - importar tarefas de outros apps
 - metricas simples
+- implementar migrations
+- não deixar api exposta
+- colocar anuncios
 
-### Fase 5: Recursos em breve
+### Fase 3: Testes
+- testes de carga
+- testes de segurança
+
+### Fase 4: Recursos
 - avaliar notas (por dia e uma aba só pra ela com várias)
 - avaliar checklists
 - avaliar financas
 - avaliar metas
+- avaliar notas de pesos de academia
 - avaliar gerenciamento de senhas
 - integracao com time de futebol
 - IA que da dicas e ajuda a fazer as tarefas cadastradas
 
-### Fase 6: Docker
+### Fase 5: Docker
 - corrigir Dockerfiles se necessario
 - validar `docker-compose.yml`
 - rodar frontend e backend localmente via containers
@@ -70,19 +114,12 @@ O projeto agora esta na fase de estabilizacao pos-deploy: separar ambiente de de
 - configurar logs, monitoramento e backups
 - comparar custo, complexidade e ganho real em relacao a Vercel/Neon
 
-### pulados
-- Revisão geral de nomes e contratos dos repositories.
-Garantir que todos retornam dado limpo ou null, e não result do pg
-
 ## Acordo de trabalho
-- quando o objetivo for aprendizado, explicar antes de alterar codigo
-- editar arquivos diretamente apenas quando solicitado
-- manter este documento como guia pratico de sequencia do projeto
-- ajustar rate limit pra mostrar o tempo que falta pra fazer algo ao invés de algo estático
-- preparar base para testes automatizados
-
-
-não deixar api exposta
-fazer secao de treinos de academia
-botar anuncio e monetizar
-implementar migrations
+- Quando o objetivo for aprendizado, explicar antes de alterar codigo.
+- Editar arquivos diretamente apenas quando solicitado.
+- Antes de implementar, observar os arquivos relacionados e seguir os padroes ja usados no projeto.
+- Preferir mudancas pequenas, testaveis e alinhadas com a arquitetura atual.
+- Controllers devem ficar focados em HTTP; regras de negocio ficam nos services; SQL fica nos repositories; validacoes reutilizaveis ficam nos validators.
+- No frontend, preferir componentes, hooks, validators e funcoes de API reutilizaveis quando isso reduzir repeticao real.
+- Manter este documento como guia pratico para continuar o projeto em qualquer computador.
+- Ao finalizar uma etapa, atualizar README, checklist ou este contexto quando fizer sentido.

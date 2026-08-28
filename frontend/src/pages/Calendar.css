@@ -1,13 +1,14 @@
 .calendar-page {
   max-width: 1300px;
+  width: 100%;
   margin: 0 auto;
-  padding: 20px;
-  min-height: 100vh;
+  padding: clamp(14px, 2.4vw, 20px);
+  min-height: 100dvh;
 }
 
 .calendar-hero {
   margin-bottom: 24px;
-  padding: 28px;
+  padding: clamp(20px, 3vw, 28px);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-panel);
   background:
@@ -23,6 +24,7 @@
   align-items: center;
   gap: 16px;
   margin-bottom: 8px;
+  min-width: 0;
 }
 
 .calendar-hero-content {
@@ -54,13 +56,14 @@
 
 .calendar-toolbar {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(140px, 1fr));
   gap: 12px;
   align-items: end;
   padding: 10px 16px;
   background: var(--bg-interactive);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-card);
+  min-width: 0;
 }
 
 .calendar-toolbar-group {
@@ -86,12 +89,68 @@
   border-radius: 12px;
 }
 
+.calendar-toolbar > .btn-secondary {
+  grid-column: 1 / -1;
+  width: min(100%, 220px);
+}
+
+.calendar-export-box {
+  margin-bottom: 24px;
+  padding: clamp(16px, 2.5vw, 22px);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-panel);
+  background:
+    radial-gradient(circle at top left, rgba(16, 185, 129, 0.08), transparent 30%),
+    linear-gradient(180deg, var(--bg-surface) 0%, var(--bg-surface-elevated) 100%);
+  box-shadow: var(--shadow-soft);
+}
+
+.calendar-export-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(180px, 1fr)) auto;
+  gap: 12px;
+  align-items: end;
+}
+
+.calendar-export-fields .calendar-toolbar-group {
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+
+.calendar-export-fields label {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+.calendar-export-fields input {
+  min-height: 46px;
+  padding: 0 14px;
+  border-radius: 12px;
+}
+
+.calendar-export-fields .export-menu,
+.calendar-export-fields .export-menu-trigger {
+  height: 100%;
+}
+
+.calendar-export-fields .export-menu-trigger {
+  min-height: 46px;
+}
+
+.button-export{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .calendar-shell {
-  padding: 20px;
+  padding: clamp(12px, 2.4vw, 20px);
   background: linear-gradient(180deg, var(--bg-surface) 0%, var(--bg-surface-elevated) 100%);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-panel);
   box-shadow: var(--shadow-soft);
+  overflow: hidden;
 }
 
 .evento-concluida {
@@ -144,17 +203,21 @@
   --fc-neutral-bg-color: var(--bg-interactive-muted);
   --fc-list-event-hover-bg-color: var(--bg-interactive-hover);
   color: var(--text-secondary);
+  width: 100%;
+  min-width: 0;
 }
 
 .calendar-page .fc-toolbar {
   margin-bottom: 20px;
   gap: 12px;
+  flex-wrap: wrap;
 }
 
 .calendar-page .fc-toolbar-chunk {
   display: flex;
   align-items: center;
   gap: 10px;
+  min-width: 0;
 }
 
 .calendar-page .fc .fc-button {
@@ -216,6 +279,12 @@
   border-radius: 10px;
   padding: 1px 6px;
   box-shadow: none;
+  max-width: 100%;
+}
+
+.calendar-page .fc-event-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .fc .fc-daygrid-body-natural .fc-daygrid-day-events {
@@ -268,6 +337,10 @@
     justify-content: stretch;
   }
 
+  .calendar-toolbar > .btn-secondary {
+    width: 100%;
+  }
+
   .calendar-toolbar-group {
     grid-template-columns: 1fr;
     align-items: stretch;
@@ -290,6 +363,15 @@
     padding: 14px;
   }
 
+  .calendar-export-fields {
+    grid-template-columns: 1fr;
+  }
+
+  .calendar-export-fields .export-menu,
+  .calendar-export-fields .export-menu-trigger {
+    width: 100%;
+  }
+
   .calendar-page .fc-toolbar {
     flex-direction: column;
     align-items: stretch;
@@ -298,5 +380,82 @@
   .calendar-page .fc-toolbar-chunk {
     justify-content: center;
     flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 640px) {
+  .calendar-page {
+    padding: 12px;
+  }
+
+  .calendar-hero {
+    border-radius: 18px;
+  }
+
+  .calendar-hero-title {
+    font-size: 2rem;
+    line-height: 1.05;
+  }
+
+  .calendar-toolbar {
+    padding: 12px;
+  }
+
+  .calendar-export-box {
+    border-radius: 18px;
+  }
+
+  .calendar-shell {
+    border-radius: 18px;
+  }
+
+  .calendar-page .fc .fc-button {
+    min-height: 36px;
+    padding: 0 10px;
+    font-size: 0.82rem;
+    border-radius: 10px;
+  }
+
+  .calendar-page .fc-toolbar {
+    margin-bottom: 14px;
+    gap: 10px;
+  }
+
+  .calendar-page .fc-toolbar-title {
+    font-size: 1.25rem;
+    line-height: 1.15;
+    text-align: center;
+    white-space: normal;
+  }
+
+  .calendar-page .fc-toolbar-chunk {
+    justify-content: center;
+  }
+
+  .calendar-page .fc-col-header-cell-cushion,
+  .calendar-page .fc-daygrid-day-number {
+    font-size: 0.78rem;
+  }
+
+  .calendar-page .fc-daygrid-day-frame {
+    min-height: 76px;
+    padding: 4px 2px;
+  }
+
+  .calendar-page .fc-daygrid-day-number {
+    min-width: 26px;
+    height: 26px;
+    border-radius: 8px;
+  }
+
+  .calendar-page .fc-daygrid-event {
+    font-size: 0.68rem;
+    padding: 1px 3px;
+    border-radius: 8px;
+  }
+
+  .calendar-page .fc-daygrid-more-link {
+    font-size: 0.68rem;
+    color: var(--text-muted);
   }
 }

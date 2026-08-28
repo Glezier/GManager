@@ -1,6 +1,8 @@
 import { useState, useRef, useEffect } from 'react'
 import './TaskForm.css'  
 import { formatarData, formatarHora, getDataLimiteAnos, getDataMinimaAnos } from '../utils/date'
+import { validarTarefa } from '../validators/tasksValidators'
+import { VALIDATION_LIMITS } from '../validators/validationRules'
 
 export default function TaskForm ({ criar, cancelar, hoje, erro='', tarefaInicial = null }){
 
@@ -18,7 +20,21 @@ export default function TaskForm ({ criar, cancelar, hoje, erro='', tarefaInicia
 
     function handleSubmit(e){
         e.preventDefault() // React controlar a execução do formulário
+        setErroForm('')
 
+        const erroValidacao = validarTarefa({ 
+            titulo,
+            descricao,
+            data,
+            dataMinima,
+            dataMaxima
+        })
+
+        if (erroValidacao){
+            setErroForm(erroValidacao)
+            return
+        }
+        
         criar({
             titulo,
             descricao, 
@@ -42,7 +58,7 @@ export default function TaskForm ({ criar, cancelar, hoje, erro='', tarefaInicia
     }, [tarefaInicial])
 
     return(
-        <form className="task-form" onSubmit={handleSubmit}>
+        <form className="task-form" onSubmit={handleSubmit} noValidate>
             <div className="task-form-head">
                 <h3>{emEdicao ? "Editar tarefa": "Nova tarefa"}</h3>
                 <p>{emEdicao 
@@ -61,12 +77,11 @@ export default function TaskForm ({ criar, cancelar, hoje, erro='', tarefaInicia
                         placeholder="Título da tarefa"
                         value={titulo}
                         onChange={(e)=>{setTitulo(e.target.value)}} 
-                        onInvalid={() => setErroForm('Título é obrigatório')}
                         ref={tituloRef}
-                        maxLength={60}
+                        maxLength={VALIDATION_LIMITS.tituloMax}
                         required
                     />
-                    <p className='task-title-counter'>{titulo.length} / 60</p>
+                    <p className='task-title-counter'>{titulo.length} / {VALIDATION_LIMITS.tituloMax}</p>
 
                 </div>
 
@@ -75,7 +90,7 @@ export default function TaskForm ({ criar, cancelar, hoje, erro='', tarefaInicia
                     type="text"
                     placeholder="Descrição da tarefa" 
                     value={descricao}
-                    maxLength={120}
+                    maxLength={VALIDATION_LIMITS.descricaoMax}
                     onChange={(e)=>{setDescricao(e.target.value)}}
                 />
 
@@ -86,15 +101,6 @@ export default function TaskForm ({ criar, cancelar, hoje, erro='', tarefaInicia
                         lang='pt-BR'
                         value={data}
                         onChange={(e)=>{setData(e.target.value)}}
-                        onInvalid={(e) => {
-                            const valor = e.target.value
-                            if (valor<dataMinima){
-                                setErroForm('Só é permitido adicionar tarefa retroativas num período de até 1 ano.')
-                            }
-                            if (valor>dataMaxima){
-                                setErroForm('Use a aba de tarefas sem data definida para datas distantes.')
-                            }
-                        }}
                         min={dataMinima}
                         max={dataMaxima}
                         required

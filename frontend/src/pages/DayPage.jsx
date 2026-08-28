@@ -16,6 +16,7 @@ import './DayPage.css'
 import AddIcon from '../assets/icons/add.png'
 import Next from '../assets/icons/next.png'
 import Preview from '../assets/icons/preview.png'
+import AppFooter from '../components/AppFooter'
 
 
 export default function DayPage(){
@@ -204,6 +205,7 @@ export default function DayPage(){
       <DayTasksPanel
         subtitulo="Agenda do dia"
         titulo="Tarefas"
+        data={data}
         erro={erroPagina}
         sucesso={sucesso}
         loading={loading}
@@ -225,6 +227,8 @@ export default function DayPage(){
         }
         emptyMessage="Nenhuma tarefa para este dia. Adicione a primeira para iniciar seu planejamento."
       />
+
+      <AppFooter minimal />
     </main>
   )
 }

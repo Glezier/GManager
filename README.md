@@ -8,13 +8,18 @@ O projeto está disponível em https://mygmanager.com.br/
 
 O My GManager nasceu como uma ferramenta pessoal de organização e evoluiu para uma aplicação completa com:
 
-- autenticação com refresh token
-- verificação de email com Resend
-- dashboard com tarefas do dia
-- visão semanal
-- calendário mensal interativo
-- página dedicada para cada dia
-- base preparada para novas áreas como notas, checklists, finanças e eventos futuros
+## Principais funcionalidades
+
+- Autenticação com JWT e refresh token em cookie httpOnly
+- Login com Google
+- Verificação de email e recuperação de senha via Resend
+- CRUD de tarefas
+- Dashboard diário e visão semanal
+- Calendário mensal com FullCalendar
+- Página individual por dia
+- Exportação de tarefas por dia/período em PDF e WhatsApp
+- Backend organizado em controllers, services, repositories e validators
+- Deploy em produção com Vercel + Neon PostgreSQL
 
 ## Stack
 
@@ -74,22 +79,6 @@ cd frontend
 npm run dev
 ```
 
-## Scripts principais
-
-### Backend
-
-```bash
-npm run dev
-```
-
-### Frontend
-
-```bash
-npm run dev
-npm run build
-npm run preview
-npm run lint
-```
 ## Autor
 
 Projeto desenvolvido por Glezier Montalvane como ferramenta real de organização pessoal e estudo prático de desenvolvimento full-stack.

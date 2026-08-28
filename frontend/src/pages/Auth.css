@@ -1,17 +1,17 @@
 .auth-page {
-  min-height: 100vh;
+  min-height: 100dvh;
   display: grid;
   place-items: center;
-  padding: 16px 20px;
+  padding: clamp(12px, 3vw, 24px);
   background:
     radial-gradient(circle at top left, rgba(16, 185, 129, 0.12), transparent 28%),
     radial-gradient(circle at bottom right, rgba(56, 189, 248, 0.08), transparent 24%);
 }
 
 .auth-card {
-  width: min(100%, 1000px);
+  width: 100%;
   display: grid;
-  grid-template-columns: minmax(280px, 1fr) minmax(320px, 460px);
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 460px);
   background: linear-gradient(180deg, var(--bg-surface) 0%, var(--bg-surface-elevated) 100%);
   border: 1px solid var(--border-subtle);
   border-radius: 28px;
@@ -20,8 +20,16 @@
   backdrop-filter: blur(10px);
 }
 
+.auth-page-content {
+  width: min(100%, 1000px);
+  display: grid;
+  gap: 18px;
+}
+
+
 .auth-hero {
-  padding: 48px 40px;
+  min-width: 0;
+  padding: clamp(30px, 5vw, 48px) clamp(24px, 4vw, 40px);
   background:
     radial-gradient(circle at top left, rgba(16, 185, 129, 0.18), transparent 30%),
     linear-gradient(160deg, var(--bg-surface) 0%, var(--bg-panel-strong-end) 100%);
@@ -79,7 +87,8 @@
 }
 
 .auth-form-wrap {
-  padding: 40px 34px;
+  min-width: 0;
+  padding: clamp(28px, 4vw, 40px) clamp(22px, 4vw, 34px);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -94,6 +103,7 @@
 .auth-form-head h1 {
   margin: 0 0 8px;
   font-size: 2rem;
+  line-height: 1.08;
 }
 
 .auth-form-head p {
@@ -155,6 +165,7 @@
 
 .auth-google-login > div {
   width: 100%;
+  min-width: 0;
 }
 
 .auth-alt {
@@ -192,6 +203,8 @@
 @media (max-width: 860px) {
   .auth-card {
     grid-template-columns: 1fr;
+    max-width: 560px;
+    border-radius: 22px;
   }
 
   .auth-hero,
@@ -202,6 +215,43 @@
   .auth-hero h1,
   .auth-hero h2 {
     font-size: 2.2rem;
+  }
+}
+
+@media (max-width: 520px) {
+  .auth-page {
+    place-items: stretch;
+    align-items: center;
+    padding: 10px;
+  }
+
+  .auth-card {
+    border-radius: 18px;
+  }
+
+  .auth-hero,
+  .auth-form-wrap {
+    padding: 22px 18px;
+  }
+
+  .auth-hero {
+    gap: 20px;
+  }
+
+  .auth-hero h1,
+  .auth-hero h2 {
+    font-size: 1.9rem;
+    line-height: 1;
+  }
+
+  .auth-form-head h2,
+  .auth-form-head h1 {
+    font-size: 1.65rem;
+  }
+
+  .auth-field input,
+  .auth-submit {
+    height: 48px;
   }
 }
 
