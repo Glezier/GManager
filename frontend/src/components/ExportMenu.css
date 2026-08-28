@@ -2,10 +2,12 @@
 .export-menu {
     position: relative;
     display: inline-flex;
+    min-width: 0;
 }
 
 .export-menu-trigger {
     width: auto;
+    white-space: nowrap;
 }
 
 .export-menu-options {
@@ -51,6 +53,8 @@
 .button-options{
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  gap: 12px;
 }
 
 .task-export-option-whatsapp,

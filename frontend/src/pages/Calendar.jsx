@@ -67,22 +67,6 @@ export default function Calendar(){
         return true
     }
 
-    useEffect(() => {
-        if (!periodo.inicio || !periodo.fim) {
-            return
-        }
-
-        if (exportacaoAberta) {
-            return
-        }
-
-        setPeriodoExportacao({
-            inicio: periodo.inicio,
-            fim: periodo.fim
-        })
-    }, [periodo, exportacaoAberta])
-
-
     async function buscarTarefasParaExportacao() {
         const periodoValido = validarPeriodoExportacao()
 
@@ -129,6 +113,19 @@ export default function Calendar(){
     const [calendarioCompacto, setCalendarioCompacto] = useState(() => {
         return typeof window !== 'undefined' && window.matchMedia('(max-width: 640px)').matches
     })
+
+    useEffect(() => {
+        if (exportacaoAberta) {
+            return
+        }
+        const inicio = new Date(anoSelecionado, mesSelecionado, 1)
+        const fim = new Date(anoSelecionado, mesSelecionado + 1, 0)
+
+        setPeriodoExportacao({
+            inicio: getData(inicio),
+            fim: getData(fim)
+        })
+    }, [mesSelecionado, anoSelecionado, exportacaoAberta])
 
     const { data: usuario, isLoading: carregandoUsuario, error: erroUsuario } = useMe()
 
@@ -288,9 +285,9 @@ export default function Calendar(){
         }
 
         const texto = formatarTarefasPorPeriodoParaTexto({
-            inicio: periodo.inicio,
-            fim: periodo.fim,
-            tarefas
+            inicio: periodoExportacao.inicio,
+            fim: periodoExportacao.fim,
+            tarefas: tarefasExportacao
         })
 
         compartilharTextoWhatsapp(texto)
@@ -304,9 +301,9 @@ export default function Calendar(){
         }
 
         baixarPdfTarefasPorPeriodo({
-            inicio: periodo.inicio,
-            fim: periodo.fim,
-            tarefas
+            inicio: periodoExportacao.inicio,
+            fim: periodoExportacao.fim,
+            tarefas: tarefasExportacao
         })
     }
 
@@ -356,6 +353,7 @@ export default function Calendar(){
                         >
                             Exportar
                         </button>
+
                     </div>
                 </div>
 

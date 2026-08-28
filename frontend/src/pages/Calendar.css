@@ -56,7 +56,7 @@
 
 .calendar-toolbar {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(140px, 1fr));
   gap: 12px;
   align-items: end;
   padding: 10px 16px;
@@ -87,6 +87,61 @@
   height: 40px;
   padding: 0 12px;
   border-radius: 12px;
+}
+
+.calendar-toolbar > .btn-secondary {
+  grid-column: 1 / -1;
+  width: min(100%, 220px);
+}
+
+.calendar-export-box {
+  margin-bottom: 24px;
+  padding: clamp(16px, 2.5vw, 22px);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-panel);
+  background:
+    radial-gradient(circle at top left, rgba(16, 185, 129, 0.08), transparent 30%),
+    linear-gradient(180deg, var(--bg-surface) 0%, var(--bg-surface-elevated) 100%);
+  box-shadow: var(--shadow-soft);
+}
+
+.calendar-export-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(180px, 1fr)) auto;
+  gap: 12px;
+  align-items: end;
+}
+
+.calendar-export-fields .calendar-toolbar-group {
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+
+.calendar-export-fields label {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+.calendar-export-fields input {
+  min-height: 46px;
+  padding: 0 14px;
+  border-radius: 12px;
+}
+
+.calendar-export-fields .export-menu,
+.calendar-export-fields .export-menu-trigger {
+  height: 100%;
+}
+
+.calendar-export-fields .export-menu-trigger {
+  min-height: 46px;
+}
+
+.button-export{
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .calendar-shell {
@@ -282,6 +337,10 @@
     justify-content: stretch;
   }
 
+  .calendar-toolbar > .btn-secondary {
+    width: 100%;
+  }
+
   .calendar-toolbar-group {
     grid-template-columns: 1fr;
     align-items: stretch;
@@ -302,6 +361,15 @@
 
   .calendar-shell {
     padding: 14px;
+  }
+
+  .calendar-export-fields {
+    grid-template-columns: 1fr;
+  }
+
+  .calendar-export-fields .export-menu,
+  .calendar-export-fields .export-menu-trigger {
+    width: 100%;
   }
 
   .calendar-page .fc-toolbar {
@@ -331,6 +399,10 @@
 
   .calendar-toolbar {
     padding: 12px;
+  }
+
+  .calendar-export-box {
+    border-radius: 18px;
   }
 
   .calendar-shell {

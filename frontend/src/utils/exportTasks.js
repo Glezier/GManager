@@ -5,7 +5,9 @@ function formatarDataExportacao(data){
         return ''
     }
 
-    const [ano, mes, dia] = data.split('-')
+    const dataSemHora = data.split('T')[0]
+    const [ano, mes, dia] = dataSemHora.split('-')
+    
     return `${dia}/${mes}/${ano}`
 }
 
