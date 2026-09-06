@@ -73,6 +73,9 @@ O projeto esta em fase de evolucao pos-deploy, com foco em estabilidade, organiz
 - Revisão geral de nomes e contratos dos repositories.
 Garantir que todos retornam dado limpo ou null, e não result do pg
 - implementar skills e infos de agentes IA
+- portugues - ingles
+- cuidar do SEO
+- centralizar e botar icone no exportar
 
 ### Fase 2: Produto
 - filtros por status e data
