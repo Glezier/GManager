@@ -10,26 +10,26 @@
 
 ## Navegação Mobile
 
-- [ ] Barra inferior aparece apenas em telas pequenas
-- [ ] Dashboard abre pelo botão Hoje
-- [ ] Calendário abre pela barra inferior
-- [ ] Perfil abre pela barra inferior
-- [ ] Botão de nova tarefa funciona no dashboard
-- [ ] Botão de nova tarefa funciona na página do dia
-- [ ] Botão de nova tarefa vindo do calendário abre dashboard/modal
-- [ ] Botão de nova tarefa vindo do perfil abre dashboard/modal
+- [x] Barra inferior aparece apenas em telas pequenas
+- [x] Dashboard abre pelo botão Hoje
+- [x] Calendário abre pela barra inferior
+- [x] Perfil abre pela barra inferior
+- [x] Botão de nova tarefa funciona no dashboard
+- [x] Botão de nova tarefa funciona na página do dia
+- [x] Botão de nova tarefa vindo do calendário abre dashboard/modal
+- [x] Botão de nova tarefa vindo do perfil abre dashboard/modal
 
 ## Fluxo Principal
 
-- [ ] Login funciona no celular
-- [ ] Refresh de sessão funciona
-- [ ] Criar tarefa funciona
-- [ ] Editar tarefa funciona
-- [ ] Concluir tarefa funciona
-- [ ] Excluir tarefa funciona
+- [x] Login funciona no celular
+- [x] Refresh de sessão funciona
+- [x] Criar tarefa funciona
+- [x] Editar tarefa funciona
+- [x] Concluir tarefa funciona
+- [x] Excluir tarefa funciona
 - [ ] Calendário não quebra visualmente
-- [ ] Página do dia não quebra visualmente
-- [ ] Perfil não quebra visualmente
+- [x] Página do dia não quebra visualmente
+- [x] Perfil não quebra visualmente
 
 ## Service Worker
 
