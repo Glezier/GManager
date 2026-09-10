@@ -1,5 +1,5 @@
-import { useMemo  } from "react"
-import { useNavigate } from 'react-router-dom'
+import { useMemo, useEffect  } from "react"
+import { useNavigate, useLocation } from 'react-router-dom'
 
 import { getData, formatarData } from "../utils/date"
 import { getToken, removeToken } from "../utils/auth"
@@ -12,6 +12,8 @@ import TaskForm from "../components/TaskForm"
 import DayTasksPanel from "../components/DayTasksPanel"
 import ConfirmBox from "../components/ConfirmBox"
 import AppFooter from "../components/AppFooter"
+
+import MobileNav from "../components/mobile/MobileNav"
 
 import useTasks from "../hooks/useTasks"
 import useProgress from "../hooks/useProgress"
@@ -27,6 +29,7 @@ import AddIcon from '../assets/icons/add.png'
 
 export default function Dashboard(){
     const navigate = useNavigate()
+    const location = useLocation()
     const token = getToken()
     const hoje = getData()
     // Busca iniciando por mes
@@ -96,6 +99,13 @@ export default function Dashboard(){
             navigate('/', {state: { skipSessionCheck: true }})
         }
     }
+
+    useEffect(() => {
+        if (location.state?.openTaskModal) {
+            abrirCriacao()
+            navigate('/dashboard', { replace: true, state: {}})
+        }
+    }, [location.state, navigate, abrirCriacao])
 
     return(
         <main className="dashboard">
@@ -314,6 +324,8 @@ export default function Dashboard(){
             </section>
 
             <AppFooter minimal />
+
+            <MobileNav onAddTask={abrirCriacao} />
         </main>
     )
 }
