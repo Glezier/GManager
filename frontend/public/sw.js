@@ -30,6 +30,14 @@ self.addEventListener('activate', (e) => {
         ))
     )
     self.clients.claim()
+
+    self.clients.matchAll().then((clients) => {
+        clients.forEach((client) => {
+            client.postMessage({
+                type: 'APP_UPDATED'
+            })
+        });
+    })
 })
 
 self.addEventListener('fetch', (e) => {

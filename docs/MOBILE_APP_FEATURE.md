@@ -124,6 +124,56 @@ A melhor estrategia para o momento parece ser:
 
 Essa abordagem evita reescrever cedo demais e transforma o proprio uso pessoal em teste de produto.
 
+## Status da implementacao
+
+### Ja implementado
+
+- Manifest PWA criado em `frontend/public/manifest.webmanifest`.
+- Metatags mobile/PWA adicionadas em `frontend/index.html`.
+- Icone principal reaproveitado em `frontend/public/icon_logo.png`.
+- Service worker inicial criado em `frontend/public/sw.js`.
+- Registro do service worker criado em `frontend/src/utils/registerServiceWorker.js`.
+- Canal basico de mensagem do service worker criado em `frontend/src/utils/serviceWorkerMessages.js`.
+- Service worker configurado para nao registrar em ambiente de desenvolvimento.
+- Cache inicial limitado ao shell da aplicacao.
+- Filtro preventivo para nao cachear rotas sensiveis como auth, tarefas e perfil quando estiverem na mesma origem.
+- Navegacao inferior mobile criada em `frontend/src/components/mobile/MobileNav.jsx`.
+- Estilos da navegacao inferior criados em `frontend/src/components/mobile/MobileNav.css`.
+- Navegacao inferior conectada em Dashboard, Calendar, DayPage e Profile.
+- Botao central de nova tarefa abre o modal direto no Dashboard e no DayPage.
+- Botao central vindo de Calendar/Profile navega para Dashboard solicitando abertura do modal.
+- Estado ativo da navegacao considera Dashboard e rotas `/dia/:data` como area de tarefas.
+- Ajuste de respiro inferior para a barra fixa em telas mobile.
+- Dashboard mobile com topbar antiga escondida para reduzir navegacao duplicada.
+- Formulario de tarefa ajustado como bottom sheet no mobile.
+- ConfirmBox ajustado para uso mobile.
+- Checklist mobile criado em `docs/CHECKLIST_MOBILE.md`.
+
+### Ainda falta para encerrar a fase mobile/PWA inicial
+
+- Validar visualmente as telas principais em larguras reais de celular.
+- Testar a barra inferior em Dashboard, Calendar, DayPage e Profile.
+- Testar o fluxo do botao `+` vindo de todas as telas.
+- Confirmar que o service worker registra corretamente em build de producao.
+- Confirmar que o service worker nao interfere em login, refresh token, CRUD de tarefas e perfil.
+- Gerar ou ajustar icones PWA nos tamanhos recomendados, especialmente 192x192 e 512x512.
+- Validar instalacao em Android Chrome.
+- Validar "Adicionar a Tela de Inicio" no iOS Safari.
+- Corrigir ambiente local de build, pois o Vite atual exige Node 20.19+ ou 22.12+.
+- Rodar build de producao apos ajuste do Node.
+- Testar o deploy publicado em celular real.
+- Marcar os itens validados em `docs/CHECKLIST_MOBILE.md`.
+
+### Fora do escopo desta fase
+
+- Publicacao na Play Store.
+- Publicacao na App Store.
+- Empacotamento com Capacitor.
+- Notificacoes push.
+- Offline completo com fila local e sincronizacao.
+- Login Google nativo para Android/iOS.
+- Deep links nativos para verificacao de email e reset de senha.
+
 ## Escopo sugerido da primeira etapa
 
 ### Interface e experiencia mobile
@@ -310,47 +360,51 @@ Fontes oficiais para reconferir:
 
 ### Fase 1: Preparacao mobile web
 
-- Corrigir build local e ambiente Node.
-- Revisar UI mobile das telas principais.
-- Criar barra inferior mobile.
-- Ajustar modal de tarefas como bottom sheet.
-- Criar checklist manual mobile.
+- [x] Criar barra inferior mobile.
+- [x] Conectar barra inferior nas telas privadas principais.
+- [x] Ajustar modal de tarefas como bottom sheet.
+- [x] Ajustar ConfirmBox para mobile.
+- [x] Criar checklist manual mobile.
+- [ ] Revisar UI mobile das telas principais em navegador.
+- [ ] Corrigir build local e ambiente Node.
+- [ ] Validar em celular real.
 
 ### Fase 2: PWA instalavel
 
-- Criar manifest.
-- Criar icones.
-- Adicionar metatags mobile/iOS.
-- Configurar service worker.
-- Testar instalacao e sessao em Android/iOS.
+- [x] Criar manifest.
+- [x] Adicionar metatags mobile/iOS.
+- [x] Configurar service worker inicial.
+- [x] Criar canal basico de atualizacao do service worker.
+- [ ] Criar icones nos tamanhos recomendados.
+- [ ] Testar instalacao e sessao em Android/iOS.
 
 ### Fase 3: Preparacao para loja
 
-- Avaliar Capacitor.
-- Gerar build Android de teste.
-- Validar login, tarefas, calendario e refresh token em aparelho real.
-- Resolver deep links.
-- Criar politica de privacidade.
-- Preparar assets de loja.
+- [ ] Avaliar Capacitor.
+- [ ] Gerar build Android de teste.
+- [ ] Validar login, tarefas, calendario e refresh token em aparelho real.
+- [ ] Resolver deep links.
+- [ ] Criar politica de privacidade.
+- [ ] Preparar assets de loja.
 
 ### Fase 4: Publicacao Android
 
-- Criar app no Play Console.
-- Configurar assinatura.
-- Gerar AAB.
-- Preencher ficha da loja.
-- Publicar em teste interno.
-- Testar instalacao via Play Store.
-- Promover para producao quando estiver estavel.
+- [ ] Criar app no Play Console.
+- [ ] Configurar assinatura.
+- [ ] Gerar AAB.
+- [ ] Preencher ficha da loja.
+- [ ] Publicar em teste interno.
+- [ ] Testar instalacao via Play Store.
+- [ ] Promover para producao quando estiver estavel.
 
 ### Fase 5: Publicacao iOS
 
-- Configurar Apple Developer.
-- Gerar app iOS.
-- Testar em dispositivo real/TestFlight.
-- Preencher App Store Connect.
-- Enviar para review.
-- Ajustar eventuais pontos levantados pela revisao.
+- [ ] Configurar Apple Developer.
+- [ ] Gerar app iOS.
+- [ ] Testar em dispositivo real/TestFlight.
+- [ ] Preencher App Store Connect.
+- [ ] Enviar para review.
+- [ ] Ajustar eventuais pontos levantados pela revisao.
 
 ## Decisao recomendada agora
 
