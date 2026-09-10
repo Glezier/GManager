@@ -236,3 +236,12 @@ textarea:focus {
   color: var(--text-muted);
   line-height: 1.5;
 }
+
+@media (max-width: 760px) {
+  .dashboard,
+  .calendar-page,
+  .day-page,
+  .profile-page {
+    padding-bottom: 104px;
+  }
+}

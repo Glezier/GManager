@@ -16,6 +16,7 @@ import './DayPage.css'
 import AddIcon from '../assets/icons/add.png'
 import Next from '../assets/icons/next.png'
 import Preview from '../assets/icons/preview.png'
+import MobileNav from '../components/mobile/MobileNav'
 import AppFooter from '../components/AppFooter'
 
 
@@ -229,6 +230,8 @@ export default function DayPage(){
       />
 
       <AppFooter minimal />
+
+      <MobileNav onAddTask={abrirCriacao} />
     </main>
   )
 }

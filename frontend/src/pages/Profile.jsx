@@ -15,6 +15,7 @@ import EyeClosed from '../assets/icons/eye-closed.png'
 import EyeOpen from '../assets/icons/eye-open.png'
 import Sun from '../assets/icons/sun.png'
 import Moon from '../assets/icons/moon.png'
+import MobileNav from "../components/mobile/MobileNav"
 import AppFooter from "../components/AppFooter"
 
 export default function Profile(){
@@ -742,6 +743,7 @@ export default function Profile(){
 
             <AppFooter minimal />
 
+            <MobileNav />
         </main>
     )
 }

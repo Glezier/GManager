@@ -12,6 +12,7 @@ import { compartilharTextoWhatsapp, formatarTarefasPorPeriodoParaTexto, baixarPd
 
 import ExportMenu from '../components/ExportMenu'
 import LoadingState from '../components/ui/LoadingState'
+import MobileNav from '../components/mobile/MobileNav'
 import AppFooter from '../components/AppFooter'
 
 import "./Calendar.css"
@@ -465,6 +466,8 @@ export default function Calendar(){
             </section>
 
             <AppFooter minimal />
+
+            <MobileNav />
         </main>
     )
 }

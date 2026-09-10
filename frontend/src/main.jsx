@@ -1,6 +1,8 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { GoogleOAuthProvider } from '@react-oauth/google'
 import { createRoot } from 'react-dom/client'
+import { registerServiceWorker } from './utils/registerServiceWorker.js'
+import { listenServiceWorkerMessages } from './utils/serviceWorkerMessages.js'
 import App from './App.jsx'
 import './styles/tokens.css'
 import './styles/base.css'
@@ -21,3 +23,6 @@ createRoot(document.getElementById('root')).render(
     </QueryClientProvider>
   </GoogleOAuthProvider>
 )
+
+registerServiceWorker()
+listenServiceWorkerMessages()

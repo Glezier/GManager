@@ -1,0 +1,21 @@
+{
+  "name": "My GManager",
+  "short_name": "My GManager",
+  "description": "Organizador pessoal para tarefas, planejamento diario e calendario.",
+  "start_url": "/dashboard",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#0f1115",
+  "theme_color": "#10b981",
+  "orientation": "portrait-primary",
+  "lang": "pt-BR",
+  "categories": ["productivity", "utilities"],
+  "icons": [
+    {
+      "src": "/icon_logo.png",
+      "sizes": "731x728",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
