@@ -13,6 +13,7 @@ import { compartilharTextoWhatsapp, formatarTarefasPorPeriodoParaTexto, baixarPd
 import ExportMenu from '../components/ExportMenu'
 import LoadingState from '../components/ui/LoadingState'
 import MobileNav from '../components/mobile/MobileNav'
+import TaskMonthGrid from '../components/calendar/TaskMonthGrid'
 import AppFooter from '../components/AppFooter'
 
 import "./Calendar.css"
@@ -219,6 +220,20 @@ export default function Calendar(){
         if (!api) return
         api.gotoDate(new Date(anoSelecionado, mesSelecionado, 1))
     }, [mesSelecionado, anoSelecionado])
+
+    useEffect(() => {
+        if (!calendarioCompacto) {
+            return
+        }
+
+        const inicio = new Date(anoSelecionado, mesSelecionado, 1)
+        const fim = new Date(anoSelecionado, mesSelecionado + 1, 0)
+
+        setPeriodo({
+            inicio: getData(inicio),
+            fim: getData(fim)
+        })
+    }, [anoSelecionado, mesSelecionado, calendarioCompacto])
 
     const eventos = useMemo( ()=> {
         return tarefas.map((tarefa) => ({
@@ -439,30 +454,43 @@ export default function Calendar(){
                 </div>
             )}
 
-            <section className='calendar-shell'>
-                <FullCalendar
-                    ref={calendarRef}
-                    plugins={[dayGridPlugin, interactionPlugin]}
-                    initialView='dayGridMonth'
-                    locale='pt-br'
-                    headerToolbar={{
-                        left: 'title',
-                        center: '',
-                        right: 'today prev,next'
-                    }}
-                    buttonText={{
-                        today: 'Hoje'
-                    }}
-                    dayHeaderFormat={calendarioCompacto ? { weekday: 'narrow' } : { weekday: 'short' }}
-                    events={eventos}
-                    dateClick={handleDate}
-                    eventClick={handleDateClick}
-                    dayMaxEvents={calendarioCompacto ? 1 : 3}
-                    fixedWeekCount={false}
-                    height="auto"
-                    datesSet={handleDatesSet}
-                    validRange={limiteCalendario}
-                />
+            <section className={`calendar-shell ${calendarioCompacto ? 'calendar-shell-compact' : ''}`}>
+                {calendarioCompacto ? (
+                    <TaskMonthGrid
+                        ano={anoSelecionado}
+                        mes={mesSelecionado}
+                        tarefas={tarefas}
+                        onSelectDate={(data) => {
+                            navigate(`/dia/${data}`, {
+                                state: getCalendarState()
+                            })
+                        }}
+                    />
+                ) : (
+                    <FullCalendar
+                        ref={calendarRef}
+                        plugins={[dayGridPlugin, interactionPlugin]}
+                        initialView='dayGridMonth'
+                        locale='pt-br'
+                        headerToolbar={{
+                            left: 'title',
+                            center: '',
+                            right: 'today prev,next'
+                        }}
+                        buttonText={{
+                            today: 'Hoje'
+                        }}
+                        dayHeaderFormat={{ weekday: 'short' }}
+                        events={eventos}
+                        dateClick={handleDate}
+                        eventClick={handleDateClick}
+                        dayMaxEvents={3}
+                        fixedWeekCount={false}
+                        height="auto"
+                        datesSet={handleDatesSet}
+                        validRange={limiteCalendario}
+                    />
+                )}
             </section>
 
             <AppFooter minimal />

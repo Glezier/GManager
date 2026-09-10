@@ -6,7 +6,9 @@ const APP_SHELL = [
     '/dashboard',
     '/calendario',
     '/manifest.webmanifest',
-    '/icon_logo.png'
+    '/icons/icon-192.png',
+    '/icons/icon-512.png',
+    '/icons/apple-touch-icon.png'
 ]
 
 // Abre o cache atual e salva as rotas definidas
