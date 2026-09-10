@@ -322,6 +322,15 @@
   border-color: var(--border-subtle);
 }
 
+.calendar-shell-compact {
+  padding: clamp(16px, 4vw, 22px);
+}
+
+.calendar-shell-compact .task-month-grid {
+  max-width: 520px;
+  margin: 0 auto;
+}
+
 @media (max-width: 900px) {
   .calendar-page {
     padding: 16px;

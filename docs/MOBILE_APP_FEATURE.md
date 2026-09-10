@@ -135,8 +135,12 @@ Essa abordagem evita reescrever cedo demais e transforma o proprio uso pessoal e
 - Registro do service worker criado em `frontend/src/utils/registerServiceWorker.js`.
 - Canal basico de mensagem do service worker criado em `frontend/src/utils/serviceWorkerMessages.js`.
 - Service worker configurado para nao registrar em ambiente de desenvolvimento.
+- Service worker validado em producao sem interferir no fluxo principal.
 - Cache inicial limitado ao shell da aplicacao.
 - Filtro preventivo para nao cachear rotas sensiveis como auth, tarefas e perfil quando estiverem na mesma origem.
+- Icones PWA 192x192, 512x512, 1024x1024 e apple touch icon adicionados em `frontend/public/icons`.
+- Manifest atualizado para usar os icones finais.
+- Favicon e apple touch icon atualizados em `frontend/index.html`.
 - Navegacao inferior mobile criada em `frontend/src/components/mobile/MobileNav.jsx`.
 - Estilos da navegacao inferior criados em `frontend/src/components/mobile/MobileNav.css`.
 - Navegacao inferior conectada em Dashboard, Calendar, DayPage e Profile.
@@ -154,9 +158,6 @@ Essa abordagem evita reescrever cedo demais e transforma o proprio uso pessoal e
 - Validar visualmente as telas principais em larguras reais de celular.
 - Testar a barra inferior em Dashboard, Calendar, DayPage e Profile.
 - Testar o fluxo do botao `+` vindo de todas as telas.
-- Confirmar que o service worker registra corretamente em build de producao.
-- Confirmar que o service worker nao interfere em login, refresh token, CRUD de tarefas e perfil.
-- Gerar ou ajustar icones PWA nos tamanhos recomendados, especialmente 192x192 e 512x512.
 - Validar instalacao em Android Chrome.
 - Validar "Adicionar a Tela de Inicio" no iOS Safari.
 - Corrigir ambiente local de build, pois o Vite atual exige Node 20.19+ ou 22.12+.
@@ -375,7 +376,7 @@ Fontes oficiais para reconferir:
 - [x] Adicionar metatags mobile/iOS.
 - [x] Configurar service worker inicial.
 - [x] Criar canal basico de atualizacao do service worker.
-- [ ] Criar icones nos tamanhos recomendados.
+- [x] Criar icones nos tamanhos recomendados.
 - [ ] Testar instalacao e sessao em Android/iOS.
 
 ### Fase 3: Preparacao para loja
