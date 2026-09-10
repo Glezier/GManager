@@ -104,7 +104,17 @@
   }
 
   .task-form {
+    max-height: calc(100dvh - 24px);
     border-radius: 18px;
+  }
+
+  .task-form::before {
+    content: "";
+    width: 44px;
+    height: 4px;
+    border-radius: 999px;
+    background: var(--border-strong);
+    justify-self: center;
   }
 }
 

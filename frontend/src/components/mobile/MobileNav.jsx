@@ -1,4 +1,4 @@
-import { useNavigate, NavLink } from "react-router-dom"
+import { useNavigate, NavLink, useLocation } from "react-router-dom"
 import CheckIcon from '../../assets/icons/check.png'
 import CalendarIcon from '../../assets/icons/calendar.png'
 import AddIcon from '../../assets/icons/add.png'
@@ -7,6 +7,8 @@ import './MobileNav.css'
 
 export default function MobileNav({ onAddTask }){
     const navigate = useNavigate()
+    const location = useLocation()
+    const isDayArea = location.pathname === '/dashboard' || location.pathname.startsWith('/dia/')
 
     function handleAddTask(){
         if (onAddTask){
@@ -21,12 +23,18 @@ export default function MobileNav({ onAddTask }){
 
     return (
         <nav className="mobile-nav" aria-label="Navegacao principal mobile">
-            <NavLink to="/dashboard" className="mobile-nav-item">
+            <NavLink
+                to="/dashboard"
+                className={({ isActive }) => (
+                    isActive || isDayArea ? "mobile-nav-item active" : "mobile-nav-item"
+                )}
+                title="Tarefas de hoje"
+            >
                 <img src={CheckIcon} alt="" />
                 <span>Hoje</span>
             </NavLink>
 
-            <NavLink to="/calendario" className="mobile-nav-item">
+            <NavLink to="/calendario" className="mobile-nav-item" title="Calendario">
                 <img src={CalendarIcon} alt="" />
                 <span>Calendario</span>
             </NavLink>
@@ -36,11 +44,12 @@ export default function MobileNav({ onAddTask }){
                 className="mobile-nav-action"
                 onClick={handleAddTask}
                 aria-label="Nova tarefa"
+                title="Nova tarefa"
             >
                 <img src={AddIcon} alt="" />
             </button>
 
-            <NavLink to="/perfil" className="mobile-nav-item">
+            <NavLink to="/perfil" className="mobile-nav-item" title="Perfil">
                 <img src={ProfileIcon} alt="" />
                 <span>Perfil</span>
             </NavLink>

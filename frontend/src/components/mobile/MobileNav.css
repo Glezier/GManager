@@ -64,8 +64,38 @@
   filter: none;
 }
 
+.mobile-nav-item:hover,
+.mobile-nav-action:hover {
+  background: var(--bg-interactive-hover);
+  color: var(--text-primary);
+}
+
+.mobile-nav-action:hover {
+  background: var(--accent-primary-hover);
+}
+
+.mobile-nav-item:focus-visible,
+.mobile-nav-action:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
+}
+
 @media (max-width: 760px) {
   .mobile-nav {
     display: grid;
+  }
+}
+
+@media (max-width: 380px) {
+  .mobile-nav {
+    left: max(8px, env(safe-area-inset-left));
+    right: max(8px, env(safe-area-inset-right));
+    bottom: max(8px, env(safe-area-inset-bottom));
+    gap: 6px;
+    padding: 7px;
+  }
+
+  .mobile-nav-item {
+    font-size: 0.68rem;
   }
 }

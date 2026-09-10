@@ -416,13 +416,11 @@
 @media (max-width: 640px) {
   .dashboard {
     padding: 12px;
-    padding-bottom: 28px;
+    padding-bottom: 104px;
   }
 
   .dashboard-topbar {
-    padding: 12px;
-    gap: 14px;
-    border-radius: 16px;
+    display: none;
   }
 
   .dashboard-brand-block {
