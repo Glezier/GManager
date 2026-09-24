@@ -305,11 +305,6 @@ export default function Login(){
                         <p className='auth-alt'>
                             <Link to='/recuperar-senha'>Esqueci minha senha</Link>
                         </p>
-
-                        <p className='auth-alt'>
-                            Social login disponível em breve...
-                        </p>
-
                     </div>
                 </section>
 

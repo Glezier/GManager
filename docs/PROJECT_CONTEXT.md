@@ -76,6 +76,7 @@ Garantir que todos retornam dado limpo ou null, e não result do pg
 - portugues - ingles
 - cuidar do SEO
 - centralizar e botar icone no exportar
+- implementar pasta de skills com agentes
 
 ### Fase 2: Produto
 - filtros por status e data

@@ -2,11 +2,14 @@ const authService = require("../services/authService")
 
 // Define as regras do refresh token
 function getRefreshTokenOptions(){
+    const dias = Number(process.env.REFRESH_TOKEN_EXPIRES_DAYS || 90)
+
     return {
         httpOnly: true,
         secure: process.env.COOKIE_SECURE === 'true',
-        sameSite: 'lax',
-        path: '/'
+        sameSite: process.env.COOKIE_SAMESITE || 'lax',
+        path: '/',
+        maxAge: dias * 24 * 60 * 60 * 1000
     }
 }
 
