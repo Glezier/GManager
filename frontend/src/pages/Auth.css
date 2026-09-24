@@ -168,6 +168,55 @@
   min-width: 0;
 }
 
+.auth-google-native-button {
+  width: 100%;
+  height: 44px;
+  border: 1px solid #dadce0;
+  border-radius: 4px;
+  background: #fff;
+  color: #3c4043;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    background var(--transition-fast),
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast),
+    opacity var(--transition-fast);
+}
+
+.auth-google-native-button:hover:not(:disabled) {
+  background: #f8fafd;
+  border-color: #d2e3fc;
+  box-shadow: 0 1px 2px rgba(60, 64, 67, 0.2);
+}
+
+.auth-google-native-button:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.auth-google-native-icon {
+  width: 18px;
+  height: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 18px;
+}
+
+.auth-google-native-icon img {
+  width: 18px;
+  height: 18px;
+  display: block;
+  object-fit: contain;
+}
+
 .auth-alt {
   margin: 16px 0 0;
   color: var(--text-muted);

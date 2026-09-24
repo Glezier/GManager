@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate, Link, useLocation } from 'react-router-dom'
 import { GoogleLogin } from '@react-oauth/google'
+import { isNativeApp } from '../utils/platform'
+import { loginGoogleMobile } from '../services/mobileGoogleAuth'
 import { login, loginGoogle, reenviarVerificacao } from '../api/authApi'
 import { refreshToken } from '../api/client'
 import { getToken, setToken } from '../utils/auth'
@@ -12,10 +14,12 @@ import './Auth.css'
 import FullLogo from '../assets/icons/full_logo.png'
 import EyeClosed from '../assets/icons/eye-closed.png'
 import EyeOpen from '../assets/icons/eye-open.png'
+import GoogleIcon from '../assets/icons/google.png'
 
 export default function Login(){
     const navigate = useNavigate()
     const location = useLocation()
+    const mobile = isNativeApp()
 
     const [email, setEmail] = useState(location.state?.emailPreenchido || '')
     const [senha, setSenha] = useState("")
@@ -114,6 +118,31 @@ export default function Login(){
             }
         } catch (error){
             setErro(error.message)
+        } finally{
+            setLoading(false)
+        }
+    }
+
+    async function handleGoogleMobile(){
+        try{
+            setErro('')
+            setMensagemSucesso('')
+            setEmailNaoVerificado(false)
+            setLoading(true)
+
+            const idToken = await loginGoogleMobile()
+            const data = await loginGoogle(idToken)
+
+            if (data.usuario?.tema){
+                salvarTemaLocal(data.usuario.tema)
+            }
+
+            if (data.token){
+                setToken(data.token)
+                navigate('/dashboard')
+            }
+        } catch (error){
+            setErro(error.message || 'Não foi possível entrar com Google')
         } finally{
             setLoading(false)
         }
@@ -287,15 +316,29 @@ export default function Login(){
                             </button>
 
                             <div className='auth-google-login'>
-                                <GoogleLogin 
-                                    onSuccess={handleGoogleSuccess}
-                                    onError={() => {
-                                        setErro('Não foi possível entrar com Google')
-                                    }}
-                                    width="100%"
-                                    
-                                />
+                                {mobile ? (
+                                    <button
+                                        type="button"
+                                        className="auth-google-native-button"
+                                        onClick={handleGoogleMobile}
+                                        disabled={loading || bloqueado}
+                                    >
+                                        <span className="auth-google-native-icon" aria-hidden="true">
+                                            <img src={GoogleIcon} alt="" />
+                                        </span>
+                                        <span>Entrar com Google</span>
+                                    </button>
+                                ) : (
+                                    <GoogleLogin 
+                                        onSuccess={handleGoogleSuccess}
+                                        onError={() => {
+                                            setErro('Não foi possível entrar com Google')
+                                        }}
+                                        width="100%"
+                                    />
+                                )}
                             </div>
+
                         </form>
 
                         <p className='auth-alt'>
