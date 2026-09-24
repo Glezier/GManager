@@ -5,31 +5,34 @@ import { refreshToken } from "../api/client"
 import ThemeSync from "../components/ThemeSync"
 
 export default function PrivateRoute({ children }){
-    const [status, setStatus] = useState(hasToken() ? 'authenticated' : 'checking')
+    const [status, setStatus] = useState('checking')
 
     useEffect(() => {
         async function tentarRefresh(){
-            if(hasToken()){
-                setStatus('authenticated')
-                return
-            }
+            const tinhaToken = hasToken()
 
             try{
-                // Pega novo token
                 const data = await refreshToken()
-                
-                // Se token válido
+
                 if (data.token){
                     setToken(data.token)
                     setStatus('authenticated')
                     return
                 }
 
-                // Token não válido
+                if (tinhaToken){
+                    setStatus('authenticated')
+                    return
+                }
+
                 removeToken()
                 setStatus('unauthenticated')
-
             } catch{
+                if (tinhaToken){
+                    setStatus('authenticated')
+                    return
+                }
+
                 removeToken()
                 setStatus('unauthenticated')
             }
