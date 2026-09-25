@@ -5,6 +5,7 @@ import { atualizarNome, atualizarEmail, atualizarSenha, atualizarTema } from "..
 import { useQueryClient, useMutation } from "@tanstack/react-query"
 import { getTemaSalvo, salvarTemaLocal } from "../utils/theme"
 import { removeToken } from "../utils/auth"
+import { logout } from "../api/authApi"
 import { validarNomePerfil, validarSenhaPerfil, validarEmailPerfil } from "../validators/profileValidators"
 import { VALIDATION_LIMITS } from "../validators/validationRules"
 import "./Profile.css"
@@ -15,6 +16,7 @@ import EyeClosed from '../assets/icons/eye-closed.png'
 import EyeOpen from '../assets/icons/eye-open.png'
 import Sun from '../assets/icons/sun.png'
 import Moon from '../assets/icons/moon.png'
+import LogoutIcon from '../assets/icons/logout.png'
 import MobileNav from "../components/mobile/MobileNav"
 import AppFooter from "../components/AppFooter"
 
@@ -282,6 +284,19 @@ export default function Profile(){
             setErroForm("Tema alterado neste dispositivo, mas não foi salvo para outros acessos.")
         }
     })
+
+    async function handleLogout(){
+        try{
+            await logout()
+        } catch(error){
+            console.warn('Não foi possível encerrar a sessão no servidor.', error)
+        } finally{
+            removeToken()
+            // Limpa cache
+            queryClient.clear()
+            navigate('/', { replace: true, state: { skipSessionCheck: true}})
+        }
+    }
 
     useEffect(() => {
         if (feedbackFixo){
@@ -712,6 +727,23 @@ export default function Profile(){
                                                 <img src={Sun} alt="" />
                                             )}
                                         </span>
+                                    </button>
+                                </div>
+
+                                <div className="profile-danger-zone">
+                                    <div>
+                                        <strong>Sair da conta</strong>
+                                        <p>Encerra sua sessão neste dispositivo.</p>
+                                    </div>
+
+                                    <button
+                                        type="button"
+                                        className="profile-logout-button"
+                                        onClick={handleLogout}
+                                        aria-label="Sair da conta"
+                                    >
+                                        <span>Sair</span>
+                                        <img src={LogoutIcon} className="profile-logout-icon" alt="" />
                                     </button>
                                 </div>
                             </>

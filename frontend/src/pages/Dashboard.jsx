@@ -2,10 +2,8 @@ import { useMemo, useEffect  } from "react"
 import { useNavigate, useLocation } from 'react-router-dom'
 
 import { getData, formatarData } from "../utils/date"
-import { getToken, removeToken } from "../utils/auth"
+import { getToken } from "../utils/auth"
 import { ordenarTarefas } from "../utils/taskOrder"
-
-import { logout } from "../api/authApi"
 
 import MiniCalendar from "../components/MiniCalendar"
 import TaskForm from "../components/TaskForm"
@@ -23,7 +21,6 @@ import "./Dashboard.css"
 import FullLogo from '../assets/icons/full_logo.png'
 import CalendarIcon from '../assets/icons/calendar.png'
 import ProfileIcon from './../assets/icons/profile.png'
-import LogoutIcon from '../assets/icons/logout.png'
 import AddIcon from '../assets/icons/add.png'
 
 
@@ -88,17 +85,6 @@ export default function Dashboard(){
     } = useProgress(tarefasDeHoje)
 
     const semana = useSemana(hoje, tarefas)  
-    
-    async function handleLogout(){
-        try{
-            await logout()
-        } catch(error){
-            console.log('Erro ao fazer login' + error)
-        } finally{
-            removeToken()
-            navigate('/', {state: { skipSessionCheck: true }})
-        }
-    }
 
     useEffect(() => {
         if (location.state?.openTaskModal) {
@@ -130,13 +116,6 @@ export default function Dashboard(){
                 <div className="dashboard-brand-block"> 
                     <button type="button" onClick={() => navigate("/perfil")} >
                         <img src={ProfileIcon} alt="Profile" className="bar-icons" title="Profile"/>
-                    </button>
-                    <button
-                        type="button"
-                        className="dashboard-logout"
-                        onClick={handleLogout}
-                    >
-                        <img src={LogoutIcon} className="bar-icons" alt="Sair" title="Sair" />
                     </button>
                 </div>
             </header>
