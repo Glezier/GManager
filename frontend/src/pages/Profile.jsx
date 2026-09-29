@@ -709,7 +709,7 @@ export default function Profile(){
                                     <div className="profile-info-row">
                                         <div className="profile-info-content">
                                             <span>Tema</span>
-                                            <strong>{tema === "dark" ? "Dark" : "Light"}</strong>
+                                            <strong>{tema === "dark" ? "Tema escuro" : "Tema claro"}</strong>
                                         </div>
                                     </div>
 

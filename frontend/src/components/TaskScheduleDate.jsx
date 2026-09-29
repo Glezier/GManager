@@ -1,12 +1,6 @@
-import { useMemo, useRef } from "react"
-import { formatarDataCompletaBR, getData } from "../utils/date"
+import { useRef } from "react"
+import { formatarDataCompletaBR } from "../utils/date"
 import './TaskScheduleDate.css'
-
-function adicionarDias(dataBase, dias){
-    const data = new Date(`${dataBase}T00:00:00`)
-    data.setDate(data.getDate() + dias)
-    return getData(data)
-}
 
 function abrir(ref){
     if (!ref.current){
@@ -24,7 +18,6 @@ function abrir(ref){
 export default function TaskScheduleDate({
     data,
     hora,
-    hoje,
     dataMinima,
     dataMaxima,
     onDataChange,

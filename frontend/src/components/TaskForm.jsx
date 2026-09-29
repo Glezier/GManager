@@ -99,7 +99,6 @@ export default function TaskForm ({ criar, cancelar, hoje, erro='', tarefaInicia
                     <TaskScheduleDate
                         data={data}
                         hora={hora}
-                        hoje={hoje}
                         dataMinima={dataMinima}
                         dataMaxima={dataMaxima}
                         onDataChange={setData}

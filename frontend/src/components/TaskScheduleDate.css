@@ -100,3 +100,19 @@
     grid-template-columns: 1fr;
   }
 }
+
+@media (max-width: 420px) {
+  .task-schedule-display {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .task-schedule-display strong {
+    align-self: flex-start;
+  }
+
+  .task-schedule-chip {
+    flex: 1 1 auto;
+  }
+}
