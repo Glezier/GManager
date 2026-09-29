@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
+import TaskScheduleDate from './TaskScheduleDate'
 import './TaskForm.css'  
 import { formatarData, formatarHora, getDataLimiteAnos, getDataMinimaAnos } from '../utils/date'
 import { validarTarefa } from '../validators/tasksValidators'
@@ -95,22 +96,14 @@ export default function TaskForm ({ criar, cancelar, hoje, erro='', tarefaInicia
                 />
 
                 <div className="task-form-row">
-                    <input 
-                        className="task-form-input"
-                        type="date"
-                        lang='pt-BR'
-                        value={data}
-                        onChange={(e)=>{setData(e.target.value)}}
-                        min={dataMinima}
-                        max={dataMaxima}
-                        required
-                    />
-
-                    <input 
-                        className="task-form-input"
-                        type="time" 
-                        value={hora}
-                        onChange={(e)=>{setHora(e.target.value)}}
+                    <TaskScheduleDate
+                        data={data}
+                        hora={hora}
+                        hoje={hoje}
+                        dataMinima={dataMinima}
+                        dataMaxima={dataMaxima}
+                        onDataChange={setData}
+                        onHoraChange={setHora}
                     />
 
                     {emEdicao && (
