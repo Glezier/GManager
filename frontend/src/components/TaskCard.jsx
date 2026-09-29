@@ -26,7 +26,7 @@ export default function TaskCard({tarefa, concluir, remover, editar}){
         </div>
 
         <div className="task-card-actions">
-          {tarefa.status === "pendente" ? (
+          {tarefa.status === "pendente" && (
             <button
               type="button"
               className="task-card-icon"
@@ -35,8 +35,6 @@ export default function TaskCard({tarefa, concluir, remover, editar}){
             >
               <img src={CheckIcon} alt="" className="task-card-icon-image"/>
             </button>
-          ) : (
-            <div className="task-card-icon-placeholder"/>
           )}
 
           <button type="button" className="task-card-icon" onClick={()=> editar(tarefa)}>

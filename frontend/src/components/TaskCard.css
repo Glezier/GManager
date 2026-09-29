@@ -13,7 +13,7 @@
   justify-content: space-between;
   gap: 16px;
   width: 100%;
-  min-width: 100%;
+  min-width: 0;
 }
 
 .task-card:hover {
@@ -96,10 +96,10 @@
 .task-card-actions {
   display: flex;
   flex-direction: row;
-  align-items: flex-end;
-  justify-content: center;
-  gap: 12px;
-  min-width: 92px;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  min-width: 144px;
   flex-shrink: 0;
 }
 
@@ -122,12 +122,6 @@
   background: var(--bg-interactive-hover);
 }
 
-.task-card-icon-placeholder {
-  width: 40px;
-  height: 40px;
-  flex-shrink: 0;
-}
-
 @media (max-width: 640px) {
   .task-card-shell {
     display: grid;
@@ -144,12 +138,13 @@
 
   .task-card-actions {
     width: 100%;
+    min-width: 0;
     justify-content: flex-start;
     gap: 10px;
+    padding-top: 2px;
   }
 
-  .task-card-icon,
-  .task-card-icon-placeholder {
+  .task-card-icon {
     width: 44px;
     height: 44px;
   }

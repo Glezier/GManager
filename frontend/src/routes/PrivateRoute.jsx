@@ -3,6 +3,7 @@ import { useState, useEffect } from "react"
 import { hasToken, removeToken, setToken } from "../utils/auth"
 import { refreshToken } from "../api/client"
 import ThemeSync from "../components/ThemeSync"
+import LoadingState from "../components/ui/LoadingState"
 
 export default function PrivateRoute({ children }){
     const [status, setStatus] = useState('checking')
@@ -42,7 +43,13 @@ export default function PrivateRoute({ children }){
     }, [])
     
     if (status === 'checking'){
-        return <p>Carregando sessão...</p>
+        return (
+            <LoadingState
+                variant="page"
+                message="Carregando sessão..."
+                detail="Preparando sua rotina."
+            />
+        )
     }
 
     if (status === 'unauthenticated'){

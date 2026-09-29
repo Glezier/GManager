@@ -34,3 +34,57 @@
     transform: rotate(360deg);
   }
 }
+
+.loading-state-copy {
+  display: grid;
+  gap: 3px;
+}
+
+.loading-state-detail {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.loading-state-page {
+  min-height: 100dvh;
+  width: 100%;
+  box-sizing: border-box;
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  text-align: center;
+  gap: 14px;
+  background:
+    radial-gradient(circle at top left, rgba(16, 185, 129, 0.14), transparent 30%),
+    linear-gradient(180deg, var(--bg-app-start) 0%, var(--bg-app-end) 100%);
+  box-shadow: none;
+}
+
+.loading-state-page .loading-state-spinner {
+  width: 34px;
+  height: 34px;
+  border-width: 3px;
+}
+
+.loading-state-page .loading-state-text {
+  color: var(--text-primary);
+  font-size: 1.05rem;
+}
+
+.loading-state-page .loading-state-copy {
+  justify-items: center;
+}
+
+@media (max-width: 420px) {
+  .loading-state-page {
+    padding: 18px;
+  }
+
+  .loading-state-page .loading-state-text {
+    font-size: 1rem;
+  }
+}
