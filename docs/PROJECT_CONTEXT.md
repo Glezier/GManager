@@ -72,7 +72,6 @@ O projeto esta em fase de evolucao pos-deploy, com foco em estabilidade, organiz
 - analisar se a forma de implementação de tema é a melhor possível
 - Revisão geral de nomes e contratos dos repositories.
 Garantir que todos retornam dado limpo ou null, e não result do pg
-- implementar skills e infos de agentes IA
 - portugues - ingles
 - cuidar do SEO
 - centralizar e botar icone no exportar
@@ -121,7 +120,8 @@ Garantir que todos retornam dado limpo ou null, e não result do pg
 
 ## Acordo de trabalho
 - Quando o objetivo for aprendizado, explicar antes de alterar codigo.
-- Editar arquivos diretamente apenas quando solicitado.
+- Editar arquivos diretamente apenas com autorizacao expressa para a tarefa; em tarefas de estilizacao solicitadas, arquivos `.css` podem ser editados diretamente dentro do escopo.
+- As instrucoes permanentes para agentes estao em `AGENTS.md`; os procedimentos reutilizaveis estao em `.agents/skills` (documentacao oficial, identidade visual e validacao de mudancas).
 - Antes de implementar, observar os arquivos relacionados e seguir os padroes ja usados no projeto.
 - Preferir mudancas pequenas, testaveis e alinhadas com a arquitetura atual.
 - Controllers devem ficar focados em HTTP; regras de negocio ficam nos services; SQL fica nos repositories; validacoes reutilizaveis ficam nos validators.
