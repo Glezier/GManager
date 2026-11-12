@@ -97,3 +97,17 @@ exports.themeLimiter = rateLimit({
         }
     }
 })
+
+exports.notesWriterLimiter = rateLimit({
+    windowMs: 60 * 1000,
+    limit: 30,
+    standardHeaders: true,
+    legacyHeaders: false,
+    keyGenerator: (req) => `user:${req.userId}`,
+    message: {
+        error: {
+            code: 'NOTE_WRITE_RATE_LIMIT_EXCEEDED',
+            message: 'Muitas alterações em notas. Tente novamente em instantes.'
+        }
+    }
+})
