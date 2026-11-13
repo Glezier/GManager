@@ -7,6 +7,7 @@ import ForgotPassword from './pages/ForgotPassword'
 import ResetPassword from './pages/ResetPassword'
 import Dashboard from './pages/Dashboard'
 import Calendar from './pages/Calendar'
+import Notes from './pages/Notes'
 import PrivateRoute from './routes/PrivateRoute'
 import DayPage from './pages/DayPage'
 import Profile from './pages/Profile'
@@ -44,6 +45,14 @@ export default function App(){
             <DayPage />
           </PrivateRoute>
         }
+        />
+        <Route 
+          path='/notas'
+          element={
+            <PrivateRoute>
+              <Notes />
+            </PrivateRoute>
+          }
         />
       </Routes>
     </BrowserRouter>

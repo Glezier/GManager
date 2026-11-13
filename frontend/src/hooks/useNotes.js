@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { listarNotas, criarNota, atualizarNota, deletarNota } from "../api/notesApi"
 
-export function useNotas ({ usuarioId, enabled = true }) {
+export default function useNotes ({ usuarioId, enabled = true }) {
     return useQuery({
         queryKey: ['notas', usuarioId],
         queryFn: listarNotas,

@@ -1,0 +1,70 @@
+.notes-page {
+  min-height: 100dvh;
+  padding: clamp(14px, 2.4vw, 20px);
+}
+
+.notes-hero {
+  display: grid;
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+}
+
+.notes-back {
+  justify-self: start;
+  margin-bottom: var(--space-2);
+  text-decoration: none;
+}
+
+.notes-hero .page-eyebrow {
+  margin: 0;
+}
+
+.notes-panel {
+  padding: clamp(18px, 2.5vw, 24px);
+}
+
+.notes-panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-bottom: var(--space-5);
+}
+
+.notes-panel-head h2 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.notes-count {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.notes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+  gap: var(--space-4);
+}
+
+@media (max-width: 760px) {
+  .notes-page {
+    padding-bottom: calc(104px + env(safe-area-inset-bottom));
+  }
+}
+
+@media (max-width: 640px) {
+  .notes-page {
+    padding-inline: var(--space-3);
+  }
+
+  .notes-hero {
+    padding: var(--space-5);
+  }
+
+  .notes-hero .page-title {
+    font-size: 2rem;
+    line-height: 1.1;
+  }
+}
