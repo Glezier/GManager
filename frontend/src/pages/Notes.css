@@ -19,6 +19,10 @@
   margin: 0;
 }
 
+.notes-new {
+  justify-self: start;
+}
+
 .notes-panel {
   padding: clamp(18px, 2.5vw, 24px);
 }

@@ -3,6 +3,7 @@ import { useMe } from '../hooks/useMe'
 import useNotes, { useNotasMutation } from '../hooks/useNotes'
 
 import NoteCard from '../components/notes/NoteCard'
+import NoteForm from '../components/notes/NoteForm'
 import LoadingState from '../components/ui/LoadingState'
 import AppFooter from '../components/AppFooter'
 import MobileNav from '../components/mobile/MobileNav'
@@ -35,6 +36,29 @@ export default function Notes () {
         setCriandoNota(true)
     }
 
+    function cancelarCriacao () {
+        if (criacao.isPending){
+            return
+        }
+
+        criacao.reset()
+        setCriandoNota(false)
+    }
+
+    async function salvarNota (nota) {
+        if (criacao.isPending){
+            return
+        }
+
+        try{
+            await criacao.mutateAsync(nota)
+            setCriandoNota(false)
+            setSucesso('Nota criada com sucesso')
+        } catch {
+            // Mutation já guarda o erro
+        }
+    }
+
     const loading = carregandoUsuario || carregandoNotas
     const error = erroUsuario || erroNotas
 
@@ -50,7 +74,31 @@ export default function Notes () {
                 <p className="page-text">
                     Guarde ideias, lembretes e anotações em um só lugar.
                 </p>
+
+                <button
+                    type="button"
+                    className="btn-primary notes-new"
+                    onClick={abrirCriacao}
+                    disabled={!usuario || Boolean(erroUsuario) || criandoNota}
+                >
+                    Nova nota
+                </button>
             </header>
+
+            {sucesso && (
+                <p className="feedback feedback-success" role="status">
+                    {sucesso}
+                </p>
+            )}
+
+            {criandoNota && (
+                <NoteForm
+                    salvar={salvarNota}
+                    cancelar={cancelarCriacao}
+                    salvando={criacao.isPending}
+                    erro={criacao.error?.message || ''}
+                />
+            )}
 
             <section
                 className="notes-panel page-panel"
