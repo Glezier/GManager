@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { useMe } from '../hooks/useMe'
-import useNotes from '../hooks/useNotes'
+import useNotes, { useNotasMutation } from '../hooks/useNotes'
 
 import NoteCard from '../components/notes/NoteCard'
 import LoadingState from '../components/ui/LoadingState'
@@ -8,6 +8,7 @@ import AppFooter from '../components/AppFooter'
 import MobileNav from '../components/mobile/MobileNav'
 
 import './Notes.css'
+import { useState } from 'react'
 
 export default function Notes () {
     const {
@@ -22,6 +23,17 @@ export default function Notes () {
         isFetching: atualizandoNotas,
         error: erroNotas
     } = useNotes({ usuarioId: usuario?.id })
+
+    const [criandoNota, setCriandoNota] = useState(false)
+    const [sucesso, setSucesso] = useState('')
+
+    const { criacao } = useNotasMutation({ usuarioId: usuario?.id })
+
+    function abrirCriacao () {
+        criacao.reset()
+        setSucesso('')
+        setCriandoNota(true)
+    }
 
     const loading = carregandoUsuario || carregandoNotas
     const error = erroUsuario || erroNotas
