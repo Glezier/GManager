@@ -76,6 +76,7 @@ Garantir que todos retornam dado limpo ou null, e não result do pg
 - cuidar do SEO
 - centralizar e botar icone no exportar
 - implementar pasta de skills com agentes
+- verificar paginação
 - automatizar alterações no banco pra criar o esquema
 
 ### Fase 2: Produto
@@ -89,6 +90,7 @@ Garantir que todos retornam dado limpo ou null, e não result do pg
 - implementar migrations
 - não deixar api exposta
 - colocar anuncios
+- ver se pode apagar pastas do desktop mudando a referencia delas pro local
 
 ### Fase 3: Testes
 - testes de carga
@@ -96,6 +98,7 @@ Garantir que todos retornam dado limpo ou null, e não result do pg
 
 ### Fase 4: Recursos
 - avaliar notas (por dia e uma aba só pra ela com várias)
+- implementar microserviços
 - avaliar checklists
 - avaliar financas
 - avaliar metas
