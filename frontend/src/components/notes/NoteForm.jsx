@@ -7,13 +7,17 @@ export default function NoteForm({
     salvar,
     cancelar,
     salvando = false,
-    erro = ''
+    erro = '',
+    notaInicial = null
 }) {
-    const [titulo, setTitulo] = useState('')
-    const [conteudo, setConteudo] = useState('')
+    const [titulo, setTitulo] = useState(notaInicial?.titulo || '')
+    const [conteudo, setConteudo] = useState(notaInicial?.conteudo || '')
     const [erroValidacao, setErroValidacao] = useState('')
     const [confirmandoDescarte, setConfirmandoDescarte] = useState(false)
-    const temAlteracoes = titulo !== '' || conteudo !== ''
+
+    const emEdicao = Boolean(notaInicial)
+    const temAlteracoes = titulo !== (notaInicial?.titulo || '') ||
+    conteudo !== (notaInicial?.conteudo || '')
 
     function handleSubmit(e) {
         e.preventDefault()
@@ -49,7 +53,7 @@ export default function NoteForm({
     return (
         <>
             <form className="note-form page-panel" onSubmit={handleSubmit} noValidate>
-                <h2>Nova nota</h2>
+                <h2>{emEdicao ? 'Editar nota' : 'Nova nota'}</h2>
 
                 {(erroValidacao || erro) && (
                     <p className="feedback feedback-error" role="alert">
@@ -91,7 +95,7 @@ export default function NoteForm({
 
                     <div className="note-form-actions">
                         <button type="submit" className="btn-primary">
-                            {salvando ? 'Salvando...' : 'Salvar nota'}
+                            {salvando ? 'Salvando' : 'Salvar nota' }
                         </button>
 
                         <button
@@ -107,7 +111,7 @@ export default function NoteForm({
 
             <ConfirmBox 
                 open={confirmandoDescarte}
-                title='Deseja descartar nota?'
+                title='Deseja descartar alterações?'
                 message='O texto não salvo será perdido'
                 confirmLabel='Descartar'
                 cancelLabel='Continuar escrevendo'

@@ -25,37 +25,70 @@ export default function Notes () {
         error: erroNotas
     } = useNotes({ usuarioId: usuario?.id })
 
-    const [criandoNota, setCriandoNota] = useState(false)
+    const [formularioAberto, setFormularioAberto] = useState(false)
     const [sucesso, setSucesso] = useState('')
 
-    const { criacao } = useNotasMutation({ usuarioId: usuario?.id })
+    const [editando, setEditando] = useState(null)
 
-    function abrirCriacao () {
+    const { criacao, atualizacao } = useNotasMutation({
+        usuarioId: usuario?.id
+    })
+
+    const salvando = criacao.isPending || atualizacao.isPending
+
+    function abrirCriacao() {
         criacao.reset()
+        atualizacao.reset()
         setSucesso('')
-        setCriandoNota(true)
+        setEditando(null)
+        setFormularioAberto(true)
     }
 
-    function cancelarCriacao () {
-        if (criacao.isPending){
+    function abrirEdicao(nota) {
+        if (formularioAberto) {
             return
         }
 
         criacao.reset()
-        setCriandoNota(false)
+        atualizacao.reset()
+        setSucesso('')
+        setEditando(nota)
+        setFormularioAberto(true)
     }
 
-    async function salvarNota (nota) {
-        if (criacao.isPending){
+    function fecharFormulario() {
+        if (salvando) {
             return
         }
 
-        try{
-            await criacao.mutateAsync(nota)
-            setCriandoNota(false)
-            setSucesso('Nota criada com sucesso')
+        criacao.reset()
+        atualizacao.reset()
+        setEditando(null)
+        setFormularioAberto(false)
+    }
+
+    async function salvarNota(nota) {
+        if (salvando) {
+            return
+        }
+
+        try {
+            if (editando) {
+                await atualizacao.mutateAsync({
+                    id: editando.id,
+                    nota
+                })
+
+                setSucesso('Nota atualizada com sucesso.')
+            } else {
+                await criacao.mutateAsync(nota)
+                setSucesso('Nota criada com sucesso.')
+            }
+
+            setFormularioAberto(false)
+            setEditando(null)
         } catch {
-            // Mutation já guarda o erro
+            // A mutation disponibiliza o erro para o formulário.
         }
     }
 
@@ -79,7 +112,7 @@ export default function Notes () {
                     type="button"
                     className="btn-primary notes-new"
                     onClick={abrirCriacao}
-                    disabled={!usuario || Boolean(erroUsuario) || criandoNota}
+                    disabled={!usuario || Boolean(erroUsuario) || formularioAberto}
                 >
                     Nova nota
                 </button>
@@ -91,12 +124,18 @@ export default function Notes () {
                 </p>
             )}
 
-            {criandoNota && (
+            {formularioAberto && (
                 <NoteForm
+                    key={editando ? `editar-${editando.id}` : 'criar'}
+                    notaInicial={editando}
                     salvar={salvarNota}
-                    cancelar={cancelarCriacao}
-                    salvando={criacao.isPending}
-                    erro={criacao.error?.message || ''}
+                    cancelar={fecharFormulario}
+                    salvando={salvando}
+                    erro={
+                        editando
+                            ? atualizacao.error?.message || ''
+                            : criacao.error?.message || ''
+                    }
                 />
             )}
 
@@ -138,7 +177,12 @@ export default function Notes () {
                 {!loading && notas.length > 0 && (
                     <div className="notes-grid">
                         {notas.map((nota) => (
-                            <NoteCard key={nota.id} nota={nota} />
+                            <NoteCard 
+                                key={nota.id} 
+                                nota={nota} 
+                                editar={abrirEdicao}
+                                desabilitado={formularioAberto}
+                            />
                         ))}
                     </div>
                 )}
