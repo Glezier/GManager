@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { validarNota } from '../../validators/noteValidators'
 import ConfirmBox from '../ConfirmBox'
 import './NoteForm.css'
@@ -14,10 +14,64 @@ export default function NoteForm({
     const [conteudo, setConteudo] = useState(notaInicial?.conteudo || '')
     const [erroValidacao, setErroValidacao] = useState('')
     const [confirmandoDescarte, setConfirmandoDescarte] = useState(false)
+    const dialogRef = useRef(null)
+    const tituloRef = useRef(null)
+
+    useEffect(() => {
+        const dialog = dialogRef.current
+        const focoAnterior = document.activeElement
+        const focoEraVisivel = focoAnterior?.matches(':focus-visible')
+        const overflowAnterior = document.body.style.overflow
+
+        dialog.showModal()
+        tituloRef.current.focus({ preventScroll: true })
+        document.body.style.overflow = 'hidden'
+
+        return () => {
+            dialog.close()
+            document.body.style.overflow = overflowAnterior
+            queueMicrotask(() => {
+                if (focoAnterior?.isConnected) {
+                    if (focoEraVisivel) {
+                        focoAnterior.focus({ preventScroll: true })
+                    } else if (document.activeElement === focoAnterior) {
+                        // Evita deixar o botão destacado após uma abertura pelo mouse.
+                        focoAnterior.blur()
+                    }
+                }
+            })
+        }
+    }, [])
+
+    useEffect(() => {
+        if (confirmandoDescarte) {
+            dialogRef.current.querySelector('.confirm-dialog-cancel')?.focus()
+        }
+    }, [confirmandoDescarte])
 
     const emEdicao = Boolean(notaInicial)
     const temAlteracoes = titulo !== (notaInicial?.titulo || '') ||
     conteudo !== (notaInicial?.conteudo || '')
+
+    // Prevenir saida sem salvar nota
+    useEffect(() => {
+        if (!temAlteracoes && !salvando) {
+            return
+        }
+
+        function avisarAntesDeSair(e) {
+            e.preventDefault()
+
+            // Compatibilidade com navegadores que exigem returnValue.
+            e.returnValue = true
+        }
+
+        window.addEventListener('beforeunload', avisarAntesDeSair)
+
+        return () => {
+            window.removeEventListener('beforeunload', avisarAntesDeSair)
+        }
+    }, [temAlteracoes, salvando])
 
     function handleSubmit(e) {
         e.preventDefault()
@@ -50,10 +104,31 @@ export default function NoteForm({
         cancelar()
     }
 
+    function continuarEdicao() {
+        setConfirmandoDescarte(false)
+        requestAnimationFrame(() => tituloRef.current?.focus({ preventScroll: true }))
+    }
+
+    function tratarEscape(event) {
+        event.preventDefault()
+
+        if (confirmandoDescarte) {
+            continuarEdicao()
+            return
+        }
+
+        solicitarCancelamento()
+    }
+
     return (
-        <>
+        <dialog
+            ref={dialogRef}
+            className="note-editor-dialog"
+            aria-labelledby="note-form-title"
+            onCancel={tratarEscape}
+        >
             <form className="note-form page-panel" onSubmit={handleSubmit} noValidate>
-                <h2>{emEdicao ? 'Editar nota' : 'Nova nota'}</h2>
+                <h2 id="note-form-title">{emEdicao ? 'Editar nota' : 'Nova nota'}</h2>
 
                 {(erroValidacao || erro) && (
                     <p className="feedback feedback-error" role="alert">
@@ -67,6 +142,7 @@ export default function NoteForm({
                     <div className="note-form-field">
                         <label htmlFor="note-title">Título (opcional)</label>
                         <input
+                            ref={tituloRef}
                             id="note-title"
                             type="text"
                             value={titulo}
@@ -95,7 +171,7 @@ export default function NoteForm({
 
                     <div className="note-form-actions">
                         <button type="submit" className="btn-primary">
-                            {salvando ? 'Salvando' : 'Salvar nota' }
+                            {salvando ? 'Salvando...' : emEdicao ? 'Salvar alterações' : 'Salvar nota'}
                         </button>
 
                         <button
@@ -117,8 +193,8 @@ export default function NoteForm({
                 cancelLabel='Continuar escrevendo'
                 variant='danger'
                 onConfirm={cancelar}
-                onCancel={() => setConfirmandoDescarte(false)}
+                onCancel={continuarEdicao}
             />
-        </>
+        </dialog>
     )
 }

@@ -1,20 +1,113 @@
 .note-card {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
+  height: 240px;
   min-width: 0;
   padding: var(--space-5);
   background: var(--bg-card-strong);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-card);
   box-shadow: var(--shadow-soft);
+  transition: transform var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast);
+}
+
+.note-card:has(.note-card-open:not(:disabled)):hover {
+  transform: translateY(-2px);
+  border-color: var(--accent-primary);
+  background: var(--bg-card-strong-hover);
+  box-shadow: var(--shadow-elevated);
+}
+
+.note-card-open {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  overflow-wrap: anywhere;
+}
+
+/* Amplia o botão de abertura sem incluir os botões de ação. */
+.note-card-open::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-card);
+}
+
+.note-card-open:focus-visible {
+  outline: none;
+}
+
+.note-card-open:focus-visible::after {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
+}
+
+.note-card-actions {
+  position: absolute;
+  top: var(--space-4);
+  right: var(--space-4);
+  z-index: 1;
+  display: flex;
+  gap: 10px;
+}
+
+.note-card-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 1px solid var(--border-strong);
+  border-radius: 12px;
+  background: var(--bg-interactive);
+  transition: transform var(--transition-fast), border-color var(--transition-fast), background var(--transition-fast);
+}
+
+.note-card-icon:hover:not(:disabled) {
+  transform: translateY(-1px);
+  border-color: var(--accent-primary);
+  background: var(--bg-interactive-hover);
+}
+
+.note-card-icon:disabled {
+  opacity: 0.5;
+}
+
+.note-card-icon-image {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+  filter: var(--icon-filter);
+}
+
+@media (max-width: 640px) {
+  .note-card-icon {
+    width: 44px;
+    height: 44px;
+  }
 }
 
 .note-card-title {
   margin: 0;
+  padding-right: 100px;
+  min-height: 44px;
   color: var(--text-primary);
   font-size: 1.1rem;
   overflow-wrap: anywhere;
+}
+
+.note-card-open {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
 }
 
 .note-card-preview {
@@ -35,4 +128,16 @@
   padding-top: var(--space-2);
   color: var(--text-muted);
   font-size: 0.85rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .note-card,
+  .note-card-icon {
+    transition: none;
+  }
+
+  .note-card:has(.note-card-open:not(:disabled)):hover,
+  .note-card-icon:hover:not(:disabled) {
+    transform: none;
+  }
 }

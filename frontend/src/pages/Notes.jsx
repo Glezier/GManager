@@ -8,9 +8,10 @@ import ConfirmBox from '../components/ConfirmBox'
 import LoadingState from '../components/ui/LoadingState'
 import AppFooter from '../components/AppFooter'
 import MobileNav from '../components/mobile/MobileNav'
+import AddIcon from '../assets/icons/add.png'
 
 import './Notes.css'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 export default function Notes () {
     const {
@@ -33,6 +34,15 @@ export default function Notes () {
         searchParams.get('nova') === '1'
     )
     const [sucesso, setSucesso] = useState('')
+
+    useEffect(() => {
+        if (!sucesso) {
+            return
+        }
+
+        const timer = setTimeout(() => setSucesso(''), 2500)
+        return () => clearTimeout(timer)
+    }, [sucesso])
 
     const [editando, setEditando] = useState(null)
     const [excluir, setExcluir] = useState(null)
@@ -156,6 +166,7 @@ export default function Notes () {
                     onClick={abrirCriacao}
                     disabled={!usuario || Boolean(erroUsuario) || formularioAberto || Boolean(excluir) || exclusao.isPending}
                 >
+                    <img src={AddIcon} alt="" className="notes-new-icon" />
                     Nova nota
                 </button>
             </header>
@@ -166,7 +177,7 @@ export default function Notes () {
                 </p>
             )}
 
-            {formularioAberto && usuario && !erroUsuario (
+            {formularioAberto && usuario && !erroUsuario && (
                 <NoteForm
                     key={editando ? `editar-${editando.id}` : 'criar'}
                     notaInicial={editando}

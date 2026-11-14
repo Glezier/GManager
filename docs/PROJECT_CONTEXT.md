@@ -97,7 +97,6 @@ Garantir que todos retornam dado limpo ou null, e não result do pg
 - testes de segurança
 
 ### Fase 4: Recursos
-- avaliar notas (por dia e uma aba só pra ela com várias)
 - implementar microserviços
 - avaliar checklists
 - avaliar financas

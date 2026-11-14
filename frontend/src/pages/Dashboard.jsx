@@ -27,7 +27,6 @@ import ProfileIcon from './../assets/icons/profile.png'
 import AddIcon from '../assets/icons/add.png'
 import NotesIcon from '../assets/icons/notes.png'
 
-
 export default function Dashboard(){
     const navigate = useNavigate()
     const location = useLocation()
@@ -112,7 +111,7 @@ export default function Dashboard(){
 
     const loadingNotas = carregandoUsuario || carregandoNotas
     const erroPainelNotas = erroUsuario || erroNotas
-    const notasRecentes = notas.slice(0, 3)
+    const notasRecentes = notas.slice(0, 2)
 
     return(
         <main className="dashboard">
@@ -128,14 +127,11 @@ export default function Dashboard(){
                     <button type="button" onClick={() => navigate("/calendario")}>
                         <img src={CalendarIcon} alt="Calendário" className="bar-icons" title="Calendário"/>
                     </button>
-                    <Link
-                        to="/notas"
-                        className="btn-secondary dashboard-notes-link"
-                        aria-label="Notas"
-                        title="Notas"
-                    >
-                        <img src={NotesIcon} alt="" className="bar-icons" />
-                    </Link>                    
+
+                    <button type="button" onClick={() => navigate("/notas")}>
+                        <img src={NotesIcon} alt="Notas" className="bar-icons" title="Notas"/>
+                    </button>
+                                       
                 </nav>
 
                 <div className="dashboard-brand-block"> 
@@ -241,21 +237,27 @@ export default function Dashboard(){
                 </div>
             </section>
 
-            <section className="dashboard-bottom">
-                <div className="dashboard-panel">
+            <section className="dashboard-bottom dashboard-notes-section">
+                <div className="dashboard-panel" onClick={() => navigate('/notas')}>
                     <div className="dashboard-head">
                         <p>Suas anotações</p>
                         <h2>Notas recentes</h2>
                     </div>
 
                     <div className="dashboard-notes-actions">
-                        <Link to="/notas?nova=1" className="btn-primary">
+                        <Link 
+                            to="/notas?nova=1" 
+                            className="btn-primary"
+                            onClick={(e) => e.stopPropagation()}    
+                        >
+                        <img src={AddIcon} className="day-icons" />
                             Nova nota
                         </Link>
-
-                        <Link to="/notas" className="btn-secondary">
-                            Ver todas
-                        </Link>
+                        <span className="dashboard-notes-count">
+                            {erroPainelNotas
+                                ? 'Quantidade indisponível'
+                                : `${notas.length} ${notas.length === 1 ? 'nota' : 'notas'}`} ao total
+                        </span>
                     </div>
 
                     {loadingNotas && (
