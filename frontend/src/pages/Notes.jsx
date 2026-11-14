@@ -1,9 +1,10 @@
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { useMe } from '../hooks/useMe'
 import useNotes, { useNotasMutation } from '../hooks/useNotes'
 
 import NoteCard from '../components/notes/NoteCard'
 import NoteForm from '../components/notes/NoteForm'
+import ConfirmBox from '../components/ConfirmBox'
 import LoadingState from '../components/ui/LoadingState'
 import AppFooter from '../components/AppFooter'
 import MobileNav from '../components/mobile/MobileNav'
@@ -25,12 +26,18 @@ export default function Notes () {
         error: erroNotas
     } = useNotes({ usuarioId: usuario?.id })
 
-    const [formularioAberto, setFormularioAberto] = useState(false)
+    const [searchParams, setSearchParams] = useSearchParams()
+
+    // Saber se está chegando na pagina a partir de criar uma nova nota pelo dashboard
+    const [formularioAberto, setFormularioAberto] = useState(
+        searchParams.get('nova') === '1'
+    )
     const [sucesso, setSucesso] = useState('')
 
     const [editando, setEditando] = useState(null)
+    const [excluir, setExcluir] = useState(null)
 
-    const { criacao, atualizacao } = useNotasMutation({
+    const { criacao, atualizacao, exclusao } = useNotasMutation({
         usuarioId: usuario?.id
     })
 
@@ -64,6 +71,7 @@ export default function Notes () {
         criacao.reset()
         atualizacao.reset()
         setEditando(null)
+        setSearchParams({}, { replace: true })
         setFormularioAberto(false)
     }
 
@@ -87,8 +95,42 @@ export default function Notes () {
 
             setFormularioAberto(false)
             setEditando(null)
+            setSearchParams({}, { replace: true })
         } catch {
             // A mutation disponibiliza o erro para o formulário.
+        }
+    }
+
+    function solicitarExclusao(nota) {
+        if (formularioAberto || excluir || exclusao.isPending) {
+            return
+        }
+
+        exclusao.reset()
+        setSucesso('')
+        setExcluir(nota)
+    }
+
+    function cancelarExclusao() {
+        if (exclusao.isPending) {
+            return
+        }
+
+        setExcluir(null)
+        exclusao.reset()
+    }
+
+    async function confirmarExclusao() {
+        if (!excluir || exclusao.isPending) {
+            return
+        }
+
+        try {
+            await exclusao.mutateAsync(excluir.id)
+            setExcluir(null)
+            setSucesso('Nota excluída com sucesso.')
+        } catch {
+            // Mantém a confirmação aberta para exibir o erro e permitir nova tentativa.
         }
     }
 
@@ -112,7 +154,7 @@ export default function Notes () {
                     type="button"
                     className="btn-primary notes-new"
                     onClick={abrirCriacao}
-                    disabled={!usuario || Boolean(erroUsuario) || formularioAberto}
+                    disabled={!usuario || Boolean(erroUsuario) || formularioAberto || Boolean(excluir) || exclusao.isPending}
                 >
                     Nova nota
                 </button>
@@ -124,7 +166,7 @@ export default function Notes () {
                 </p>
             )}
 
-            {formularioAberto && (
+            {formularioAberto && usuario && !erroUsuario (
                 <NoteForm
                     key={editando ? `editar-${editando.id}` : 'criar'}
                     notaInicial={editando}
@@ -181,12 +223,29 @@ export default function Notes () {
                                 key={nota.id} 
                                 nota={nota} 
                                 editar={abrirEdicao}
-                                desabilitado={formularioAberto}
+                                remover={solicitarExclusao}
+                                desabilitado={formularioAberto || Boolean(excluir) || exclusao.isPending}
                             />
                         ))}
                     </div>
                 )}
             </section>
+
+            <ConfirmBox
+                open={Boolean(excluir)}
+                title="Excluir nota?"
+                message={
+                    exclusao.error
+                        ? `Não foi possível excluir a nota: ${exclusao.error.message}`
+                        : `Deseja excluir a nota "${excluir?.titulo?.trim() || 'Sem título'}"? Essa ação não poderá ser desfeita.`
+                }
+                confirmLabel="Excluir nota"
+                cancelLabel="Cancelar"
+                variant="danger"
+                loading={exclusao.isPending}
+                onConfirm={confirmarExclusao}
+                onCancel={cancelarExclusao}
+            />
 
             <AppFooter minimal />
             <MobileNav />

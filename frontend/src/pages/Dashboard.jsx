@@ -1,5 +1,5 @@
 import { useMemo, useEffect  } from "react"
-import { useNavigate, useLocation } from 'react-router-dom'
+import { useNavigate, useLocation, Link } from 'react-router-dom'
 
 import { getData, formatarData } from "../utils/date"
 import { getToken } from "../utils/auth"
@@ -9,19 +9,23 @@ import MiniCalendar from "../components/MiniCalendar"
 import TaskForm from "../components/TaskForm"
 import DayTasksPanel from "../components/DayTasksPanel"
 import ConfirmBox from "../components/ConfirmBox"
+import LoadingState from '../components/ui/LoadingState'
 import AppFooter from "../components/AppFooter"
 
 import MobileNav from "../components/mobile/MobileNav"
 
+import { useMe } from '../hooks/useMe'
 import useTasks from "../hooks/useTasks"
 import useProgress from "../hooks/useProgress"
 import useSemana from "../hooks/useSemana"
+import useNotes from '../hooks/useNotes'
 
 import "./Dashboard.css"
 import FullLogo from '../assets/icons/full_logo.png'
 import CalendarIcon from '../assets/icons/calendar.png'
 import ProfileIcon from './../assets/icons/profile.png'
 import AddIcon from '../assets/icons/add.png'
+import NotesIcon from '../assets/icons/notes.png'
 
 
 export default function Dashboard(){
@@ -93,6 +97,23 @@ export default function Dashboard(){
         }
     }, [location.state, navigate, abrirCriacao])
 
+    // Notas
+    const {
+        data: usuario,
+        isPending: carregandoUsuario,
+        error: erroUsuario
+    } = useMe()
+
+    const {
+        data: notas = [],
+        isLoading: carregandoNotas,
+        error: erroNotas
+    } = useNotes({ usuarioId: usuario?.id })
+
+    const loadingNotas = carregandoUsuario || carregandoNotas
+    const erroPainelNotas = erroUsuario || erroNotas
+    const notasRecentes = notas.slice(0, 3)
+
     return(
         <main className="dashboard">
             <header className="dashboard-topbar">
@@ -107,10 +128,14 @@ export default function Dashboard(){
                     <button type="button" onClick={() => navigate("/calendario")}>
                         <img src={CalendarIcon} alt="Calendário" className="bar-icons" title="Calendário"/>
                     </button>
-                    {/*<button type="button">
-                        <img src={NotesIcon} alt="Notas" className="bar-icons" title="Notas"/>
-                    </button> */}
-                    
+                    <Link
+                        to="/notas"
+                        className="btn-secondary dashboard-notes-link"
+                        aria-label="Notas"
+                        title="Notas"
+                    >
+                        <img src={NotesIcon} alt="" className="bar-icons" />
+                    </Link>                    
                 </nav>
 
                 <div className="dashboard-brand-block"> 
@@ -219,18 +244,49 @@ export default function Dashboard(){
             <section className="dashboard-bottom">
                 <div className="dashboard-panel">
                     <div className="dashboard-head">
-                        <p>Em breve</p>
-                        <h2>Anotações gerais</h2>
+                        <p>Suas anotações</p>
+                        <h2>Notas recentes</h2>
                     </div>
 
-                    <div className="dashboard-notes-box">
-                        <p className="dashboard-notes-lead">
-                            Espaço reservado para notas gerais, lembretes e ideias rápidas.
-                        </p>
-                        <p className="dashboard-notes-subtext">
-                            Aqui entram observações do dia a dia, pontos de atenção e tudo o que não precisa virar tarefa agora.
-                        </p>
+                    <div className="dashboard-notes-actions">
+                        <Link to="/notas?nova=1" className="btn-primary">
+                            Nova nota
+                        </Link>
+
+                        <Link to="/notas" className="btn-secondary">
+                            Ver todas
+                        </Link>
                     </div>
+
+                    {loadingNotas && (
+                        <LoadingState message="Carregando notas..." />
+                    )}
+
+                    {erroPainelNotas && (
+                        <p className="feedback feedback-error" role="alert">
+                            {erroPainelNotas.message}
+                        </p>
+                    )}
+
+                    {!loadingNotas && !erroPainelNotas && notas.length === 0 && (
+                        <div className="empty-state">
+                            <h3 className="empty-title">Nenhuma nota por aqui</h3>
+                            <p className="empty-message">
+                                Crie sua primeira nota para guardar ideias e lembretes.
+                            </p>
+                        </div>
+                    )}
+
+                    {!loadingNotas && notasRecentes.length > 0 && (
+                        <div className="dashboard-recent-notes">
+                            {notasRecentes.map((nota) => (
+                                <article key={nota.id} className="dashboard-recent-note">
+                                    <h3>{nota.titulo?.trim() || 'Sem título'}</h3>
+                                    <p>{nota.conteudo}</p>
+                                </article>
+                            ))}
+                        </div>
+                    )}
                 </div>
               
                 <div className="dashboard-panel">

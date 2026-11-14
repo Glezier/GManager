@@ -1,6 +1,7 @@
 import { useNavigate, NavLink, useLocation } from "react-router-dom"
 import CheckIcon from '../../assets/icons/check.png'
 import CalendarIcon from '../../assets/icons/calendar.png'
+import NotesIcon from '../../assets/icons/notes.png'
 import AddIcon from '../../assets/icons/add.png'
 import ProfileIcon from '../../assets/icons/profile.png'
 import './MobileNav.css'
@@ -48,6 +49,15 @@ export default function MobileNav({ onAddTask }){
             >
                 <img src={AddIcon} alt="" />
             </button>
+
+            <NavLink
+                to="/notas"
+                className="mobile-nav-item"
+                title="Notas"
+            >
+                <img src={NotesIcon} alt="" />
+                <span>Notas</span>
+            </NavLink>
 
             <NavLink to="/perfil" className="mobile-nav-item" title="Perfil">
                 <img src={ProfileIcon} alt="" />

@@ -1,6 +1,6 @@
 import './NoteCard.css'
 
-export default function NoteCard({ nota, editar, desabilitado = false }) {
+export default function NoteCard({ nota, editar, remover, desabilitado = false }) {
     const ultimaAlteracao = new Date(nota.updated_at).toLocaleString('pt-BR', {
         dateStyle: 'short',
         timeStyle: 'short'
@@ -29,6 +29,16 @@ export default function NoteCard({ nota, editar, desabilitado = false }) {
                 aria-label={`Abrir nota: ${nota.titulo?.trim() || 'Sem título'}`}
             >
                 Abrir nota
+            </button>
+
+            <button
+                type="button"
+                className="btn-danger"
+                onClick={() => remover(nota)}
+                disabled={desabilitado}
+                aria-label={`Excluir nota: ${nota.titulo?.trim() || 'Sem título'}`}
+            >
+                Excluir
             </button>
         </article>
     )
