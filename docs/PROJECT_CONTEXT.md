@@ -78,6 +78,9 @@ Garantir que todos retornam dado limpo ou null, e não result do pg
 - implementar pasta de skills com agentes
 - verificar paginação
 - automatizar alterações no banco pra criar o esquema
+- ajustar botoes de voltar pra links
+- pasta de estilos em componentes e pages
+- ver como ta mobile apos notas
 
 ### Fase 2: Produto
 - filtros por status e data
