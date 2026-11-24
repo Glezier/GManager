@@ -1,0 +1,56 @@
+﻿Estado atual
+- Anúncios adiados: primeiro suporte, exclusão de conta e privacidade.
+- Renovação automática da hospedagem Hostinger desativada; ativa até 04/10/2027. Evitada cobrança de R$ 779,88 por 12 meses.
+- Domínio mygmanager.com.br continua na Hostinger, com renovação separada ativa. Email gratuito oferecido era teste de um mês; não contratar plano pago.
+- Cloudflare Free: aguardando propagação/reconhecimento dos novos nameservers. Ativação ainda NÃO confirmada.
+- Novos: damon.ns.cloudflare.com e paige.ns.cloudflare.com. Anteriores: pixel.dns-parking.com e byte.dns-parking.com.
+- Site/API continuam na Vercel, banco no Neon e envio de autenticação no Resend.
+- Usuário conseguiu entrar no dashboard durante a transição; demais fluxos ainda não validados.
+
+Próximas ações: DNS e suporte
+1. Aguardar status Active na Cloudflare; consultar “Check nameservers now”. Painel estimou 1–2 horas, podendo levar até 24 horas.
+2. Conferir raiz, www e api em DNS only (nuvens cinza), registros importados e estado do DNSSEC. Não ativar proxy nem restringir a origem a IPs Cloudflare neste fluxo.
+3. Após ativação, validar site, API, login/refresh e entrega de emails de autenticação.
+4. Em Email / Email Routing, verificar a caixa de destino e criar support@mygmanager.com.br encaminhando para o email atual do desenvolvedor.
+5. Conferir registros solicitados antes de ativar; preservar DKIM resend._domainkey, TXT/MX de send e _dmarc. Não sobrescrever SPF sem conferir nome e finalidade.
+6. Testar recebimento a partir de outra caixa e repetir teste do Resend; só então divulgar o suporte.
+- Encaminhamento gratuito não é caixa postal própria. Respostas pela caixa atual usam seu endereço atual; envio como support@ exige configuração separada.
+- Não precisamos transferir o registro do domínio nem hospedar o app na Cloudflare.
+
+DNS de referência
+- Importados 7 registros: A raiz 216.198.79.1; CNAME www e api; TXT send, _dmarc e resend._domainkey; MX send.
+- www: 570394b63079a744.vercel-dns-017.com; api: 09a7ae39bfe8781b.vercel-dns-017.com.
+- Hostinger tinha também ALIAS @ para o destino de api, não copiado. Mantido A raiz; Vercel mostrava Valid Configuration antes da troca.
+- Conferir valores completos nos painéis; esta lista não substitui backup da zona DNS.
+
+Pendência do console
+- Dashboard abriu, mas apareceram GSI “Provided button width is invalid: 100%” e mensagens Cross-Origin-Opener-Policy sobre window.postMessage.
+- Investigar botão Google e headers/fluxo de popup, reproduzindo login. Causa e impacto não diagnosticados; não atribuir ao DNS nem alterar headers apenas para silenciar mensagens.
+
+Prioridades antes da publicidade
+1. Concluir suporte e publicar contato.
+2. Implementar exclusão de conta com confirmação de identidade local/Google, remoção dos dados relacionados e revogação de sessões; conferir FKs, logs e backups.
+3. Inventariar dados e fornecedores; definir retenção e exclusão reais.
+4. Publicar Política de Privacidade, informações de cookies e Termos de Uso acessíveis sem login. Não prometer recursos ou prazos ainda inexistentes.
+5. Preparar preferências: aceitar, recusar e revisar publicidade opcional; recusa impede carregar scripts e não bloqueia o produto.
+- Pretensão de atender público internacional: verificar requisitos conforme os países atendidos.
+
+Decisões de anúncios
+- Objetivo: aprender integração; receita eventual tem baixa prioridade.
+- Apenas dashboard web. Android fica para depois da publicação na Play Store.
+- Avaliar AdSense, sujeito à aprovação e elegibilidade de páginas privadas; não fornecer acesso a dados reais dos usuários ao crawler.
+- Começar com um bloco manual lateral identificado como “Publicidade”, somente em telas com espaço. Entre seções fica para depois.
+- Sem sobreposição, pop-up, botão X ou acompanhamento da rolagem inicialmente; preservar estilo e responsividade.
+- Sem anúncio, com bloqueador ou recusa: manter experiência atual. Não carregar bloco em telas estreitas.
+- Preferir anúncios não personalizados e minimizar dados, sem prometer coleta zero. Não enviar conta, tarefas ou notas para segmentação; revisar scripts de terceiros em páginas privadas.
+- Google será fornecedor, não único anunciante. Existem bloqueios de anúncios/categorias, mas não seleção prévia garantida de cada peça.
+- Após pré-requisitos: prototipar layout, integrar script sem duplicação, prever desligamento e publicar frontend/public/ads.txt com dados reais do fornecedor.
+- Verificar consentimento, navegação, bloqueadores, ausência de anúncio, desempenho e temas. Não clicar em anúncios reais próprios para testar.
+- Piloto não exige inicialmente tabelas ou backend próprio de publicidade.
+
+Continuidade
+- Desenvolvedor implementa com orientação; editar somente no escopo autorizado. Não fazer commit, push ou deploy sem pedido.
+- Este documento é contexto, não o ads.txt público.
+- Cloudflare: https://developers.cloudflare.com/email-service/get-started/route-emails/
+- AdSense: https://support.google.com/adsense/answer/180609 e https://support.google.com/adsense/answer/1348695
+- ANPD: https://www.gov.br/anpd/pt-br/centrais-de-conteudo/materiais-educativos-e-publicacoes/guia_orientativo_cookies_e_protecao_de_dados_pessoais
