@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import { useMe } from "../hooks/useMe"
-import { atualizarNome, atualizarEmail, atualizarSenha, atualizarTema } from "../api/profileApi"
+import { atualizarNome, atualizarEmail, atualizarSenha, atualizarTema, solicitarExclusaoConta } from "../api/profileApi"
 import { useQueryClient, useMutation } from "@tanstack/react-query"
 import { getTemaSalvo, salvarTemaLocal } from "../utils/theme"
 import { removeToken } from "../utils/auth"
@@ -283,6 +283,11 @@ export default function Profile(){
             setSucesso("")
             setErroForm("Tema alterado neste dispositivo, mas não foi salvo para outros acessos.")
         }
+    })
+
+    const solicitarExclusaoMutation = useMutation({
+        mutationFn: solicitarExclusaoConta,
+        retry: false // Não reenviar e gerar novo token
     })
 
     async function handleLogout(){
@@ -746,6 +751,56 @@ export default function Profile(){
                                         <img src={LogoutIcon} className="profile-logout-icon" alt="" />
                                     </button>
                                 </div>
+
+                                <section aria-labelledby="exclusao-conta-titulo">
+                                    <div className="profile-danger-zone">
+                                        <div>
+                                            <strong id="exclusao-conta-titulo">
+                                                Excluir conta
+                                            </strong>
+
+                                            <p>
+                                                Enviaremos um link para o email cadastrado para
+                                                confirmar a exclusão da conta.
+                                            </p>
+                                        </div>
+
+                                        <button
+                                            type="button"
+                                            className="btn-danger"
+                                            disabled={
+                                                solicitarExclusaoMutation.isPending ||
+                                                solicitarExclusaoMutation.isSuccess
+                                            }
+                                            onClick={() => solicitarExclusaoMutation.mutate()}
+                                        >
+                                            {solicitarExclusaoMutation.isPending
+                                                ? 'Enviando...'
+                                                : solicitarExclusaoMutation.isSuccess
+                                                    ? 'Email enviado'
+                                                    : 'Solicitar exclusão'}
+                                        </button>
+                                    </div>
+
+                                    {solicitarExclusaoMutation.isSuccess && (
+                                        <p
+                                            className="dashboard-feedback dashboard-feedback-success"
+                                            role="status"
+                                        >
+                                            {solicitarExclusaoMutation.data.message}
+                                            {' '}Confira também a pasta de spam. O link expira em 10 minutos.
+                                        </p>
+                                    )}
+
+                                    {solicitarExclusaoMutation.isError && (
+                                        <p
+                                            className="dashboard-feedback dashboard-feedback-error"
+                                            role="alert"
+                                        >
+                                            {solicitarExclusaoMutation.error.message}
+                                        </p>
+                                    )}
+                                </section>
                             </>
                         )}
         
