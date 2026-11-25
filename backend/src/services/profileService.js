@@ -3,8 +3,9 @@ const authValidators = require("../validators/authValidators")
 const userRepository = require("../repositories/userRepository")
 const refreshTokensRepository = require("../repositories/refreshTokensRepository")
 const emailVerificationRepository = require('../repositories/emailVerificationRepository')
-const { enviarEmailVerificacao } = require('../utils/EmailService')
 const { gerarTokenEmail, gerarHashToken } =  require('../utils/EmailVerification')
+const { gerarTokenExclusao, gerarHashTokenExclusao, gerarExpiracaoExclusao } = require('../utils/AccountDeletion')
+const { enviarEmailExclusaoConta, enviarEmailVerificacao } = require('../utils/EmailService')
 const bcrypt = require("bcryptjs")
 const AppError = require("../utils/AppError")
 
@@ -137,5 +138,45 @@ exports.atualizarEmail = async (usuarioId, dados) => {
 
     return{
         message: 'Enviamos um link de verificação para o novo email.'
+    }
+}
+
+// Exclusão da conta
+exports.solicitarExclusao = async (usuarioId) => {
+    const usuario = await userRepository.findPublicById(usuarioId)
+
+    if (!usuario) {
+        throw new AppError(
+            'Usuário não encontrado',
+            404,
+            'USER_NOT_FOUND'
+        )
+    }
+
+    const token = gerarTokenExclusao()
+    const tokenHash = gerarHashTokenExclusao(token)
+    const expiresAt = gerarExpiracaoExclusao()
+
+    await userRepository.registrarSolicitacaoExclusao( usuario.id, usuario.email, tokenHash, expiresAt )
+
+    try {
+        await enviarEmailExclusaoConta({
+            email: usuario.email,
+            token
+        })
+    } catch (error) {
+        try {
+            await userRepository.removerSolicitacaoExclusaoPorToken(
+                usuario.id,
+                tokenHash
+            )
+        } catch {
+            console.error('Falha ao limpar solicitação de exclusão de conta')
+        }
+        throw error
+    }
+
+    return {
+        message: 'Enviamos um link de confirmação para o email da sua conta.'
     }
 }
