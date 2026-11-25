@@ -83,6 +83,7 @@ Garantir que todos retornam dado limpo ou null, e não result do pg
 - ver como ta mobile apos notas
 
 ### Fase 2: Produto
+- ALTA PRIORIDADE: ARRUMAR OS .ENV DOS 3 LOCAIS DE DESENVOLVIMENTO E ARRUMAR BANCOS DO NEON DEV E MAIN
 - filtros por status e data
 - busca de tarefas
 - tarefas com datas continuas ou frequencia definida
@@ -94,6 +95,7 @@ Garantir que todos retornam dado limpo ou null, e não result do pg
 - não deixar api exposta
 - colocar anuncios
 - ver se pode apagar pastas do desktop mudando a referencia delas pro local
+- responder mensagens no support como support mesmo e nao como email
 
 ### Fase 3: Testes
 - testes de carga
