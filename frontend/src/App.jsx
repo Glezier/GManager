@@ -11,6 +11,7 @@ import Notes from './pages/Notes'
 import PrivateRoute from './routes/PrivateRoute'
 import DayPage from './pages/DayPage'
 import Profile from './pages/Profile'
+import DeleteAccount from './pages/DeleteAccount'
 
 export default function App(){
   return(
@@ -22,6 +23,7 @@ export default function App(){
         <Route path="/recuperar-senha" element={<ForgotPassword />} />
         <Route path="/resetar-senha" element={<ResetPassword />} />
         <Route path="/" element={<Login />}/>
+        <Route path='/excluir-conta' element={<DeleteAccount />} />
         <Route path="/perfil" element={
           <PrivateRoute>
             <Profile />
