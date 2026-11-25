@@ -214,3 +214,44 @@ exports.removerSolicitacaoExclusaoPorToken = async (usuarioId, tokenHash) => {
         [usuarioId, tokenHash]
     )
 }
+
+exports.confirmarExclusaoPorToken = async (tokenHash) => {
+    const conexao = await pool.connect()
+
+    try {
+        await conexao.query('BEGIN')
+
+        const solicitacao = await conexao.query(
+            `SELECT u.id
+             FROM usuarios u
+             JOIN account_deletion_tokens t
+               ON t.usuario_id = u.id
+             WHERE t.token_hash = $1
+               AND t.expires_at > CURRENT_TIMESTAMP
+               AND t.email_destino = u.email
+             FOR UPDATE OF u, t`,
+            [tokenHash]
+        )
+
+        if (!solicitacao.rows[0]) {
+            await conexao.query('ROLLBACK')
+            return null
+        }
+
+        const result = await conexao.query(
+            `DELETE FROM usuarios
+             WHERE id = $1
+             RETURNING id`,
+            [solicitacao.rows[0].id]
+        )
+
+        await conexao.query('COMMIT')
+
+        return result.rows[0] || null
+    } catch (error) {
+        await conexao.query('ROLLBACK')
+        throw error
+    } finally {
+        conexao.release()
+    }
+}

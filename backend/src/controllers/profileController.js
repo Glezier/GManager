@@ -55,3 +55,31 @@ exports.atualizarTema = async(req,res,next) => {
         next(error)
     }
 }
+
+// Exclusão da conta
+exports.solicitarExclusao = async (req, res, next) => {
+    try {
+        const resposta = await profileService.solicitarExclusao(req.userId)
+
+        res.json(resposta)
+    } catch (error) {
+        next(error)
+    }
+}
+
+exports.confirmarExclusao = async (req, res, next) => {
+    try {
+        const resposta = await profileService.confirmarExclusao(req.body?.token)
+
+        res.clearCookie('refreshToken', {
+            httpOnly: true,
+            secure: process.env.COOKIE_SECURE === 'true',
+            sameSite: process.env.COOKIE_SAMESITE || 'lax',
+            path: '/'
+        })
+
+        res.json(resposta)
+    } catch (error) {
+        next(error)
+    }
+}

@@ -180,3 +180,22 @@ exports.solicitarExclusao = async (usuarioId) => {
         message: 'Enviamos um link de confirmação para o email da sua conta.'
     }
 }
+
+exports.confirmarExclusao = async (token) => {
+    const tokenValidado = userValidators.validarTokenExclusao(token)
+    const tokenHash = gerarHashTokenExclusao(tokenValidado)
+
+    const usuarioExcluido = await userRepository.confirmarExclusaoPorToken(tokenHash)
+
+    if (!usuarioExcluido) {
+        throw new AppError(
+            'Link de exclusão inválido ou expirado. Solicite um novo link.',
+            400,
+            'INVALID_ACCOUNT_DELETION_TOKEN'
+        )
+    }
+
+    return {
+        message: 'Sua conta foi excluída.'
+    }
+}

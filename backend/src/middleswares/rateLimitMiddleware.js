@@ -125,3 +125,16 @@ exports.accountDeletionLimiter = rateLimit({
         }
     }
 })
+
+exports.accountDeletionConfirmLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    limit: 10,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: {
+        error: {
+            code: 'ACCOUNT_DELETION_CONFIRM_RATE_LIMIT_EXCEEDED',
+            message: 'Muitas tentativas. Tente novamente em 15 minutos.'
+        }
+    }
+})
