@@ -1,4 +1,5 @@
-import { API_URL, fetchAutenticado } from './client'
+import { API_URL, fetchAutenticado, fetchComTratamento } from './client'
+import { getApiError } from './errors'
 
 // Informações do usuário
 export async function infosUser(){
@@ -55,6 +56,33 @@ export async function atualizarTema(dados){
         },
         body: JSON.stringify(dados)
     })
+
+    return response.json()
+}
+
+// Excluir conta
+export async function solicitarExclusaoConta() {
+    const response = await fetchAutenticado(`${API_URL}/profile/exclusao/solicitar`, {
+        method: 'POST'
+    }
+    )
+
+    return response.json()
+}
+
+export async function confirmarExclusaoConta(token) {
+    const response = await fetchComTratamento(`${API_URL}/profile/exclusao/confirmar`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ token })
+    })
+
+    if (!response.ok) {
+        throw await getApiError(response)
+    }
 
     return response.json()
 }
