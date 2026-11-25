@@ -10,5 +10,7 @@ router.patch('/nome', authMiddleware, rateLimitMiddleware.profileNameLimiter, pr
 router.patch('/email', authMiddleware, rateLimitMiddleware.emailLimiter, profileController.atualizarEmail)
 router.patch('/senha', authMiddleware, rateLimitMiddleware.passwordLimiter, profileController.atualizarSenha)
 router.patch('/tema', authMiddleware, rateLimitMiddleware.themeLimiter, profileController.atualizarTema)
+router.post('/exclusao/solicitar', authMiddleware, rateLimitMiddleware.accountDeletionLimiter, profileController.solicitarExclusao)
+router.post('/exclusao/confirmar', rateLimitMiddleware.accountDeletionConfirmLimiter, profileController.confirmarExclusao)
 
 module.exports = router

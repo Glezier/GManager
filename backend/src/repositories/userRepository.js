@@ -157,6 +157,19 @@ exports.emailExists = async (email) => {
     return result.rows[0].exists
 }
 
+exports.usuarioExistePorId = async (id) => {
+    const result = await pool.query(
+        `SELECT EXISTS (
+            SELECT 1
+            FROM usuarios
+            WHERE id = $1
+        ) AS existe`,
+        [id]
+    )
+
+    return result.rows[0].existe
+}
+
 exports.updateName = async (id, nome) => {
     const result = await pool.query(
         `UPDATE usuarios 
