@@ -3,6 +3,8 @@ const { Resend } =  require('resend')
 // Cria cliente autenticado
 const resend = new Resend(process.env.RESEND_API_KEY)
 
+const AppError = require('./AppError')
+
 // Produz url de verificação
 function getVerificationUrl(token){
     const frontendUrl = process.env.FRONTEND_URL
@@ -126,6 +128,83 @@ async function enviarEmailRecuperacaoSenha({ email, nome, token }){
     })
 }
 
-// Enviar email para mudança de email
+// Enviar email para exclusão de conta
+async function enviarEmailExclusaoConta({ email, token }) {
+    const url = new URL('/excluir-conta', process.env.FRONTEND_URL)
+    url.searchParams.set('token', token)
+    const urlHtml = url.toString().replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
 
-module.exports={enviarEmailVerificacao, enviarEmailRecuperacaoSenha}
+    const { data, error } = await resend.emails.send({
+        from: process.env.EMAIL_FROM,
+        to: email,
+        subject: 'Confirmação de exclusão de conta - My GManager',
+        text: [
+            'Recebemos uma solicitação para excluir sua conta do My GManager.',
+            '',
+            'A exclusão removerá sua conta, tarefas e notas.',
+            'Abrir o link não exclui sua conta. Você precisará confirmar na página.',
+            '',
+            `Para continuar: ${url.toString()}`,
+            '',
+            'Este link expira em 10 minutos.',
+            'Se você não solicitou a exclusão, ignore este email.'
+        ].join('\n'),
+        html: `
+            <div style="margin: 0; padding: 32px 16px; background-color: #0f141b;">
+                <div style="max-width: 560px; margin: 0 auto; background-color: #161d26; background-image: linear-gradient(180deg, #161d26 0%, #10161d 100%); border: 1px solid #253142; border-radius: 20px; padding: 40px 24px; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.28); font-family: Arial, sans-serif; color: #e8eef5; text-align: center;">
+                    <p style="margin: 0 0 12px; font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: #94a6b8; font-weight: 700;">
+                        My GManager
+                    </p>
+
+                    <h1 style="margin: 0 0 16px; font-size: 28px; line-height: 1.2; color: #ffffff;">
+                        Exclusão de conta
+                    </h1>
+
+                    <p style="margin: 0 0 12px; font-size: 16px; line-height: 1.7; color: #c8d3df;">
+                        Recebemos uma solicitação para excluir sua conta do My GManager.
+                    </p>
+
+                    <p style="margin: 0 0 12px; font-size: 16px; line-height: 1.7; color: #c8d3df;">
+                        A exclusão removerá sua conta, tarefas e notas. Essa ação não poderá ser desfeita pelo aplicativo.
+                    </p>
+
+                    <p style="margin: 0 0 28px; font-size: 16px; line-height: 1.7; color: #c8d3df;">
+                        Abrir o link não exclui sua conta. Você precisará confirmar a exclusão na página seguinte.
+                    </p>
+
+                    <a href="${urlHtml}" style="display: inline-block; padding: 14px 24px; background-color: #22c55e; color: #08110c; text-decoration: none; font-weight: 700; border-radius: 12px; font-size: 15px;">
+                        Revisar exclusão
+                    </a>
+
+                    <p style="margin: 28px 0 0; font-size: 14px; line-height: 1.7; color: #94a6b8;">
+                        Este link expira em 10 minutos.
+                    </p>
+
+                    <p style="margin: 16px 0 0; font-size: 14px; line-height: 1.6; color: #94a6b8;">
+                        Se você não solicitou a exclusão, ignore este email. Sua conta será mantida.
+                    </p>
+
+                    <p style="margin: 16px 0 0; font-size: 13px; line-height: 1.6; color: #94a6b8;">
+                        Se o botão não funcionar, copie e cole este link no navegador:
+                    </p>
+
+                    <p style="margin: 8px 0 0; font-size: 13px; line-height: 1.6; word-break: break-word; overflow-wrap: anywhere;">
+                        <a href="${urlHtml}" style="color: #7dd3fc; text-decoration: none;">${urlHtml}</a>
+                    </p>
+                </div>
+            </div>
+        `
+    })
+
+    if (error) {
+        throw new AppError(
+            'Não foi possível enviar o email de confirmação. Tente novamente.',
+            502,
+            'ACCOUNT_DELETION_EMAIL_FAILED'
+        )
+    }
+
+    return data
+}
+
+module.exports={enviarEmailVerificacao, enviarEmailRecuperacaoSenha, enviarEmailExclusaoConta}

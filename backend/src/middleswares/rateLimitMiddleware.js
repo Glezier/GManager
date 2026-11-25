@@ -111,3 +111,17 @@ exports.notesWriterLimiter = rateLimit({
         }
     }
 })
+
+exports.accountDeletionLimiter = rateLimit({
+    windowMs: 60 * 60 * 1000,
+    limit: 3,
+    standardHeaders: true,
+    legacyHeaders: false,
+    keyGenerator: (req) => `user:${req.userId}`,
+    message: {
+        error: {
+            code: 'ACCOUNT_DELETION_RATE_LIMIT_EXCEEDED',
+            message: 'Muitas solicitações de exclusão. Tente novamente em uma hora.'
+        }
+    }
+})
